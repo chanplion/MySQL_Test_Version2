@@ -1,0 +1,562 @@
+drop table if exists t1,t2,t3,t4,t5,t6,t7;
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+CREATE TABLE t1 (a blob, b text, c blob(250), d text(70000), e text(70000000));
+show columns from t1;
+Field	Type	Null	Key	Default	Extra
+a	blob	YES		NULL	
+b	text	YES		NULL	
+c	tinyblob	YES		NULL	
+d	mediumtext	YES		NULL	
+e	longtext	YES		NULL	
+CREATE TABLE t2 (a char(255), b varbinary(70000), c varchar(70000000));
+Warnings:
+Note	1246	Converting column 'b' from VARBINARY to BLOB
+Note	1246	Converting column 'c' from VARCHAR to TEXT
+CREATE TABLE t4 (c varchar(65530) character set utf8 not null);
+Warnings:
+Note	1246	Converting column 'c' from VARCHAR to TEXT
+show columns from t2;
+Field	Type	Null	Key	Default	Extra
+a	char(255)	YES		NULL	
+b	mediumblob	YES		NULL	
+c	longtext	YES		NULL	
+create table t3 (a long, b long byte);
+show create TABLE t3;
+Table	Create Table
+t3	CREATE TABLE `t3` (
+  `a` mediumtext,
+  `b` mediumblob
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+show create TABLE t4;
+Table	Create Table
+t4	CREATE TABLE `t4` (
+  `c` mediumtext CHARACTER SET utf8 NOT NULL
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+drop table t1,t2,t3,t4;
+CREATE TABLE t1 (a char(257) default "hello");
+ERROR 42000: Column length too big for column 'a' (max = 255); use BLOB or TEXT instead
+CREATE TABLE t2 (a char(256));
+ERROR 42000: Column length too big for column 'a' (max = 255); use BLOB or TEXT instead
+CREATE TABLE t1 (a varchar(70000) default "hello");
+ERROR 42000: Column length too big for column 'a' (max = 65535); use BLOB or TEXT instead
+CREATE TABLE t2 (a blob default "hello");
+ERROR 42000: BLOB, TEXT, GEOMETRY or JSON column 'a' can't have a default value
+drop table if exists t1,t2;
+create table t1 (a text);
+insert into t1 values ('where');
+update t1 set a='Where';
+select * from t1;
+a
+Where
+drop table t1;
+create table t1 (t text,c char(10),b blob, d varbinary(10));
+insert into t1 values (NULL,NULL,NULL,NULL);
+insert into t1 values ("","","","");
+insert into t1 values ("hello","hello","hello","hello");
+insert into t1 values ("HELLO","HELLO","HELLO","HELLO");
+insert into t1 values ("HELLO MY","HELLO MY","HELLO MY","HELLO MY");
+insert into t1 values ("a","a","a","a");
+insert into t1 values (1,1,1,1);
+insert into t1 values (NULL,NULL,NULL,NULL);
+update t1 set c="",b=null where c="1";
+lock tables t1 READ;
+show full fields from t1;
+Field	Type	Collation	Null	Key	Default	Extra	Privileges	Comment
+t	text	latin1_swedish_ci	YES		NULL		#	
+c	char(10)	latin1_swedish_ci	YES		NULL		#	
+b	blob	NULL	YES		NULL		#	
+d	varbinary(10)	NULL	YES		NULL		#	
+lock tables t1 WRITE;
+show full fields from t1;
+Field	Type	Collation	Null	Key	Default	Extra	Privileges	Comment
+t	text	latin1_swedish_ci	YES		NULL		#	
+c	char(10)	latin1_swedish_ci	YES		NULL		#	
+b	blob	NULL	YES		NULL		#	
+d	varbinary(10)	NULL	YES		NULL		#	
+unlock tables;
+select t from t1 where t like "hello";
+t
+hello
+HELLO
+select c from t1 where c like "hello";
+c
+hello
+HELLO
+select b from t1 where b like "hello";
+b
+hello
+select d from t1 where d like "hello";
+d
+hello
+select c from t1 having c like "hello";
+c
+hello
+HELLO
+select d from t1 having d like "hello";
+d
+hello
+select t from t1 where t like "%HELLO%";
+t
+hello
+HELLO
+HELLO MY
+select c from t1 where c like "%HELLO%";
+c
+hello
+HELLO
+HELLO MY
+select b from t1 where b like "%HELLO%";
+b
+HELLO
+HELLO MY
+select d from t1 where d like "%HELLO%";
+d
+HELLO
+HELLO MY
+select c from t1 having c like "%HELLO%";
+c
+hello
+HELLO
+HELLO MY
+select d from t1 having d like "%HELLO%";
+d
+HELLO
+HELLO MY
+select d from t1 having d like "%HE%LLO%";
+d
+HELLO
+HELLO MY
+select t from t1 order by t;
+t
+NULL
+NULL
+
+1
+a
+hello
+HELLO
+HELLO MY
+select c from t1 order by c;
+c
+NULL
+NULL
+
+
+a
+hello
+HELLO
+HELLO MY
+select d from t1 order by d;
+d
+NULL
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+select distinct t from t1;
+t
+NULL
+
+hello
+HELLO MY
+a
+1
+select t from t1 group by t;
+t
+NULL
+
+1
+a
+hello
+HELLO MY
+select b from t1 group by b;
+b
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+set big_tables=1;
+select distinct t from t1;
+t
+NULL
+
+hello
+HELLO MY
+a
+1
+select distinct b from t1;
+b
+NULL
+
+hello
+HELLO
+HELLO MY
+a
+1
+select distinct t from t1 order by t;
+t
+NULL
+
+1
+a
+hello
+HELLO MY
+select distinct b from t1 order by b;
+b
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+select distinct c from t1;
+c
+NULL
+
+a
+hello
+HELLO MY
+select distinct d from t1;
+d
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+select distinct c from t1 order by c;
+c
+NULL
+
+a
+hello
+HELLO MY
+select distinct d from t1 order by d;
+d
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+select c from t1 group by c;
+c
+NULL
+
+a
+hello
+HELLO MY
+select d from t1 group by d;
+d
+NULL
+
+1
+HELLO
+HELLO MY
+a
+hello
+set big_tables=0;
+select t,count(*) from t1 group by t;
+t	count(*)
+NULL	2
+	1
+1	1
+a	1
+hello	2
+HELLO MY	1
+select c,count(*) from t1 group by c;
+c	count(*)
+NULL	2
+	2
+a	1
+hello	2
+HELLO MY	1
+select d,count(*) from t1 group by d;
+d	count(*)
+NULL	2
+	1
+1	1
+HELLO	1
+HELLO MY	1
+a	1
+hello	1
+drop table t1;
+CREATE TABLE t4 (
+seq_0_id bigint(21) DEFAULT '0' NOT NULL,
+seq_1_id bigint(21) DEFAULT '0' NOT NULL,
+PRIMARY KEY (seq_0_id,seq_1_id)
+);
+INSERT INTO t4 VALUES (1,1);
+INSERT INTO t4 VALUES (2,1);
+CREATE TABLE t6 (
+seq_0_id bigint(21) DEFAULT '0' NOT NULL,
+seq_1_id bigint(21) DEFAULT '0' NOT NULL,
+PRIMARY KEY (seq_0_id,seq_1_id)
+);
+INSERT INTO t6 VALUES (1,1);
+INSERT INTO t6 VALUES (1,2);
+INSERT INTO t6 VALUES (2,2);
+drop table if exists t1,t2,t3,t4,t5,t6,t7;
+Warnings:
+Note	1051	Unknown table 'test.t1'
+Note	1051	Unknown table 'test.t2'
+Note	1051	Unknown table 'test.t3'
+Note	1051	Unknown table 'test.t5'
+Note	1051	Unknown table 'test.t7'
+create table t1 (a blob);
+insert into t1 values ("empty"),("");
+select a,reverse(a) from t1;
+a	reverse(a)
+empty	ytpme
+	
+drop table t1;
+CREATE TABLE t1 (
+f1 int(11) DEFAULT '0' NOT NULL,
+f2 varchar(16) DEFAULT '' NOT NULL,
+f5 text,
+KEY index_name (f1,f2,f5(16))
+);
+INSERT INTO t1 VALUES (0,'traktor','1111111111111');
+INSERT INTO t1 VALUES (1,'traktor','1111111111111111111111111');
+select count(*) from t1 where f2='traktor';
+count(*)
+2
+drop table t1;
+CREATE TABLE t1 ( i int(11) NOT NULL default '0',    c text NOT NULL, d varchar(1) NOT NULL DEFAULT ' ', PRIMARY KEY  (i), KEY (c(1),d));
+INSERT t1 (i, c) VALUES (1,''),(2,''),(3,'asdfh'),(4,'');
+select max(i) from t1 where c = '';
+max(i)
+4
+drop table t1;
+create table t1 (a text default '');
+Warnings:
+Warning	1101	BLOB, TEXT, GEOMETRY or JSON column 'a' can't have a default value
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` text
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+insert into t1 values (default);
+select * from t1;
+a
+NULL
+drop table t1;
+set @@sql_mode='TRADITIONAL';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+create table t1 (a text default '');
+ERROR 42000: BLOB, TEXT, GEOMETRY or JSON column 'a' can't have a default value
+set @@sql_mode='';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+CREATE TABLE t (c TEXT CHARSET ASCII);
+INSERT INTO t (c) VALUES (REPEAT('1',65537));
+Warnings:
+Warning	1265	Data truncated for column 'c' at row 1
+INSERT INTO t (c) VALUES (REPEAT('2',65536));
+Warnings:
+Warning	1265	Data truncated for column 'c' at row 1
+INSERT INTO t (c) VALUES (REPEAT('3',65535));
+SELECT LENGTH(c), CHAR_LENGTH(c) FROM t;
+LENGTH(c)	CHAR_LENGTH(c)
+65535	65535
+65535	65535
+65535	65535
+DROP TABLE t;
+drop table if exists b15776;
+create table b15776 (data blob(2147483647));
+drop table b15776;
+create table b15776 (data blob(-1));
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-1))' at line 1
+create table b15776 (data blob(2147483648));
+drop table b15776;
+create table b15776 (data blob(4294967294));
+drop table b15776;
+create table b15776 (data blob(4294967295));
+drop table b15776;
+create table b15776 (data blob(4294967296));
+ERROR 42000: Display width out of range for column 'data' (max = 4294967295)
+CREATE TABLE b15776 (a blob(2147483647), b blob(2147483648), c blob(4294967295), a1 text(2147483647), b1 text(2147483648), c1 text(4294967295) );
+show columns from b15776;
+Field	Type	Null	Key	Default	Extra
+a	longblob	YES		NULL	
+b	longblob	YES		NULL	
+c	longblob	YES		NULL	
+a1	longtext	YES		NULL	
+b1	longtext	YES		NULL	
+c1	longtext	YES		NULL	
+drop table b15776;
+CREATE TABLE b15776 (a blob(4294967296));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a text(4294967296));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a blob(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a text(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a int(0));
+INSERT INTO b15776 values (NULL), (1), (42), (654);
+SELECT * from b15776 ORDER BY a;
+a
+NULL
+1
+42
+654
+DROP TABLE b15776;
+CREATE TABLE b15776 (a int(-1));
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-1))' at line 1
+CREATE TABLE b15776 (a int(255));
+DROP TABLE b15776;
+CREATE TABLE b15776 (a int(256));
+ERROR 42000: Display width out of range for column 'a' (max = 255)
+CREATE TABLE b15776 (data blob(-1));
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-1))' at line 1
+CREATE TABLE b15776 (a char(2147483647));
+ERROR 42000: Column length too big for column 'a' (max = 255); use BLOB or TEXT instead
+CREATE TABLE b15776 (a char(2147483648));
+ERROR 42000: Column length too big for column 'a' (max = 255); use BLOB or TEXT instead
+CREATE TABLE b15776 (a char(4294967295));
+ERROR 42000: Column length too big for column 'a' (max = 255); use BLOB or TEXT instead
+CREATE TABLE b15776 (a char(4294967296));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a year(4294967295));
+ERROR HY000: Supports only YEAR or YEAR(4) column.
+CREATE TABLE b15776 (a year(4));
+INSERT INTO b15776 VALUES (42);
+SELECT * FROM b15776;
+a
+2042
+DROP TABLE b15776;
+CREATE TABLE b15776 (a year(4294967296));
+ERROR HY000: Supports only YEAR or YEAR(4) column.
+CREATE TABLE b15776 (a year(0));
+ERROR HY000: Supports only YEAR or YEAR(4) column.
+CREATE TABLE b15776 (a year(-2));
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-2))' at line 1
+CREATE TABLE b15776 (a int(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a char(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'a' (max = 4294967295)
+CREATE TABLE b15776 (a year(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR HY000: Supports only YEAR or YEAR(4) column.
+CREATE TABLE b15776 select cast(null as char(4294967295));
+show columns from b15776;
+Field	Type	Null	Key	Default	Extra
+cast(null as char(4294967295))	char(0)	YES		NULL	
+drop table b15776;
+CREATE TABLE b15776 select cast(null as nchar(4294967295));
+show columns from b15776;
+Field	Type	Null	Key	Default	Extra
+cast(null as nchar(4294967295))	char(0)	YES		NULL	
+drop table b15776;
+CREATE TABLE b15776 select cast(null as binary(4294967295));
+show columns from b15776;
+Field	Type	Null	Key	Default	Extra
+cast(null as binary(4294967295))	binary(0)	YES		NULL	
+drop table b15776;
+explain select cast(1 as char(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset latin1) AS `cast(1 as char(4294967295))`
+explain select cast(1 as nchar(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset utf8) AS `cast(1 as nchar(4294967295))`
+explain select cast(1 as binary(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset binary) AS `cast(1 as binary(4294967295))`
+explain select cast(1 as char(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select cast(1 as nchar(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select cast(1 as binary(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select cast(1 as decimal(-1));
+ERROR 42000: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '-1))' at line 1
+explain select cast(1 as decimal(64, 30));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as decimal(64,30)) AS `cast(1 as decimal(64, 30))`
+explain select cast(1 as decimal(64, 999999999999999999999999999999));
+Got one of the listed errors
+explain select cast(1 as decimal(4294967296));
+Got one of the listed errors
+explain select cast(1 as decimal(999999999999999999999999999999999999));
+Got one of the listed errors
+explain select convert(1, char(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset latin1) AS `convert(1, char(4294967295))`
+explain select convert(1, char(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select convert(1, char(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select convert(1, nchar(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset utf8) AS `convert(1, nchar(4294967295))`
+explain select convert(1, nchar(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select convert(1, nchar(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select convert(1, binary(4294967295));
+id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
+1	SIMPLE	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	No tables used
+Warnings:
+Note	1003	/* select#1 */ select cast(1 as char charset binary) AS `convert(1, binary(4294967295))`
+explain select convert(1, binary(4294967296));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+explain select convert(1, binary(999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999));
+ERROR 42000: Display width out of range for column 'cast as char' (max = 4294967295)
+End of 5.0 tests
+CREATE TABLE t1(id INT NOT NULL);
+CREATE TABLE t2(id INT NOT NULL, c TEXT NOT NULL);
+INSERT INTO t1 VALUES (1);
+INSERT INTO t2 VALUES (1, '');
+UPDATE t2 SET c = REPEAT('1', 70000);
+Warnings:
+Warning	1265	Data truncated for column 'c' at row 1
+SELECT LENGTH(c) FROM t2;
+LENGTH(c)
+65535
+UPDATE t1 LEFT JOIN t2 USING(id) SET t2.c = REPEAT('1', 70000) WHERE t1.id = 1;
+Warnings:
+Warning	1265	Data truncated for column 'c' at row 1
+SELECT LENGTH(c) FROM t2;
+LENGTH(c)
+65535
+DROP TABLE t1, t2;
+# Bug #52160: crash and inconsistent results when grouping
+#             by a function and column
+CREATE FUNCTION f1() RETURNS TINYBLOB RETURN 1;
+CREATE TABLE t1(a CHAR(1));
+INSERT INTO t1 VALUES ('0'), ('0');
+SELECT COUNT(*) FROM t1 GROUP BY f1(), a;
+COUNT(*)
+2
+DROP FUNCTION f1;
+DROP TABLE t1;
+SET sql_mode = default;
+End of 5.1 tests
+#
+# Bug #18127749: OPTIMIZER SHOULD THROW AN ERROR WHEN USER USES
+#                COMPARISION OPERATORS ON GIS DATA
+#
