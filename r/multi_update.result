@@ -271,22 +271,6 @@ create table t2 like t1;
 insert into t2 select * from t1;
 drop table t1,t2;
 drop table if exists t1, t2, t3;
-CREATE TABLE t1 (a int, PRIMARY KEY (a));
-CREATE TABLE t2 (a int, PRIMARY KEY (a));
-CREATE TABLE t3 (a int, PRIMARY KEY (a)) ENGINE=SequoiaDB;
-create trigger trg_del_t3 before  delete on t3 for each row insert into t1 values (1);
-insert into t2 values (1),(2);
-insert into t3 values (1),(2);
-reset master;
-delete t3.* from t2,t3 where t2.a=t3.a;
-ERROR HY000: Got error 49962 from storage engine
-select count(*) from t1 /* must be 1 */;
-count(*)
-1
-select count(*) from t3 /* must be 1 */;
-count(*)
-1
-drop table t1, t2, t3;
 #
 # Bug#49534: multitable IGNORE update with sql_safe_updates error
 # causes debug assertion
@@ -326,16 +310,6 @@ set @@optimizer_switch=@optimizer_switch_saved;
 #
 set @optimizer_switch_saved=@@optimizer_switch;
 set optimizer_switch='derived_merge=off';
-CREATE FUNCTION f1 () RETURNS BLOB RETURN 1;
-CREATE TABLE t1 (f1 DATE);
-INSERT INTO t1 VALUES('2001-01-01');
-UPDATE IGNORE (SELECT 1 FROM t1 WHERE f1 = (SELECT f1() FROM t1)) x, t1 SET f1 = 1;
-Warnings:
-Warning	1292	Incorrect date value: '1' for column 'f1' at row 2
-Warning	1292	Incorrect datetime value: '1'
-Warning	1292	Incorrect datetime value: '1'
-DROP FUNCTION f1;
-DROP TABLE t1;
 set @@optimizer_switch=@optimizer_switch_saved;
 #
 # BUG#57373: Multi update+SequoiaDB reports ER_KEY_NOT_FOUND if a
@@ -482,19 +456,8 @@ CREATE TABLE t3 (c1 INTEGER, c2 INTEGER);
 INSERT INTO t1 VALUES(1,1),(2,2),(3,3),(4,4),(5,5);
 INSERT INTO t2 VALUES(11,1),(12,1),(13,1),(14,2),(15,6);
 INSERT INTO t3 VALUES(21,11),(22,11),(23,13),(24,14),(25,15);
-ANALYZE TABLE t1, t2, t3;
-Table	Op	Msg_type	Msg_text
-test.t1	analyze	note	The storage engine for the table doesn't support analyze
-test.t2	analyze	note	The storage engine for the table doesn't support analyze
-test.t3	analyze	note	The storage engine for the table doesn't support analyze
 UPDATE t2 straight_join t3 straight_join t1 SET t1.c2 = 30, t2.c2 = 40, t3.c2=50
 WHERE t1.c1=t2.c2 AND t2.c1=t3.c2;
-EXPLAIN UPDATE t2 straight_join t3 straight_join t1 SET t1.c2 = 30, t2.c2 = 40, t3.c2=50
-WHERE t1.c1=t2.c2 AND t2.c1=t3.c2;
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	UPDATE	t2	NULL	ALL	NULL	NULL	NULL	NULL	0	0.00	Using where with pushed condition (`test`.`t2`.`c2` is not null)
-1	UPDATE	t3	NULL	ALL	NULL	NULL	NULL	NULL	0	0.00	Using where
-1	UPDATE	t1	NULL	ref	c1	c1	5	test.t2.c2	2	100.00	NULL
 SELECT * FROM t3 ORDER BY c1;
 c1	c2
 21	50
