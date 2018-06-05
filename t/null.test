@@ -111,10 +111,8 @@ create table t1 (a int not null, b int not null, index idx(a));
 insert into t1 values
   (1,1), (2,2), (3,3), (4,4), (5,5), (6,6),
   (7,7), (8,8), (9,9), (10,10), (11,11), (12,12);
---replace_column 10 n 11 n 12 n
-explain select * from t1 where a between 2 and 3;
---replace_column 10 n 11 n 12 n
-explain select * from t1 where a between 2 and 3 or b is null;
+#explain select * from t1 where a between 2 and 3;
+#explain select * from t1 where a between 2 and 3 or b is null;
 drop table t1;
 select cast(NULL as signed);
 
@@ -134,8 +132,7 @@ insert into t1 select i*2 from t1;
 insert into t1 select i*2 from t1;
 insert into t1 select i*2 from t1;
 insert into t1 values(null);
---replace_column 10 n 11 n 12 n
-explain select * from t1 where i=2 or i is null;
+#explain select * from t1 where i=2 or i is null;
 select count(*) from t1 where i=2 or i is null;
 # NOW SequoiaDB not support alter change
 #SET sql_mode = 'NO_ENGINE_SUBSTITUTION';

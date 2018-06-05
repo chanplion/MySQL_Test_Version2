@@ -158,13 +158,13 @@ test
 select cast(_koi8r'тест' as char character set cp1251);
 cast(_koi8r'тест' as char character set cp1251)
 РЕЯР
-create table abc_t1 select cast(_koi8r'тест' as char character set cp1251) as t;
-show create table abc_t1;
+create table t1 select cast(_koi8r'тест' as char character set cp1251) as t;
+show create table t1;
 Table	Create Table
-abc_t1	CREATE TABLE `abc_t1` (
+t1	CREATE TABLE `t1` (
   `t` varchar(4) CHARACTER SET cp1251 DEFAULT NULL
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-drop table abc_t1;
+drop table t1;
 select
 cast(_latin1'ab'  AS char)    as c1,
 cast(_latin1'a '  AS char)    as c2,
@@ -184,7 +184,7 @@ Warning	1292	Truncated incorrect BINARY(3) value: '1000'
 SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 Warnings:
 Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
-create table abc_t1 select
+create table t1 select
 cast(_latin1'ab'  AS char)    as c1,
 cast(_latin1'a '  AS char)    as c2,
 cast(_latin1'abc' AS char(2)) as c3,
@@ -193,19 +193,19 @@ cast(_latin1'a'   AS char(2)) as c5;
 Warnings:
 Warning	1292	Truncated incorrect BINARY(2) value: 'abc'
 Warning	1292	Truncated incorrect BINARY(2) value: 'a  '
-select c1,c2,c3,c4,hex(c5) from abc_t1;
+select c1,c2,c3,c4,hex(c5) from t1;
 c1	c2	c3	c4	hex(c5)
 ab	a 	ab	a 	6100
-show create table abc_t1;
+show create table t1;
 Table	Create Table
-abc_t1	CREATE TABLE `abc_t1` (
+t1	CREATE TABLE `t1` (
   `c1` varbinary(2) NOT NULL DEFAULT '',
   `c2` varbinary(2) NOT NULL DEFAULT '',
   `c3` varbinary(2) NOT NULL DEFAULT '',
   `c4` varbinary(2) NOT NULL DEFAULT '',
   `c5` varbinary(2) NOT NULL DEFAULT ''
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-drop table abc_t1;
+drop table t1;
 select
 cast(_koi8r'фг'  AS nchar)    as c1,
 cast(_koi8r'ф '  AS nchar)    as c2,
@@ -217,7 +217,7 @@ c1	c2	c3	c4	c5
 Warnings:
 Warning	1292	Truncated incorrect CHAR(4) value: 'я└пЁя┘'
 Warning	1292	Truncated incorrect CHAR(3) value: 'я└  '
-create table abc_t1 select
+create table t1 select
 cast(_koi8r'фг'  AS nchar)    as c1,
 cast(_koi8r'ф '  AS nchar)    as c2,
 cast(_koi8r'фгх' AS nchar(2)) as c3,
@@ -226,34 +226,34 @@ cast(_koi8r'ф'   AS nchar(2)) as c5;
 Warnings:
 Warning	1292	Truncated incorrect CHAR(4) value: 'я└пЁя┘'
 Warning	1292	Truncated incorrect CHAR(3) value: 'я└  '
-select * from abc_t1;
+select * from t1;
 c1	c2	c3	c4	c5
 я└пЁ	я└ 	я└пЁ	я└ 	я└
-show create table abc_t1;
+show create table t1;
 Table	Create Table
-abc_t1	CREATE TABLE `abc_t1` (
+t1	CREATE TABLE `t1` (
   `c1` varchar(2) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `c2` varchar(2) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `c3` varchar(2) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `c4` varchar(2) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `c5` varchar(2) CHARACTER SET utf8 NOT NULL DEFAULT ''
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-drop table abc_t1;
+drop table t1;
 SET sql_mode = default;
-create table abc_t1 (a binary(4), b char(4) character set koi8r);
-insert into abc_t1 values (_binary'тест',_binary'тест');
-select a,b,cast(a as char character set cp1251),cast(b as binary) from abc_t1;
+create table t1 (a binary(4), b char(4) character set koi8r);
+insert into t1 values (_binary'тест',_binary'тест');
+select a,b,cast(a as char character set cp1251),cast(b as binary) from t1;
 a	b	cast(a as char character set cp1251)	cast(b as binary)
 тест	тест	тест	тест
 set names koi8r;
-select a,b,cast(a as char character set cp1251),cast(b as binary) from abc_t1;
+select a,b,cast(a as char character set cp1251),cast(b as binary) from t1;
 a	b	cast(a as char character set cp1251)	cast(b as binary)
 тест	тест	ФЕУФ	тест
 set names cp1251;
-select a,b,cast(a as char character set cp1251),cast(b as binary) from abc_t1;
+select a,b,cast(a as char character set cp1251),cast(b as binary) from t1;
 a	b	cast(a as char character set cp1251)	cast(b as binary)
 тест	РЕЯР	тест	тест
-drop table abc_t1;
+drop table t1;
 set names binary;
 select cast("2001-1-1" as date) = "2001-01-01";
 cast("2001-1-1" as date) = "2001-01-01"
@@ -270,14 +270,14 @@ NULL
 select cast(NULL as BINARY);
 cast(NULL as BINARY)
 NULL
-CREATE TABLE abc_t1 (a enum ('aac','aab','aaa') not null);
-INSERT INTO abc_t1 VALUES ('aaa'),('aab'),('aac');
-SELECT a, CAST(a AS CHAR) FROM abc_t1 ORDER BY CAST(a AS UNSIGNED) ;
+CREATE TABLE t1 (a enum ('aac','aab','aaa') not null);
+INSERT INTO t1 VALUES ('aaa'),('aab'),('aac');
+SELECT a, CAST(a AS CHAR) FROM t1 ORDER BY CAST(a AS UNSIGNED) ;
 a	CAST(a AS CHAR)
 aac	aac
 aab	aab
 aaa	aaa
-SELECT a, CAST(a AS CHAR(3)) FROM abc_t1 ORDER BY CAST(a AS CHAR(2)), a;
+SELECT a, CAST(a AS CHAR(3)) FROM t1 ORDER BY CAST(a AS CHAR(2)), a;
 a	CAST(a AS CHAR(3))
 aac	aac
 aab	aab
@@ -286,12 +286,12 @@ Warnings:
 Warning	1292	Truncated incorrect BINARY(2) value: 'aaa'
 Warning	1292	Truncated incorrect BINARY(2) value: 'aab'
 Warning	1292	Truncated incorrect BINARY(2) value: 'aac'
-SELECT a, CAST(a AS UNSIGNED) FROM abc_t1 ORDER BY CAST(a AS CHAR) ;
+SELECT a, CAST(a AS UNSIGNED) FROM t1 ORDER BY CAST(a AS CHAR) ;
 a	CAST(a AS UNSIGNED)
 aaa	3
 aab	2
 aac	1
-SELECT a, CAST(a AS CHAR(2)) FROM abc_t1 ORDER BY CAST(a AS CHAR(3)), a;
+SELECT a, CAST(a AS CHAR(2)) FROM t1 ORDER BY CAST(a AS CHAR(3)), a;
 a	CAST(a AS CHAR(2))
 aaa	aa
 aab	aa
@@ -300,7 +300,7 @@ Warnings:
 Warning	1292	Truncated incorrect BINARY(2) value: 'aaa'
 Warning	1292	Truncated incorrect BINARY(2) value: 'aab'
 Warning	1292	Truncated incorrect BINARY(2) value: 'aac'
-DROP TABLE abc_t1;
+DROP TABLE t1;
 select date_add(cast('2004-12-30 12:00:00' as date), interval 0 hour);
 date_add(cast('2004-12-30 12:00:00' as date), interval 0 hour)
 2004-12-30 00:00:00
@@ -346,17 +346,17 @@ Warning	1105	Cast to signed converted positive out-of-range integer to it's nega
 select cast(1.0e+300 as signed int);
 cast(1.0e+300 as signed int)
 9223372036854775807
-CREATE TABLE abc_t1 (f1 double);
-INSERT INTO abc_t1 SET f1 = -1.0e+30 ;
-INSERT INTO abc_t1 SET f1 = +1.0e+30 ;
-SELECT f1 AS double_val, CAST(f1 AS SIGNED INT) AS cast_val FROM abc_t1;
+CREATE TABLE t1 (f1 double);
+INSERT INTO t1 SET f1 = -1.0e+30 ;
+INSERT INTO t1 SET f1 = +1.0e+30 ;
+SELECT f1 AS double_val, CAST(f1 AS SIGNED INT) AS cast_val FROM t1;
 double_val	cast_val
 -1e30	-9223372036854775808
 1e30	9223372036854775807
 Warnings:
 Warning	1292	Truncated incorrect INTEGER value: '-1e30'
 Warning	1292	Truncated incorrect INTEGER value: '1e30'
-DROP TABLE abc_t1;
+DROP TABLE t1;
 select isnull(date(NULL)), isnull(cast(NULL as DATE));
 isnull(date(NULL))	isnull(cast(NULL as DATE))
 1	1
@@ -383,24 +383,24 @@ cast(@v1 as decimal(22, 2))
 select cast(-1e18 as decimal(22,2));
 cast(-1e18 as decimal(22,2))
 -1000000000000000000.00
-create table abc_t1(s1 time);
-insert into abc_t1 values ('11:11:11');
-select cast(s1 as decimal(7,2)) from abc_t1;
+create table t1(s1 time);
+insert into t1 values ('11:11:11');
+select cast(s1 as decimal(7,2)) from t1;
 cast(s1 as decimal(7,2))
 99999.99
 Warnings:
 Warning	1264	Out of range value for column 'cast(s1 as decimal(7,2))' at row 1
-drop table abc_t1;
-CREATE TABLE abc_t1 (v varchar(10), tt tinytext, t text,
+drop table t1;
+CREATE TABLE t1 (v varchar(10), tt tinytext, t text,
 mt mediumtext, lt longtext);
-INSERT INTO abc_t1 VALUES ('1.01', '2.02', '3.03', '4.04', '5.05');
+INSERT INTO t1 VALUES ('1.01', '2.02', '3.03', '4.04', '5.05');
 SELECT CAST(v AS DECIMAL), CAST(tt AS DECIMAL), CAST(t AS DECIMAL),
-CAST(mt AS DECIMAL), CAST(lt AS DECIMAL) from abc_t1;
+CAST(mt AS DECIMAL), CAST(lt AS DECIMAL) from t1;
 CAST(v AS DECIMAL)	CAST(tt AS DECIMAL)	CAST(t AS DECIMAL)	CAST(mt AS DECIMAL)	CAST(lt AS DECIMAL)
 1	2	3	4	5
-DROP TABLE abc_t1;
-select cast(NULL as decimal(6)) as abc_t1;
-abc_t1
+DROP TABLE t1;
+select cast(NULL as decimal(6)) as t1;
+t1
 NULL
 set names latin1;
 select hex(cast('a' as char(2) binary));
@@ -412,22 +412,22 @@ hex(cast('a' as binary(2)))
 select hex(cast('a' as char(2) binary));
 hex(cast('a' as char(2) binary))
 61
-CREATE TABLE abc_t1 (d1 datetime);
-INSERT INTO abc_t1(d1) VALUES ('2007-07-19 08:30:00'), (NULL),
+CREATE TABLE t1 (d1 datetime);
+INSERT INTO t1(d1) VALUES ('2007-07-19 08:30:00'), (NULL),
 ('2007-07-19 08:34:00'), (NULL), ('2007-07-19 08:36:00');
-SELECT cast(date(d1) as signed) FROM abc_t1;
+SELECT cast(date(d1) as signed) FROM t1;
 cast(date(d1) as signed)
 20070719
 NULL
 20070719
 NULL
 20070719
-drop table abc_t1;
-CREATE TABLE abc_t1 (f1 DATE);
-INSERT INTO abc_t1 VALUES ('2007-07-19'), (NULL);
+drop table t1;
+CREATE TABLE t1 (f1 DATE);
+INSERT INTO t1 VALUES ('2007-07-19'), (NULL);
 SELECT HOUR(f1),
 MINUTE(f1),
-SECOND(f1) FROM abc_t1;
+SECOND(f1) FROM t1;
 HOUR(f1)	MINUTE(f1)	SECOND(f1)
 0	0	0
 NULL	NULL	NULL
@@ -446,20 +446,20 @@ MINUTE(NULL),
 SECOND(NULL);
 HOUR(NULL)	MINUTE(NULL)	SECOND(NULL)
 NULL	NULL	NULL
-DROP TABLE abc_t1;
+DROP TABLE t1;
 End of 5.0 tests
 #
 #  Bug #44766: valgrind error when using convert() in a subquery
 #
-CREATE TABLE abc_t1(a tinyint);
-INSERT INTO abc_t1 VALUES (127);
+CREATE TABLE t1(a tinyint);
+INSERT INTO t1 VALUES (127);
 SELECT 1 FROM
 (
-SELECT CONVERT(abc_t2.a USING UTF8) FROM abc_t1, abc_t1 abc_t2 LIMIT 1
+SELECT CONVERT(t2.a USING UTF8) FROM t1, t1 t2 LIMIT 1
 ) AS s LIMIT 1;
 1
 1
-DROP TABLE abc_t1;
+DROP TABLE t1;
 #
 # Bug #11765023: 57934: DOS POSSIBLE SINCE BINARY CASTING 
 #   DOESN'T ADHERE TO MAX_ALLOWED_PACKET
@@ -480,12 +480,12 @@ SET @@GLOBAL.max_allowed_packet=default;
 #
 # Bug#13519724 63793: CRASH IN DTCOLLATION::SET(DTCOLLATION &SET)
 #
-CREATE TABLE abc_t1 (a VARCHAR(50));
-SELECT a FROM abc_t1 
+CREATE TABLE t1 (a VARCHAR(50));
+SELECT a FROM t1 
 WHERE CAST(a as BINARY)=x'62736D697468' 
 AND CAST(a AS BINARY)=x'65736D697468';
 a
-DROP TABLE abc_t1;
+DROP TABLE t1;
 End of 5.1 tests
 #
 # Bug#13581962 HIGH MEMORY USAGE ATTEMPT, THEN CRASH WITH LONGTEXT, UNION, USER VARIABLE
@@ -493,17 +493,17 @@ End of 5.1 tests
 SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 Warnings:
 Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
-CREATE TABLE abc_t1 AS SELECT CONCAT(CAST(REPEAT('9', 1000) AS SIGNED)),
+CREATE TABLE t1 AS SELECT CONCAT(CAST(REPEAT('9', 1000) AS SIGNED)),
 CONCAT(CAST(REPEAT('9', 1000) AS UNSIGNED));
 Warnings:
 Warning	1292	Truncated incorrect INTEGER value: '99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
 Warning	1292	Truncated incorrect INTEGER value: '99999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999'
-SHOW CREATE TABLE abc_t1;
+SHOW CREATE TABLE t1;
 Table	Create Table
-abc_t1	CREATE TABLE `abc_t1` (
+t1	CREATE TABLE `t1` (
   `CONCAT(CAST(REPEAT('9', 1000) AS SIGNED))` varchar(21) NOT NULL DEFAULT '',
   `CONCAT(CAST(REPEAT('9', 1000) AS UNSIGNED))` varchar(21) NOT NULL DEFAULT ''
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-DROP TABLE abc_t1;
+DROP TABLE t1;
 SET sql_mode = default;
 End of 5.5 tests
