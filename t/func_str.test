@@ -846,13 +846,13 @@ select "18383815659218730760" + 0;
 CREATE TABLE t1 (code varchar(10));
 INSERT INTO t1 VALUES ('a12'), ('A12'), ('a13');
 
-# SequoiaDB return exactly record, and case sensitive
+#Bug #SEQUOIADBMAINSTREAM-3373
 SELECT ASCII(code), code FROM t1 WHERE code='A12';
 SELECT ASCII(code), code FROM t1 WHERE code='A12' AND ASCII(code)=65;
 
 INSERT INTO t1 VALUES ('a12 '), ('A12  ');
 
-# SequoiaDB return exactly record, and case sensitive
+#Bug #SEQUOIADBMAINSTREAM-3373
 SELECT LENGTH(code), code FROM t1 WHERE code='A12';
 SELECT LENGTH(code), code FROM t1 WHERE code='A12' AND LENGTH(code)=5;
 
