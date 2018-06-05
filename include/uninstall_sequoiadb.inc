@@ -3,4 +3,3 @@
 SET default_storage_engine = default;
 SET sql_mode = default;
 UNINSTALL PLUGIN sequoiadb;
-
