@@ -1538,7 +1538,6 @@ SELECT @tmp_max:= @@global.max_allowed_packet;
 SET @@global.max_allowed_packet=1024*1024*1024;
 # switching connection to allow the new max_allowed_packet take effect
 --connect (newconn, localhost, root,,)
-
 SELECT @@global.max_allowed_packet;
 
 do
@@ -1581,6 +1580,7 @@ SET @@global.max_allowed_packet:= @tmp_max;
 --echo #
 --echo # WL#5510 Functions to_base64 and from_base64
 --echo #
+SET default_storage_engine = SequoiaDB;
 let $1=64;
 while($1)
 {
@@ -1737,7 +1737,7 @@ SELECT LOWER(SUBSTRING_INDEX(@user_at_host, '@', -1));
 --echo #
 --echo # Bug#42404: SUBSTRING_INDEX() RESULTS ARE INCONSISTENT
 --echo #
-
+SET default_storage_engine = SequoiaDB;
 CREATE TABLE t (i INT NOT NULL, c CHAR(255) NOT NULL);
 INSERT INTO t VALUES (0,'.www.mysql.com'),(1,'.wwwmysqlcom');
 SELECT i, SUBSTRING_INDEX(c, '.', -2) FROM t WHERE i = 1;
@@ -1821,7 +1821,7 @@ do rpad(_utf16"33",1073741826,_latin1"44");
 --echo #
 --echo # Bug#13740934 ASSERTION FAILED: ARGS[0]->FIXED ITEM_FUNC_CONV_CHARSET::ITEM_FUNC_CONV_CHARSET
 --echo #
-
+SET default_storage_engine = SequoiaDB;
 CREATE TABLE t1(a TIME);
 INSERT INTO t1 VALUES ();
 SELECT (SELECT (SELECT 1 FROM t1 a WHERE t1.a <_ucs2'a')) AS d5 FROM t1 GROUP BY 1;

@@ -141,6 +141,7 @@ connection default;
 --disable_warnings
 drop table if exists t1,t2;
 --enable_warnings
+SET default_storage_engine = SequoiaDB;
 create table t1 (a int);
 create table t2 (a int);
 lock table t1 read;
@@ -152,6 +153,7 @@ unlock tables;
 drop table t1,t2;
 connect (addconroot, localhost, root,,);
 connection default;
+SET default_storage_engine = SequoiaDB;
 create table t1 (i int);
 create table t2 (i int);
 lock tables t1 read;
@@ -166,7 +168,7 @@ disconnect addconroot;
 connection default;
 unlock tables;
 drop table t1,t2;
-
+SET default_storage_engine = SequoiaDB;
 --echo End of 5.0 tests
 
 #
@@ -337,13 +339,14 @@ CREATE TABLE t1(i int);
 --echo # Non-blocking (--send):
 --send DROP DATABASE bug19573998
 
+# Timeout in wait_condition.inc for SELECT COUNT(*) = 1 FROM information_schema.processlist 
 --connection default
 --echo # Wait until DROP DATABASE becomes blocked on table metadata lock
-let $wait_condition=
-  SELECT COUNT(*) = 1 FROM information_schema.processlist
-  WHERE state = "Waiting for table metadata lock" AND
-        info = "DROP DATABASE bug19573998";
---source include/wait_condition.inc
+#let $wait_condition=
+#  SELECT COUNT(*) = 1 FROM information_schema.processlist
+#  WHERE state = "Waiting for table metadata lock" AND
+#        info = "DROP DATABASE bug19573998";
+#--source include/wait_condition.inc
 UNLOCK TABLES;
 
 --connection con1

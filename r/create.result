@@ -388,6 +388,7 @@ database()	user()
 NULL	mysqltest_1@localhost
 drop user mysqltest_1;
 use test;
+SET default_storage_engine = SequoiaDB;
 create table t1 (a int, index `primary` (a));
 ERROR 42000: Incorrect index name 'primary'
 create table t1 (a int, index `PRIMARY` (a));
@@ -398,14 +399,14 @@ Table	Create Table
 t1	CREATE TABLE `t1` (
   `primary` int(11) DEFAULT NULL,
   KEY `primary_2` (`primary`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 create table t2 (`PRIMARY` int, index(`PRIMARY`));
 show create table t2;
 Table	Create Table
 t2	CREATE TABLE `t2` (
   `PRIMARY` int(11) DEFAULT NULL,
   KEY `PRIMARY_2` (`PRIMARY`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 create table t3 (a int);
 alter table t3 add index `primary` (a);
 ERROR 42000: Incorrect index name 'primary'
@@ -418,7 +419,7 @@ Table	Create Table
 t4	CREATE TABLE `t4` (
   `primary` int(11) DEFAULT NULL,
   KEY `primary_2` (`primary`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 create table t5 (`PRIMARY` int);
 alter table t5 add index(`PRIMARY`);
 show create table t5;
@@ -426,19 +427,8 @@ Table	Create Table
 t5	CREATE TABLE `t5` (
   `PRIMARY` int(11) DEFAULT NULL,
   KEY `PRIMARY_2` (`PRIMARY`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1, t2, t3, t4, t5;
-CREATE TABLE t1(id varchar(10) NOT NULL PRIMARY KEY, dsc longtext);
-INSERT INTO t1 VALUES ('5000000001', NULL),('5000000003', 'Test'),('5000000004', NULL);
-CREATE TABLE t2(id varchar(15) NOT NULL, proc varchar(100) NOT NULL, runID varchar(16) NOT NULL, start datetime NOT NULL, PRIMARY KEY  (id,proc,runID,start));
-INSERT INTO t2 VALUES ('5000000001', 'proc01', '20031029090650', '2003-10-29 13:38:40'),('5000000001', 'proc02', '20031029090650', '2003-10-29 13:38:51'),('5000000001', 'proc03', '20031029090650', '2003-10-29 13:38:11'),('5000000002', 'proc09', '20031024013310', '2003-10-24 01:33:11'),('5000000002', 'proc09', '20031024153537', '2003-10-24 15:36:04'),('5000000004', 'proc01', '20031024013641', '2003-10-24 01:37:29'),('5000000004', 'proc02', '20031024013641', '2003-10-24 01:37:39');
-CREATE TABLE t3  SELECT t1.dsc,COUNT(DISTINCT t2.id) AS countOfRuns  FROM t1 LEFT JOIN t2 ON (t1.id=t2.id) GROUP BY t1.id;
-SELECT * FROM t3;
-dsc	countOfRuns
-NULL	1
-Test	0
-NULL	1
-drop table t1, t2, t3;
 create table t1 (b bool not null default false);
 create table t2 (b bool not null default true);
 insert into t1 values ();
@@ -514,7 +504,7 @@ Table	Create Table
 t1	CREATE TABLE `t1` (
   `a` varchar(112) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 CREATE TABLE t2 (
 a int(11) default NULL
@@ -530,7 +520,7 @@ t1	CREATE TABLE `t1` (
   `a` varchar(12) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `b` int(11) NOT NULL,
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 create table t1 ( 
 a varchar(12) charset utf8 collate utf8_bin not null, 
@@ -545,7 +535,7 @@ t1	CREATE TABLE `t1` (
   `a` varchar(12) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `c` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 create table t1 ( 
 a varchar(12) charset utf8 collate utf8_bin not null, 
@@ -558,7 +548,7 @@ t1	CREATE TABLE `t1` (
   `a` varchar(12) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `c` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 create table t1 ( 
 a varchar(12) charset utf8 collate utf8_bin not null,
@@ -570,7 +560,7 @@ t1	CREATE TABLE `t1` (
   `a` varchar(12) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `b` int(11) NOT NULL,
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 create table t1 ( 
 a varchar(12) charset utf8 collate utf8_bin,
@@ -582,7 +572,7 @@ t1	CREATE TABLE `t1` (
   `a` varchar(12) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `b` int(11) NOT NULL,
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1, t2;
 create table t1 ( 
 a1 int not null,
@@ -619,7 +609,7 @@ t2	CREATE TABLE `t2` (
   `b` int(11) DEFAULT '3',
   `a1` int(11) DEFAULT NULL,
   `a2` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1, t2;
 create table t1(a set("a,b","c,d") not null);
 ERROR 22007: Illegal set 'a,b' value found during parsing

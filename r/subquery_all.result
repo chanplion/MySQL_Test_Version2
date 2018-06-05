@@ -1963,6 +1963,7 @@ Warnings:
 Note	1003	/* select#1 */ select `test`.`t1`.`a` AS `a` from `test`.`t1` where (`test`.`t1`.`c` = 2)
 drop table t1;
 set @got_val= (SELECT 1 FROM (SELECT 'A' as my_col) as T1 ) ;
+SET default_storage_engine = SequoiaDB;
 create table t1 (a int, b int);
 create table t2 (a int, b int);
 insert into t1 values (1,1),(1,2),(1,3),(2,4),(2,5);

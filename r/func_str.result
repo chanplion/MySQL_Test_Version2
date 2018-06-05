@@ -2966,6 +2966,7 @@ SET @@global.max_allowed_packet:= @tmp_max;
 #
 # WL#5510 Functions to_base64 and from_base64
 #
+SET default_storage_engine = SequoiaDB;
 CREATE TABLE t1 AS SELECT TO_BASE64(REPEAT('a',63)) AS to_base64;
 SHOW CREATE TABLE t1;
 Table	Create Table
@@ -4521,6 +4522,7 @@ mytinyhost-pc.local
 #
 # Bug#42404: SUBSTRING_INDEX() RESULTS ARE INCONSISTENT
 #
+SET default_storage_engine = SequoiaDB;
 CREATE TABLE t (i INT NOT NULL, c CHAR(255) NOT NULL);
 INSERT INTO t VALUES (0,'.www.mysql.com'),(1,'.wwwmysqlcom');
 SELECT i, SUBSTRING_INDEX(c, '.', -2) FROM t WHERE i = 1;
@@ -4637,6 +4639,7 @@ Warning	1301	Result of rpad() was larger than max_allowed_packet (4194304) - tru
 #
 # Bug#13740934 ASSERTION FAILED: ARGS[0]->FIXED ITEM_FUNC_CONV_CHARSET::ITEM_FUNC_CONV_CHARSET
 #
+SET default_storage_engine = SequoiaDB;
 CREATE TABLE t1(a TIME);
 INSERT INTO t1 VALUES ();
 SELECT (SELECT (SELECT 1 FROM t1 a WHERE t1.a <_ucs2'a')) AS d5 FROM t1 GROUP BY 1;

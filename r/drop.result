@@ -89,6 +89,7 @@ select 1;
 1
 unlock tables;
 drop table if exists t1,t2;
+SET default_storage_engine = SequoiaDB;
 create table t1 (a int);
 create table t2 (a int);
 lock table t1 read;
@@ -98,6 +99,7 @@ drop table t1;
 ERROR HY000: Table 't1' was locked with a READ lock and can't be updated
 unlock tables;
 drop table t1,t2;
+SET default_storage_engine = SequoiaDB;
 create table t1 (i int);
 create table t2 (i int);
 lock tables t1 read;
@@ -108,6 +110,7 @@ drop table t1,t2;
 ERROR HY000: Table 't1' was locked with a READ lock and can't be updated
 unlock tables;
 drop table t1,t2;
+SET default_storage_engine = SequoiaDB;
 End of 5.0 tests
 create database mysql_test;
 create table mysql_test.t1(f1 int);
@@ -208,9 +211,6 @@ DROP TABLE table1,table2;
 CREATE DATABASE bug19573998;
 USE bug19573998;
 CREATE TABLE t1(i int);
-# Start FLUSH TABLES command which will create .cfg files
-# and block DROP DATABASE
-FLUSH TABLES t1 FOR EXPORT;
 connect con1, localhost, root, '', bug19573998;
 # Non-blocking (--send):
 DROP DATABASE bug19573998;

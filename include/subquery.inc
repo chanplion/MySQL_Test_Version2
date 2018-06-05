@@ -1486,6 +1486,7 @@ disconnect root;
 #
 # primary query with temporary table and subquery with grouping
 #
+SET default_storage_engine = SequoiaDB;
 create table t1 (a int, b int);
 create table t2 (a int, b int);
 insert into t1 values (1,1),(1,2),(1,3),(2,4),(2,5);
