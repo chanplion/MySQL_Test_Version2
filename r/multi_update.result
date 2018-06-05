@@ -208,6 +208,7 @@ SELECT * from t2;
 a
 2
 DROP TABLE t1,t2;
+SET default_storage_engine = SequoiaDB;
 create database mysqltest;
 create table mysqltest.t1 (a int, b int, primary key (a));
 create table mysqltest.t2 (a int, b int, primary key (a));
@@ -223,6 +224,7 @@ set sql_mode= @orig_sql_mode;
 Warnings:
 Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
 grant update on mysqltest.t1 to mysqltest_1@localhost;
+SET default_storage_engine = SequoiaDB;
 update t1, t2 set t1.b=1 where t1.a=t2.a;
 update t1, t2 set t1.b=(select t3.b from t3 where t1.a=t3.a) where t1.a=t2.a;
 revoke all privileges on mysqltest.t1 from mysqltest_1@localhost;

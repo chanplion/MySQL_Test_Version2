@@ -385,6 +385,9 @@ DROP TABLE t1,t2;
 #
 
 connect (root,localhost,root,,test,$MASTER_MYPORT,$MASTER_MYSOCK);
+
+SET default_storage_engine = SequoiaDB;
+
 connection root;
 --disable_warnings
 create database mysqltest;
@@ -398,6 +401,9 @@ grant select on mysqltest.* to mysqltest_1@localhost;
 set sql_mode= @orig_sql_mode;
 grant update on mysqltest.t1 to mysqltest_1@localhost;
 connect (user1,localhost,mysqltest_1,,mysqltest,$MASTER_MYPORT,$MASTER_MYSOCK);
+
+SET default_storage_engine = SequoiaDB;
+
 connection user1;
 update t1, t2 set t1.b=1 where t1.a=t2.a;
 update t1, t2 set t1.b=(select t3.b from t3 where t1.a=t3.a) where t1.a=t2.a;
