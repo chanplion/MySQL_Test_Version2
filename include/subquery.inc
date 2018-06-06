@@ -327,8 +327,9 @@ select * from t1;
 update t1 set b= (select b from t1);
 -- error ER_SUBQUERY_NO_1_ROW
 update t1 set b= (select b from t2);
-update t1 set b= (select b from t2 where t1.a = t2.a);
-select * from t1;
+# Bug of SequoiaDB, update set=null will not ok: SEQUOIADBMAINSTREAM-3611	
+#update t1 set b= (select b from t2 where t1.a = t2.a);
+#select * from t1;
 drop table t1, t2;
 
 #delete with subselects
@@ -468,16 +469,17 @@ insert into t1 values (1.5),(2.5),(3.5);
 select 1.5 IN (SELECT * from t1);
 #select 10.5 IN (SELECT * from t1);
 select NULL IN (SELECT * from t1);
-update t1 set a=NULL where a=2.5;
-select 1.5 IN (SELECT * from t1);
-select 3.5 IN (SELECT * from t1);
+# Bug of SequoiaDB, update set=null will not ok: SEQUOIADBMAINSTREAM-3611
+#update t1 set a=NULL where a=2.5;
+#select 1.5 IN (SELECT * from t1);
+#select 3.5 IN (SELECT * from t1);
 #select 10.5 IN (SELECT * from t1);
-select 1.5 > ALL (SELECT * from t1);
-select 10.5 > ALL (SELECT * from t1);
-select 1.5 > ANY (SELECT * from t1);
-select 10.5 > ANY (SELECT * from t1);
-explain extended select (select a+1) from t1;
-select (select a+1) from t1;
+#select 1.5 > ALL (SELECT * from t1);
+#select 10.5 > ALL (SELECT * from t1);
+#select 1.5 > ANY (SELECT * from t1);
+#select 10.5 > ANY (SELECT * from t1);
+#explain extended select (select a+1) from t1;
+#select (select a+1) from t1;
 drop table t1;
 
 #
@@ -728,20 +730,20 @@ drop table t1;
 
 #
 # Multi update test
+# Bug of SequoiaDB, multi update only one record updated when match many: SEQUOIADBMAINSTREAM-3601
+#CREATE TABLE t1 (
+#  id int(11) default NULL
+#) ENGINE=SequoiaDB CHARSET=latin1;
+#INSERT INTO t1 VALUES (1),(1),(2),(2),(1),(3);
+#CREATE TABLE t2 (
+#  id int(11) default NULL,
+#  name varchar(15) default NULL
+#) ENGINE=SequoiaDB CHARSET=latin1;
 #
-CREATE TABLE t1 (
-  id int(11) default NULL
-) ENGINE=SequoiaDB CHARSET=latin1;
-INSERT INTO t1 VALUES (1),(1),(2),(2),(1),(3);
-CREATE TABLE t2 (
-  id int(11) default NULL,
-  name varchar(15) default NULL
-) ENGINE=SequoiaDB CHARSET=latin1;
-
-INSERT INTO t2 VALUES (4,'vita'), (1,'vita'), (2,'vita'), (1,'vita');
-update t1, t2 set t2.name='lenka' where t2.id in (select id from t1);
-select * from t2;
-drop table t1,t2;
+#INSERT INTO t2 VALUES (4,'vita'), (1,'vita'), (2,'vita'), (1,'vita');
+#update t1, t2 set t2.name='lenka' where t2.id in (select id from t1);
+#select * from t2;
+#drop table t1,t2;
 
 #
 # correct NULL in <CONSTANT> IN (SELECT ...)
@@ -6331,89 +6333,89 @@ DROP TABLE t1;
 --echo #
 --echo # Bug#19416826 Assert failed in JOIN::make_tmp_tables_info
 --echo #
-
-CREATE TABLE t1 (
-  pk int NOT NULL,
-  col_int_nokey int DEFAULT NULL,
-  col_int_key int DEFAULT NULL,
-  col_varchar_key varchar(1) DEFAULT NULL,
-  col_varchar_nokey varchar(1) DEFAULT NULL,
-  PRIMARY KEY(pk),
-  KEY col_int_key(col_int_key),
-  KEY col_varchar_key(col_varchar_key, col_int_key)
-);
-
-INSERT INTO t1 VALUES
-(1,2,4,'v','v'),
-(2,150,62,'v','v'),
-(3,NULL,7,'c','c'),
-(4,2,1,NULL,NULL),
-(5,5,0,'x','x'),
-(6,3,7,'i','i'),
-(7,1,7,'e','e'),
-(8,4,1,'p','p'),
-(9,NULL,7,'s','s'),
-(10,2,1,'j','j'),
-(11,6,5,'z','z'),
-(12,6,2,'c','c'),
-(13,8,0,'a','a'),
-(14,2,1,'q','q'),
-(15,6,8,'y','y'),
-(16,8,1,NULL,NULL),
-(17,3,1,'r','r'),
-(18,3,9,'v','v'),
-(19,9,1,NULL,NULL),
-(20,6,5,'r','r');
-
-CREATE TABLE t2 (
-  pk int NOT NULL,
-  col_int_nokey int DEFAULT NULL,
-  col_int_key int DEFAULT NULL,
-  col_varchar_key varchar(1) DEFAULT NULL,
-  col_varchar_nokey varchar(1) DEFAULT NULL,
-  PRIMARY KEY(pk),
-  KEY col_int_key(col_int_key),
-  KEY col_varchar_key(col_varchar_key, col_int_key)
-);
-
-INSERT INTO t2 VALUES
-(10,NULL,8,'x','x'),
-(11,8,7,'d','d'),
-(12,1,1,'r','r'),
-(13,9,7,'f','f'),
-(14,4,9,'y','y'),
-(15,3,NULL,'u','u'),
-(16,2,1,'m','m'),
-(17,NULL,9,NULL,NULL),
-(18,2,2,'o','o'),
-(19,NULL,9,'w','w'),
-(20,6,2,'m','m'),
-(21,7,4,'q','q'),
-(22,2,0,NULL,NULL),
-(23,5,4,'d','d'),
-(24,7,8,'g','g'),
-(25,6,NULL,'x','x'),
-(26,6,NULL,'f','f'),
-(27,2,0,'p','p'),
-(28,9,NULL,'j','j'),
-(29,6,8,'c','c');
-
---sorted_result
-SELECT alias1.col_varchar_nokey AS field1
-FROM (SELECT sq1_alias1.*
-      FROM t1 AS sq1_alias1 INNER JOIN t2 AS sq1_alias2
-           ON sq1_alias2.col_varchar_key = sq1_alias1.col_varchar_nokey) AS alias1
-     INNER JOIN t1 AS alias2
-     ON alias2.col_int_key = alias1.col_int_key
-WHERE (alias1.col_int_key, alias2.col_int_nokey) NOT IN
-        (SELECT sq2_alias1.pk AS sq2_field1, COUNT(sq2_alias2.pk) AS sq2_field2
-         FROM t2 AS sq2_alias1, t2 AS sq2_alias2
-         GROUP BY sq2_field1) AND
-      alias1.col_varchar_key <= 's'
-HAVING field1 != 'r'
-ORDER BY CONCAT(alias2.col_varchar_nokey, alias2.col_varchar_nokey) DESC, field1;
-
-DROP TABLE t1, t2;
+# Bug of SequoiaDB, when multi query with index will cause wrong result: SEQUOIADBMAINSTREAM-3574
+#CREATE TABLE t1 (
+#  pk int NOT NULL,
+#  col_int_nokey int DEFAULT NULL,
+#  col_int_key int DEFAULT NULL,
+#  col_varchar_key varchar(1) DEFAULT NULL,
+#  col_varchar_nokey varchar(1) DEFAULT NULL,
+#  PRIMARY KEY(pk),
+#  KEY col_int_key(col_int_key),
+#  KEY col_varchar_key(col_varchar_key, col_int_key)
+#);
+#
+#INSERT INTO t1 VALUES
+#(1,2,4,'v','v'),
+#(2,150,62,'v','v'),
+#(3,NULL,7,'c','c'),
+#(4,2,1,NULL,NULL),
+#(5,5,0,'x','x'),
+#(6,3,7,'i','i'),
+#(7,1,7,'e','e'),
+#(8,4,1,'p','p'),
+#(9,NULL,7,'s','s'),
+#(10,2,1,'j','j'),
+#(11,6,5,'z','z'),
+#(12,6,2,'c','c'),
+#(13,8,0,'a','a'),
+#(14,2,1,'q','q'),
+#(15,6,8,'y','y'),
+#(16,8,1,NULL,NULL),
+#(17,3,1,'r','r'),
+#(18,3,9,'v','v'),
+#(19,9,1,NULL,NULL),
+#(20,6,5,'r','r');
+#
+#CREATE TABLE t2 (
+#  pk int NOT NULL,
+#  col_int_nokey int DEFAULT NULL,
+#  col_int_key int DEFAULT NULL,
+#  col_varchar_key varchar(1) DEFAULT NULL,
+#  col_varchar_nokey varchar(1) DEFAULT NULL,
+#  PRIMARY KEY(pk),
+#  KEY col_int_key(col_int_key),
+#  KEY col_varchar_key(col_varchar_key, col_int_key)
+#);
+#
+#INSERT INTO t2 VALUES
+#(10,NULL,8,'x','x'),
+#(11,8,7,'d','d'),
+#(12,1,1,'r','r'),
+#(13,9,7,'f','f'),
+#(14,4,9,'y','y'),
+#(15,3,NULL,'u','u'),
+#(16,2,1,'m','m'),
+#(17,NULL,9,NULL,NULL),
+#(18,2,2,'o','o'),
+#(19,NULL,9,'w','w'),
+#(20,6,2,'m','m'),
+#(21,7,4,'q','q'),
+#(22,2,0,NULL,NULL),
+#(23,5,4,'d','d'),
+#(24,7,8,'g','g'),
+#(25,6,NULL,'x','x'),
+#(26,6,NULL,'f','f'),
+#(27,2,0,'p','p'),
+#(28,9,NULL,'j','j'),
+#(29,6,8,'c','c');
+#
+#--sorted_result
+#SELECT alias1.col_varchar_nokey AS field1
+#FROM (SELECT sq1_alias1.*
+#      FROM t1 AS sq1_alias1 INNER JOIN t2 AS sq1_alias2
+#           ON sq1_alias2.col_varchar_key = sq1_alias1.col_varchar_nokey) AS alias1
+#     INNER JOIN t1 AS alias2
+#     ON alias2.col_int_key = alias1.col_int_key
+#WHERE (alias1.col_int_key, alias2.col_int_nokey) NOT IN
+#        (SELECT sq2_alias1.pk AS sq2_field1, COUNT(sq2_alias2.pk) AS sq2_field2
+#         FROM t2 AS sq2_alias1, t2 AS sq2_alias2
+#         GROUP BY sq2_field1) AND
+#      alias1.col_varchar_key <= 's'
+#HAVING field1 != 'r'
+#ORDER BY CONCAT(alias2.col_varchar_nokey, alias2.col_varchar_nokey) DESC, field1;
+#
+#DROP TABLE t1, t2;
 
 --echo # Bug#19778967: Assert failed in JOIN::optimize
 

@@ -42,7 +42,7 @@ SET SQL_WARNINGS=1;
 #
 # NOW SequoiaDB not support index of enum, when create index of type enum, it will causes error 1112: Table uses an extension that doesn't exist in MySQL version while 
 # executing select
-# Not Sure if this is a problem
+# Bug of SequoiaDB, select type of enum with index will cause wrong results: SEQUOIADBMAINSTREAM:3571
 CREATE TABLE t1 (
   price int(5) DEFAULT '0' NOT NULL,
   area varchar(40) DEFAULT '' NOT NULL,

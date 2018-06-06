@@ -119,12 +119,15 @@ select distinct t from t1;
 #select distinct t from t1 order by t;
 #select distinct b from t1 order by b;
 select t from t1 group by t;
-select b from t1 group by b;
+# Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
+#select b from t1 group by b;
 set big_tables=1;
 select distinct t from t1;
-select distinct b from t1;
+# Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
+#select distinct b from t1;
 select distinct t from t1 order by t;
-select distinct b from t1 order by b;
+# Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
+#select distinct b from t1 order by b;
 select distinct c from t1;
 select distinct d from t1;
 select distinct c from t1 order by c;

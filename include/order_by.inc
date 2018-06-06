@@ -1,30 +1,29 @@
 #
 # Bug with order by
 #
-
---disable_warnings
-drop table if exists t1,t2,t3;
---enable_warnings
-SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
-CREATE TABLE t1 (
-  id int(6) DEFAULT '0' NOT NULL,
-  idservice int(5),
-  clee char(20) NOT NULL,
-  flag char(1),
-  KEY id (id),
-  PRIMARY KEY (clee)
-);
-
-
-INSERT INTO t1 VALUES (2,4,'6067169d','Y');
-INSERT INTO t1 VALUES (2,5,'606716d1','Y');
-INSERT INTO t1 VALUES (2,1,'606717c1','Y');
-INSERT INTO t1 VALUES (3,1,'6067178d','Y');
-INSERT INTO t1 VALUES (2,6,'60671515','Y');
-INSERT INTO t1 VALUES (2,7,'60671569','Y');
-INSERT INTO t1 VALUES (2,3,'dd','Y');
-
 # NOW SequoiaDB not support auto_increment
+#--disable_warnings
+#drop table if exists t1,t2,t3;
+#--enable_warnings
+#SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+#CREATE TABLE t1 (
+#  id int(6) DEFAULT '0' NOT NULL,
+#  idservice int(5),
+#  clee char(20) NOT NULL,
+#  flag char(1),
+#  KEY id (id),
+#  PRIMARY KEY (clee)
+#);
+#
+#
+#INSERT INTO t1 VALUES (2,4,'6067169d','Y');
+#INSERT INTO t1 VALUES (2,5,'606716d1','Y');
+#INSERT INTO t1 VALUES (2,1,'606717c1','Y');
+#INSERT INTO t1 VALUES (3,1,'6067178d','Y');
+#INSERT INTO t1 VALUES (2,6,'60671515','Y');
+#INSERT INTO t1 VALUES (2,7,'60671569','Y');
+#INSERT INTO t1 VALUES (2,3,'dd','Y');
+
 #CREATE TABLE t2 (
 #  id int(6) NOT NULL auto_increment,
 #  description varchar(40) NOT NULL,
@@ -52,7 +51,7 @@ INSERT INTO t1 VALUES (2,3,'dd','Y');
 #
 #
 #select t1.id,t1.idservice,t2.ordre,t2.description  from t1, t2 where t1.id = 2   and t1.idservice = t2.id  order by t2.ordre;
-drop table if exists t1,t2;
+#drop table if exists t1,t2;
 
 #
 # Test of ORDER BY on concat() result

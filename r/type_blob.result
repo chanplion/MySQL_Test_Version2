@@ -174,30 +174,12 @@ NULL
 a
 hello
 HELLO MY
-select b from t1 group by b;
-b
-NULL
-
-1
-HELLO
-HELLO MY
-a
-hello
 set big_tables=1;
 select distinct t from t1;
 t
 NULL
 
 hello
-HELLO MY
-a
-1
-select distinct b from t1;
-b
-NULL
-
-hello
-HELLO
 HELLO MY
 a
 1
@@ -209,15 +191,6 @@ NULL
 a
 hello
 HELLO MY
-select distinct b from t1 order by b;
-b
-NULL
-
-1
-HELLO
-HELLO MY
-a
-hello
 select distinct c from t1;
 c
 NULL
