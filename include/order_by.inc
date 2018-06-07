@@ -1840,7 +1840,7 @@ FROM view_t1 LEFT JOIN t2
 ON  view_t1.pk = t2.i1
 WHERE (view_t1.pk <= 204 AND t2.i1 != 3)
   OR view_t1.pk BETWEEN 1 AND 7
-ORDER BY t2.i1;
+ORDER BY t2.i1,view_t1.pk;
 
 #eval EXPLAIN $query;
 eval $query;
