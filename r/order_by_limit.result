@@ -1,0 +1,108 @@
+#
+# WL#6986 : Make switching of index due to order by limit cost based
+#
+# Testcase for Bug#16522053
+CREATE TABLE t0 (
+i0 INTEGER NOT NULL
+);
+INSERT INTO t0 VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
+CREATE TABLE t1 (
+pk INTEGER PRIMARY KEY,
+i1 INTEGER NOT NULL,
+i2 INTEGER NOT NULL,
+INDEX k1 (i1),
+INDEX k2 (i1,i2)
+) ENGINE=Sequoiadb;
+INSERT INTO t1
+SELECT a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0,
+(a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0) % 1000,
+(a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0) % 1000
+FROM t0 AS a0, t0 AS a1;
+CREATE TABLE t2 (
+pk INTEGER PRIMARY KEY,
+i1 INTEGER NOT NULL,
+INDEX k1 (i1)
+) ENGINE=Sequoiadb;
+INSERT INTO t2
+SELECT a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0,
+(a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0) % 500
+FROM t0 AS a0, t0 AS a1;
+# Query should use index to optimize the ORDER BY LIMIT
+# Query should not make the switch to use index to
+# optimize ORDER BY LIMIT. So should be using filesort
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 7000 and t1.i1 > 2
+ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+7070	70	70	7070	70
+8080	80	80	8080	80
+9090	90	90	9090	90
+7171	171	171	7171	171
+8181	181	181	8181	181
+# Changing range condition on i1 should make
+# key on i1 get picked to give the order
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 7000 and t1.i1 > 800
+ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+# Use range condition only on pk to see if switch
+# happens just for ORDER BY LIMIT
+# Should not happen unless range results in too
+# many records
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 7000 ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+7070	70	70	7070	70
+8080	80	80	8080	80
+9090	90	90	9090	90
+7171	171	171	7171	171
+8181	181	181	8181	181
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 1000 ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+1010	10	10	1010	10
+2020	20	20	2020	20
+3030	30	30	3030	30
+4040	40	40	4040	40
+5050	50	50	5050	50
+# check if switch happens when the index for order 
+# by is non-covering
+SELECT t1.i1,t1.i2 FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1 
+WHERE t1.pk > 100 ORDER BY t1.i1 LIMIT 5;
+i1	i2
+10	10
+20	20
+30	30
+40	40
+50	50
+# Reduce the fanout for table t2 and check
+# that index for order by is not choosen
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 7000 and t2.pk = 100 ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+# Increase the fanout to see if index gets choosen
+# for order by for which range scan was choosen
+# earlier
+INSERT INTO t2
+SELECT a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0 + 1,
+(a0.i0 + 10*a1.i0 + 100*a0.i0 + 1000*a1.i0) % 500
+FROM t0 AS a0, t0 AS a1;
+SELECT * FROM t1 STRAIGHT_JOIN t2 ON t1.i1=t2.i1
+WHERE t1.pk > 7000 ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+7070	70	70	7070	70
+7070	70	70	7071	70
+8080	80	80	8080	80
+8080	80	80	8081	80
+9090	90	90	9090	90
+# Check if the index for order by is used when
+# force index is done on order by
+SELECT * FROM t1 FORCE INDEX FOR ORDER BY (k2) STRAIGHT_JOIN t2 ON
+t1.i1=t2.i1 WHERE t1.pk > 7000 ORDER BY t1.i1 LIMIT 5;
+pk	i1	i2	pk	i1
+7070	70	70	7070	70
+7070	70	70	7071	70
+8080	80	80	8080	80
+8080	80	80	8081	80
+9090	90	90	9090	90
+DROP TABLE t0, t1, t2;
