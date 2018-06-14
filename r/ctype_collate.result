@@ -548,16 +548,16 @@ c
 create index i on t1 (a);
 select * from t1 where a > 'B' collate latin1_bin;
 a
+C
 a
 b
-C
 c
 select * from t1 where a <> 'B' collate latin1_bin;
 a
 A
+C
 a
 b
-C
 c
 drop table t1;
 SET NAMES latin1;

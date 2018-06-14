@@ -197,7 +197,9 @@ insert into t1 values ('A'),('a'),('B'),('b'),('C'),('c');
 select * from t1 where a > 'B' collate latin1_bin;
 select * from t1 where a <> 'B' collate latin1_bin;
 create index i on t1 (a);
+--sorted_result
 select * from t1 where a > 'B' collate latin1_bin;
+--sorted_result
 select * from t1 where a <> 'B' collate latin1_bin;
 drop table t1;
 
