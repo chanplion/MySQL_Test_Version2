@@ -1,6 +1,6 @@
 drop table if exists t1;
-SET @test_character_set= 'big5';
-SET @test_collation= 'big5_chinese_ci';
+SET @test_character_set= 'gb2312';
+SET @test_collation= 'gb2312_chinese_ci';
 SET @safe_character_set_server= @@character_set_server;
 SET @safe_collation_server= @@collation_server;
 SET @safe_character_set_client= @@character_set_client;
@@ -12,7 +12,7 @@ USE d1;
 CREATE TABLE t1 (c1 varchar(15), KEY c1 (c1(2)));
 SHOW FULL COLUMNS FROM t1;
 Field	Type	Collation	Null	Key	Default	Extra	Privileges	Comment
-c1	varchar(15)	big5_chinese_ci	YES	MUL	NULL			
+c1	varchar(15)	gb2312_chinese_ci	YES	MUL	NULL			
 INSERT INTO t1 VALUES ('location'),('loberge'),('lotre'),('boabab');
 SELECT c1 as want3results from t1 where c1 like 'l%';
 want3results
@@ -69,7 +69,7 @@ Table	Create Table
 t1	CREATE TABLE `t1` (
   `name` varchar(10) DEFAULT NULL,
   `level` smallint(5) unsigned DEFAULT NULL
-) ENGINE=SEQUOIADB DEFAULT CHARSET=big5
+) ENGINE=SEQUOIADB DEFAULT CHARSET=gb2312
 insert into t1 values ('string',1);
 select concat(name,space(level)), concat(name, repeat(' ',level)) from t1;
 concat(name,space(level))	concat(name, repeat(' ',level))
@@ -81,20 +81,20 @@ SET character_set_server= @safe_character_set_server;
 SET collation_server= @safe_collation_server;
 SET character_set_client= @safe_character_set_client;
 SET character_set_results= @safe_character_set_results;
-SET NAMES big5;
-SET collation_connection='big5_chinese_ci';
+SET NAMES gb2312;
+SET collation_connection='gb2312_chinese_ci';
 create table t1 select repeat('a',4000) a;
 delete from t1;
 insert into t1 values ('a'), ('a '), ('a\t');
 select collation(a),hex(a) from t1 order by a;
 collation(a)	hex(a)
-big5_chinese_ci	6109
-big5_chinese_ci	61
-big5_chinese_ci	6120
+gb2312_chinese_ci	6109
+gb2312_chinese_ci	61
+gb2312_chinese_ci	6120
 drop table t1;
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+gb2312_chinese_ci
 create table t1 ROW_FORMAT=DYNAMIC select repeat('a',50) as c1 ;
 insert into t1 values('abcdef');
 insert into t1 values('_bcdef');
@@ -175,7 +175,7 @@ Aa	41,61
 Bb	42,62
 Cc	43,63
 Dd	44,64
-E`e	45,60,65
+Ee	45,65
 Ff	46,66
 Gg	47,67
 Hh	48,68
@@ -202,24 +202,25 @@ Zz	5A,7A
 \	5C
 ^	5E
 _	5F
+`	60
 {	7B
 |	7C
 }	7D
 	7F
 drop table t1;
-SET collation_connection='big5_bin';
+SET collation_connection='gb2312_bin';
 create table t1 select repeat('a',4000) a;
 delete from t1;
 insert into t1 values ('a'), ('a '), ('a\t');
 select collation(a),hex(a) from t1 order by a;
 collation(a)	hex(a)
-big5_bin	6109
-big5_bin	61
-big5_bin	6120
+gb2312_bin	6109
+gb2312_bin	61
+gb2312_bin	6120
 drop table t1;
 select @@collation_connection;
 @@collation_connection
-big5_bin
+gb2312_bin
 create table t1 ROW_FORMAT=DYNAMIC select repeat('a',50) as c1 ;
 insert into t1 values('abcdef');
 insert into t1 values('_bcdef');
@@ -252,46 +253,14 @@ a	hex(b)	c
 3	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 4	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 DROP TABLE t1;
-SET NAMES big5;
-CREATE TABLE t1 (a text) character set big5;
-INSERT INTO t1 VALUES ('��');
-SELECT * FROM t1;
-a
-��
-DROP TABLE t1;
-set names big5;
-create table t1 (a char character set big5);
-insert into t1 values (0xF9D6),(0xF9D7),(0xF9D8),(0xF9D9);
-insert into t1 values (0xF9DA),(0xF9DB),(0xF9DC);
-select hex(a) a, hex(@u:=convert(a using utf8)) b,
-hex(convert(@u using big5)) c from t1 order by a;
-a	b	c
-F9D6	E7A281	F9D6
-F9D7	E98AB9	F9D7
-F9D8	E8A38F	F9D8
-F9D9	E5A2BB	F9D9
-F9DA	E68192	F9DA
-F9DB	E7B2A7	F9DB
-F9DC	E5ABBA	F9DC
-drop table t1;
-select hex(convert(_big5 0xC84041 using ucs2));
-hex(convert(_big5 0xC84041 using ucs2))
-003F0041
-End of 4.1 tests
-set names big5;
-create table t1 (a blob);
-insert into t1 values (0xEE00);
-select * into outfile 'test/t1.txt' from t1;
-delete from t1;
-select hex(load_file('MYSQLD_DATADIR/test/t1.txt'));;
-hex(load_file('MYSQLD_DATADIR/test/t1.txt'))
-5CEE5C300A
-load data infile 't1.txt' into table t1;
-select hex(a) from t1;
+SET NAMES gb2312;
+CREATE TABLE t1 (a text) character set gb2312;
+INSERT INTO t1 VALUES (0xA2A1),(0xD7FE);
+SELECT hex(a) FROM t1 ORDER BY a;
 hex(a)
-EE00
-drop table t1;
-End of 5.0 tests
+A2A1
+D7FE
+DROP TABLE t1;
 #
 # Start of 5.5 tests
 #
@@ -299,7 +268,7 @@ End of 5.0 tests
 # Testing WL#4583 Case conversion in Asian character sets 
 #
 SET NAMES utf8;
-SET collation_connection=big5_chinese_ci;
+SET collation_connection=gb2312_chinese_ci;
 CREATE TABLE t1 (b VARCHAR(2));
 INSERT INTO t1 VALUES ('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7');
 INSERT INTO t1 VALUES ('8'),('9'),('A'),('B'),('C'),('D'),('E'),('F');
@@ -316,11 +285,8 @@ SHOW CREATE TABLE t1;
 Table	Create Table
 t1	CREATE TABLE `t1` (
   `code` varchar(8) DEFAULT NULL,
-  `a` varchar(1) CHARACTER SET big5 NOT NULL DEFAULT ''
+  `a` varchar(1) CHARACTER SET gb2312 NOT NULL DEFAULT ''
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-SELECT COUNT(*) FROM t1;
-COUNT(*)
-28672
 UPDATE IGNORE t1 SET a=unhex(code) ORDER BY code;
 Warnings:
 Warning	1366	Incorrect string value: '\x80 ' for column 'a' at row 1
@@ -389,183 +355,221 @@ Warning	1366	Incorrect string value: '\x80^' for column 'a' at row 63
 Warning	1366	Incorrect string value: '\x80_' for column 'a' at row 64
 SELECT COUNT(*) FROM t1 WHERE a<>'';
 COUNT(*)
-13973
+8178
 SELECT code, hex(upper(a)), hex(lower(a)),a, upper(a), lower(a) FROM t1 WHERE hex(a)<>hex(upper(a)) OR hex(a)<>hex(lower(a));
 code	hex(upper(a))	hex(lower(a))	a	upper(a)	lower(a)
-A2CF	A2CF	A2E9	Ａ	Ａ	ａ
-A2D0	A2D0	A2EA	Ｂ	Ｂ	ｂ
-A2D1	A2D1	A2EB	Ｃ	Ｃ	ｃ
-A2D2	A2D2	A2EC	Ｄ	Ｄ	ｄ
-A2D3	A2D3	A2ED	Ｅ	Ｅ	ｅ
-A2D4	A2D4	A2EE	Ｆ	Ｆ	ｆ
-A2D5	A2D5	A2EF	Ｇ	Ｇ	ｇ
-A2D6	A2D6	A2F0	Ｈ	Ｈ	ｈ
-A2D7	A2D7	A2F1	Ｉ	Ｉ	ｉ
-A2D8	A2D8	A2F2	Ｊ	Ｊ	ｊ
-A2D9	A2D9	A2F3	Ｋ	Ｋ	ｋ
-A2DA	A2DA	A2F4	Ｌ	Ｌ	ｌ
-A2DB	A2DB	A2F5	Ｍ	Ｍ	ｍ
-A2DC	A2DC	A2F6	Ｎ	Ｎ	ｎ
-A2DD	A2DD	A2F7	Ｏ	Ｏ	ｏ
-A2DE	A2DE	A2F8	Ｐ	Ｐ	ｐ
-A2DF	A2DF	A2F9	Ｑ	Ｑ	ｑ
-A2E0	A2E0	A2FA	Ｒ	Ｒ	ｒ
-A2E1	A2E1	A2FB	Ｓ	Ｓ	ｓ
-A2E2	A2E2	A2FC	Ｔ	Ｔ	ｔ
-A2E3	A2E3	A2FD	Ｕ	Ｕ	ｕ
-A2E4	A2E4	A2FE	Ｖ	Ｖ	ｖ
-A2E5	A2E5	A340	Ｗ	Ｗ	ｗ
-A2E6	A2E6	A341	Ｘ	Ｘ	ｘ
-A2E7	A2E7	A342	Ｙ	Ｙ	ｙ
-A2E8	A2E8	A343	Ｚ	Ｚ	ｚ
-A2E9	A2CF	A2E9	ａ	Ａ	ａ
-A2EA	A2D0	A2EA	ｂ	Ｂ	ｂ
-A2EB	A2D1	A2EB	ｃ	Ｃ	ｃ
-A2EC	A2D2	A2EC	ｄ	Ｄ	ｄ
-A2ED	A2D3	A2ED	ｅ	Ｅ	ｅ
-A2EE	A2D4	A2EE	ｆ	Ｆ	ｆ
-A2EF	A2D5	A2EF	ｇ	Ｇ	ｇ
-A2F0	A2D6	A2F0	ｈ	Ｈ	ｈ
-A2F1	A2D7	A2F1	ｉ	Ｉ	ｉ
-A2F2	A2D8	A2F2	ｊ	Ｊ	ｊ
-A2F3	A2D9	A2F3	ｋ	Ｋ	ｋ
-A2F4	A2DA	A2F4	ｌ	Ｌ	ｌ
-A2F5	A2DB	A2F5	ｍ	Ｍ	ｍ
-A2F6	A2DC	A2F6	ｎ	Ｎ	ｎ
-A2F7	A2DD	A2F7	ｏ	Ｏ	ｏ
-A2F8	A2DE	A2F8	ｐ	Ｐ	ｐ
-A2F9	A2DF	A2F9	ｑ	Ｑ	ｑ
-A2FA	A2E0	A2FA	ｒ	Ｒ	ｒ
-A2FB	A2E1	A2FB	ｓ	Ｓ	ｓ
-A2FC	A2E2	A2FC	ｔ	Ｔ	ｔ
-A2FD	A2E3	A2FD	ｕ	Ｕ	ｕ
-A2FE	A2E4	A2FE	ｖ	Ｖ	ｖ
-A340	A2E5	A340	ｗ	Ｗ	ｗ
-A341	A2E6	A341	ｘ	Ｘ	ｘ
-A342	A2E7	A342	ｙ	Ｙ	ｙ
-A343	A2E8	A343	ｚ	Ｚ	ｚ
-A344	A344	A35C	Α	Α	α
-A345	A345	A35D	Β	Β	β
-A346	A346	A35E	Γ	Γ	γ
-A347	A347	A35F	Δ	Δ	δ
-A348	A348	A360	Ε	Ε	ε
-A349	A349	A361	Ζ	Ζ	ζ
-A34A	A34A	A362	Η	Η	η
-A34B	A34B	A363	Θ	Θ	θ
-A34C	A34C	A364	Ι	Ι	ι
-A34D	A34D	A365	Κ	Κ	κ
-A34E	A34E	A366	Λ	Λ	λ
-A34F	A34F	A367	Μ	Μ	μ
-A350	A350	A368	Ν	Ν	ν
-A351	A351	A369	Ξ	Ξ	ξ
-A352	A352	A36A	Ο	Ο	ο
-A353	A353	A36B	Π	Π	π
-A354	A354	A36C	Ρ	Ρ	ρ
-A355	A355	A36D	Σ	Σ	σ
-A356	A356	A36E	Τ	Τ	τ
-A357	A357	A36F	Υ	Υ	υ
-A358	A358	A370	Φ	Φ	φ
-A359	A359	A371	Χ	Χ	χ
-A35A	A35A	A372	Ψ	Ψ	ψ
-A35B	A35B	A373	Ω	Ω	ω
-A35C	A344	A35C	α	Α	α
-A35D	A345	A35D	β	Β	β
-A35E	A346	A35E	γ	Γ	γ
-A35F	A347	A35F	δ	Δ	δ
-A360	A348	A360	ε	Ε	ε
-A361	A349	A361	ζ	Ζ	ζ
-A362	A34A	A362	η	Η	η
-A363	A34B	A363	θ	Θ	θ
-A364	A34C	A364	ι	Ι	ι
-A365	A34D	A365	κ	Κ	κ
-A366	A34E	A366	λ	Λ	λ
-A367	A34F	A367	μ	Μ	μ
-A368	A350	A368	ν	Ν	ν
-A369	A351	A369	ξ	Ξ	ξ
-A36A	A352	A36A	ο	Ο	ο
-A36B	A353	A36B	π	Π	π
-A36C	A354	A36C	ρ	Ρ	ρ
-A36D	A355	A36D	σ	Σ	σ
-A36E	A356	A36E	τ	Τ	τ
-A36F	A357	A36F	υ	Υ	υ
-A370	A358	A370	φ	Φ	φ
-A371	A359	A371	χ	Χ	χ
-A372	A35A	A372	ψ	Ψ	ψ
-A373	A35B	A373	ω	Ω	ω
-C7B1	C7B1	C7CC	Д	Д	д
-C7B2	C7B2	C7CD	Е	Е	е
-C7B3	C7B3	C7CE	Ё	Ё	ё
-C7B4	C7B4	C7CF	Ж	Ж	ж
-C7B5	C7B5	C7D0	З	З	з
-C7B6	C7B6	C7D1	И	И	и
-C7B7	C7B7	C7D2	Й	Й	й
-C7B8	C7B8	C7D3	К	К	к
-C7B9	C7B9	C7D4	Л	Л	л
-C7BA	C7BA	C7D5	М	М	м
-C7BB	C7BB	C7DC	У	У	у
-C7BC	C7BC	C7DD	Ф	Ф	ф
-C7BD	C7BD	C7DE	Х	Х	х
-C7BE	C7BE	C7DF	Ц	Ц	ц
-C7BF	C7BF	C7E0	Ч	Ч	ч
-C7C0	C7C0	C7E1	Ш	Ш	ш
-C7C1	C7C1	C7E2	Щ	Щ	щ
-C7C2	C7C2	C7E3	Ъ	Ъ	ъ
-C7C3	C7C3	C7E4	Ы	Ы	ы
-C7C4	C7C4	C7E5	Ь	Ь	ь
-C7C5	C7C5	C7E6	Э	Э	э
-C7C6	C7C6	C7E7	Ю	Ю	ю
-C7C7	C7C7	C7E8	Я	Я	я
-C7CC	C7B1	C7CC	д	Д	д
-C7CD	C7B2	C7CD	е	Е	е
-C7CE	C7B3	C7CE	ё	Ё	ё
-C7CF	C7B4	C7CF	ж	Ж	ж
-C7D0	C7B5	C7D0	з	З	з
-C7D1	C7B6	C7D1	и	И	и
-C7D2	C7B7	C7D2	й	Й	й
-C7D3	C7B8	C7D3	к	К	к
-C7D4	C7B9	C7D4	л	Л	л
-C7D5	C7BA	C7D5	м	М	м
-C7DC	C7BB	C7DC	у	У	у
-C7DD	C7BC	C7DD	ф	Ф	ф
-C7DE	C7BD	C7DE	х	Х	х
-C7DF	C7BE	C7DF	ц	Ц	ц
-C7E0	C7BF	C7E0	ч	Ч	ч
-C7E1	C7C0	C7E1	ш	Ш	ш
-C7E2	C7C1	C7E2	щ	Щ	щ
-C7E3	C7C2	C7E3	ъ	Ъ	ъ
-C7E4	C7C3	C7E4	ы	Ы	ы
-C7E5	C7C4	C7E5	ь	Ь	ь
-C7E6	C7C5	C7E6	э	Э	э
-C7E7	C7C6	C7E7	ю	Ю	ю
-C7E8	C7C7	C7E8	я	Я	я
+A3C1	A3C1	A3E1	Ａ	Ａ	ａ
+A3C2	A3C2	A3E2	Ｂ	Ｂ	ｂ
+A3C3	A3C3	A3E3	Ｃ	Ｃ	ｃ
+A3C4	A3C4	A3E4	Ｄ	Ｄ	ｄ
+A3C5	A3C5	A3E5	Ｅ	Ｅ	ｅ
+A3C6	A3C6	A3E6	Ｆ	Ｆ	ｆ
+A3C7	A3C7	A3E7	Ｇ	Ｇ	ｇ
+A3C8	A3C8	A3E8	Ｈ	Ｈ	ｈ
+A3C9	A3C9	A3E9	Ｉ	Ｉ	ｉ
+A3CA	A3CA	A3EA	Ｊ	Ｊ	ｊ
+A3CB	A3CB	A3EB	Ｋ	Ｋ	ｋ
+A3CC	A3CC	A3EC	Ｌ	Ｌ	ｌ
+A3CD	A3CD	A3ED	Ｍ	Ｍ	ｍ
+A3CE	A3CE	A3EE	Ｎ	Ｎ	ｎ
+A3CF	A3CF	A3EF	Ｏ	Ｏ	ｏ
+A3D0	A3D0	A3F0	Ｐ	Ｐ	ｐ
+A3D1	A3D1	A3F1	Ｑ	Ｑ	ｑ
+A3D2	A3D2	A3F2	Ｒ	Ｒ	ｒ
+A3D3	A3D3	A3F3	Ｓ	Ｓ	ｓ
+A3D4	A3D4	A3F4	Ｔ	Ｔ	ｔ
+A3D5	A3D5	A3F5	Ｕ	Ｕ	ｕ
+A3D6	A3D6	A3F6	Ｖ	Ｖ	ｖ
+A3D7	A3D7	A3F7	Ｗ	Ｗ	ｗ
+A3D8	A3D8	A3F8	Ｘ	Ｘ	ｘ
+A3D9	A3D9	A3F9	Ｙ	Ｙ	ｙ
+A3DA	A3DA	A3FA	Ｚ	Ｚ	ｚ
+A3E1	A3C1	A3E1	ａ	Ａ	ａ
+A3E2	A3C2	A3E2	ｂ	Ｂ	ｂ
+A3E3	A3C3	A3E3	ｃ	Ｃ	ｃ
+A3E4	A3C4	A3E4	ｄ	Ｄ	ｄ
+A3E5	A3C5	A3E5	ｅ	Ｅ	ｅ
+A3E6	A3C6	A3E6	ｆ	Ｆ	ｆ
+A3E7	A3C7	A3E7	ｇ	Ｇ	ｇ
+A3E8	A3C8	A3E8	ｈ	Ｈ	ｈ
+A3E9	A3C9	A3E9	ｉ	Ｉ	ｉ
+A3EA	A3CA	A3EA	ｊ	Ｊ	ｊ
+A3EB	A3CB	A3EB	ｋ	Ｋ	ｋ
+A3EC	A3CC	A3EC	ｌ	Ｌ	ｌ
+A3ED	A3CD	A3ED	ｍ	Ｍ	ｍ
+A3EE	A3CE	A3EE	ｎ	Ｎ	ｎ
+A3EF	A3CF	A3EF	ｏ	Ｏ	ｏ
+A3F0	A3D0	A3F0	ｐ	Ｐ	ｐ
+A3F1	A3D1	A3F1	ｑ	Ｑ	ｑ
+A3F2	A3D2	A3F2	ｒ	Ｒ	ｒ
+A3F3	A3D3	A3F3	ｓ	Ｓ	ｓ
+A3F4	A3D4	A3F4	ｔ	Ｔ	ｔ
+A3F5	A3D5	A3F5	ｕ	Ｕ	ｕ
+A3F6	A3D6	A3F6	ｖ	Ｖ	ｖ
+A3F7	A3D7	A3F7	ｗ	Ｗ	ｗ
+A3F8	A3D8	A3F8	ｘ	Ｘ	ｘ
+A3F9	A3D9	A3F9	ｙ	Ｙ	ｙ
+A3FA	A3DA	A3FA	ｚ	Ｚ	ｚ
+A6A1	A6A1	A6C1	Α	Α	α
+A6A2	A6A2	A6C2	Β	Β	β
+A6A3	A6A3	A6C3	Γ	Γ	γ
+A6A4	A6A4	A6C4	Δ	Δ	δ
+A6A5	A6A5	A6C5	Ε	Ε	ε
+A6A6	A6A6	A6C6	Ζ	Ζ	ζ
+A6A7	A6A7	A6C7	Η	Η	η
+A6A8	A6A8	A6C8	Θ	Θ	θ
+A6A9	A6A9	A6C9	Ι	Ι	ι
+A6AA	A6AA	A6CA	Κ	Κ	κ
+A6AB	A6AB	A6CB	Λ	Λ	λ
+A6AC	A6AC	A6CC	Μ	Μ	μ
+A6AD	A6AD	A6CD	Ν	Ν	ν
+A6AE	A6AE	A6CE	Ξ	Ξ	ξ
+A6AF	A6AF	A6CF	Ο	Ο	ο
+A6B0	A6B0	A6D0	Π	Π	π
+A6B1	A6B1	A6D1	Ρ	Ρ	ρ
+A6B2	A6B2	A6D2	Σ	Σ	σ
+A6B3	A6B3	A6D3	Τ	Τ	τ
+A6B4	A6B4	A6D4	Υ	Υ	υ
+A6B5	A6B5	A6D5	Φ	Φ	φ
+A6B6	A6B6	A6D6	Χ	Χ	χ
+A6B7	A6B7	A6D7	Ψ	Ψ	ψ
+A6B8	A6B8	A6D8	Ω	Ω	ω
+A6C1	A6A1	A6C1	α	Α	α
+A6C2	A6A2	A6C2	β	Β	β
+A6C3	A6A3	A6C3	γ	Γ	γ
+A6C4	A6A4	A6C4	δ	Δ	δ
+A6C5	A6A5	A6C5	ε	Ε	ε
+A6C6	A6A6	A6C6	ζ	Ζ	ζ
+A6C7	A6A7	A6C7	η	Η	η
+A6C8	A6A8	A6C8	θ	Θ	θ
+A6C9	A6A9	A6C9	ι	Ι	ι
+A6CA	A6AA	A6CA	κ	Κ	κ
+A6CB	A6AB	A6CB	λ	Λ	λ
+A6CC	A6AC	A6CC	μ	Μ	μ
+A6CD	A6AD	A6CD	ν	Ν	ν
+A6CE	A6AE	A6CE	ξ	Ξ	ξ
+A6CF	A6AF	A6CF	ο	Ο	ο
+A6D0	A6B0	A6D0	π	Π	π
+A6D1	A6B1	A6D1	ρ	Ρ	ρ
+A6D2	A6B2	A6D2	σ	Σ	σ
+A6D3	A6B3	A6D3	τ	Τ	τ
+A6D4	A6B4	A6D4	υ	Υ	υ
+A6D5	A6B5	A6D5	φ	Φ	φ
+A6D6	A6B6	A6D6	χ	Χ	χ
+A6D7	A6B7	A6D7	ψ	Ψ	ψ
+A6D8	A6B8	A6D8	ω	Ω	ω
+A7A1	A7A1	A7D1	А	А	а
+A7A2	A7A2	A7D2	Б	Б	б
+A7A3	A7A3	A7D3	В	В	в
+A7A4	A7A4	A7D4	Г	Г	г
+A7A5	A7A5	A7D5	Д	Д	д
+A7A6	A7A6	A7D6	Е	Е	е
+A7A7	A7A7	A7D7	Ё	Ё	ё
+A7A8	A7A8	A7D8	Ж	Ж	ж
+A7A9	A7A9	A7D9	З	З	з
+A7AA	A7AA	A7DA	И	И	и
+A7AB	A7AB	A7DB	Й	Й	й
+A7AC	A7AC	A7DC	К	К	к
+A7AD	A7AD	A7DD	Л	Л	л
+A7AE	A7AE	A7DE	М	М	м
+A7AF	A7AF	A7DF	Н	Н	н
+A7B0	A7B0	A7E0	О	О	о
+A7B1	A7B1	A7E1	П	П	п
+A7B2	A7B2	A7E2	Р	Р	р
+A7B3	A7B3	A7E3	С	С	с
+A7B4	A7B4	A7E4	Т	Т	т
+A7B5	A7B5	A7E5	У	У	у
+A7B6	A7B6	A7E6	Ф	Ф	ф
+A7B7	A7B7	A7E7	Х	Х	х
+A7B8	A7B8	A7E8	Ц	Ц	ц
+A7B9	A7B9	A7E9	Ч	Ч	ч
+A7BA	A7BA	A7EA	Ш	Ш	ш
+A7BB	A7BB	A7EB	Щ	Щ	щ
+A7BC	A7BC	A7EC	Ъ	Ъ	ъ
+A7BD	A7BD	A7ED	Ы	Ы	ы
+A7BE	A7BE	A7EE	Ь	Ь	ь
+A7BF	A7BF	A7EF	Э	Э	э
+A7C0	A7C0	A7F0	Ю	Ю	ю
+A7C1	A7C1	A7F1	Я	Я	я
+A7D1	A7A1	A7D1	а	А	а
+A7D2	A7A2	A7D2	б	Б	б
+A7D3	A7A3	A7D3	в	В	в
+A7D4	A7A4	A7D4	г	Г	г
+A7D5	A7A5	A7D5	д	Д	д
+A7D6	A7A6	A7D6	е	Е	е
+A7D7	A7A7	A7D7	ё	Ё	ё
+A7D8	A7A8	A7D8	ж	Ж	ж
+A7D9	A7A9	A7D9	з	З	з
+A7DA	A7AA	A7DA	и	И	и
+A7DB	A7AB	A7DB	й	Й	й
+A7DC	A7AC	A7DC	к	К	к
+A7DD	A7AD	A7DD	л	Л	л
+A7DE	A7AE	A7DE	м	М	м
+A7DF	A7AF	A7DF	н	Н	н
+A7E0	A7B0	A7E0	о	О	о
+A7E1	A7B1	A7E1	п	П	п
+A7E2	A7B2	A7E2	р	Р	р
+A7E3	A7B3	A7E3	с	С	с
+A7E4	A7B4	A7E4	т	Т	т
+A7E5	A7B5	A7E5	у	У	у
+A7E6	A7B6	A7E6	ф	Ф	ф
+A7E7	A7B7	A7E7	х	Х	х
+A7E8	A7B8	A7E8	ц	Ц	ц
+A7E9	A7B9	A7E9	ч	Ч	ч
+A7EA	A7BA	A7EA	ш	Ш	ш
+A7EB	A7BB	A7EB	щ	Щ	щ
+A7EC	A7BC	A7EC	ъ	Ъ	ъ
+A7ED	A7BD	A7ED	ы	Ы	ы
+A7EE	A7BE	A7EE	ь	Ь	ь
+A7EF	A7BF	A7EF	э	Э	э
+A7F0	A7C0	A7F0	ю	Ю	ю
+A7F1	A7C1	A7F1	я	Я	я
 SELECT * FROM t1
 WHERE HEX(CAST(LOWER(a) AS CHAR CHARACTER SET utf8)) <>
 HEX(LOWER(CAST(a AS CHAR CHARACTER SET utf8))) ORDER BY code;
 code	a
-A2B9	Ⅰ
-A2BA	Ⅱ
-A2BB	Ⅲ
-A2BC	Ⅳ
-A2BD	Ⅴ
-A2BE	Ⅵ
-A2BF	Ⅶ
-A2C0	Ⅷ
-A2C1	Ⅸ
-A2C2	Ⅹ
+A2F1	Ⅰ
+A2F2	Ⅱ
+A2F3	Ⅲ
+A2F4	Ⅳ
+A2F5	Ⅴ
+A2F6	Ⅵ
+A2F7	Ⅶ
+A2F8	Ⅷ
+A2F9	Ⅸ
+A2FA	Ⅹ
+A2FB	Ⅺ
+A2FC	Ⅻ
 SELECT * FROM t1
 WHERE HEX(CAST(UPPER(a) AS CHAR CHARACTER SET utf8)) <>
 HEX(UPPER(CAST(a AS CHAR CHARACTER SET utf8))) ORDER BY code;
 code	a
-C7C8	а
-C7C9	б
-C7CA	в
-C7CB	г
-C7D6	н
-C7D7	о
-C7D8	п
-C7D9	р
-C7DA	с
-C7DB	т
+A8A1	ā
+A8A2	á
+A8A3	ǎ
+A8A4	à
+A8A5	ē
+A8A6	é
+A8A7	ě
+A8A8	è
+A8A9	ī
+A8AA	í
+A8AB	ǐ
+A8AC	ì
+A8AD	ō
+A8AE	ó
+A8AF	ǒ
+A8B0	ò
+A8B1	ū
+A8B2	ú
+A8B3	ǔ
+A8B4	ù
+A8B5	ǖ
+A8B6	ǘ
+A8B7	ǚ
+A8B8	ǜ
+A8B9	ü
+A8BA	ê
 DROP TABLE t1;
 #
 # End of 5.5 tests
@@ -576,10 +580,10 @@ DROP TABLE t1;
 #
 # WL#3664 WEIGHT_STRING
 #
-set names big5;
+set names gb2312;
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+gb2312_chinese_ci
 select hex(weight_string('a'));
 hex(weight_string('a'))
 41
@@ -654,7 +658,7 @@ hex(weight_string('abc',25, 4, 0xC0))
 41424320202020202020202020202020202020202020202020
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+gb2312_chinese_ci
 select hex(weight_string('a' LEVEL 1));
 hex(weight_string('a' LEVEL 1))
 41
@@ -684,95 +688,95 @@ hex(weight_string('abc' as char(5) LEVEL 1 DESC REVERSE))
 DFDFBCBDBE
 select collation(cast(0xA1A1 as char));
 collation(cast(0xA1A1 as char))
-big5_chinese_ci
+gb2312_chinese_ci
 select hex(weight_string(cast(0x6141 as char)));
 hex(weight_string(cast(0x6141 as char)))
 4141
 select hex(weight_string(cast(0xA1A1 as char)));
 hex(weight_string(cast(0xA1A1 as char)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1 as char) as char(1)));
 hex(weight_string(cast(0xA1A1 as char) as char(1)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1 as char) as char(1)));
 hex(weight_string(cast(0xA1A1A1A1 as char) as char(1)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1 as char) as char(3)));
 hex(weight_string(cast(0xA1A1 as char) as char(3)))
-A1402020
+A1A12020
 select hex(weight_string(cast(0xA1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0xA1A1A1A1 as char) as char(3)))
-A140A14020
+A1A1A1A120
 select hex(weight_string(cast(0x40A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1 as char) as char(3)))
-40A14020
+40A1A120
 select hex(weight_string(cast(0x40A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1A1A1 as char) as char(3)))
-40A140A140
+40A1A1A1A1
 select hex(weight_string(cast(0x40A1A1A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1A1A1A1A1 as char) as char(3)))
-40A140A140
+40A1A1A1A1
 select hex(weight_string(cast(0x4040A1A1A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x4040A1A1A1A1A1A1 as char) as char(3)))
-4040A140
+4040A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 2, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 2, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 2, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 2, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 2, 0xC0))
-A140A14020
+A1A1A1A120
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 2, 0xC0))
-A140A140202020202020202020202020202020202020202020
+A1A1A1A1202020202020202020202020202020202020202020
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 3, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 3, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 3, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 3, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 3, 0xC0))
-A140A140A1
+A1A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 3, 0xC0))
-A140A140A14020202020202020202020202020202020202020
+A1A1A1A1A1A120202020202020202020202020202020202020
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 4, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 4, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 4, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 4, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 4, 0xC0))
-A140A140A1
+A1A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0))
-A140A140A14020202020202020202020202020202020202020
-set collation_connection=big5_bin;
+A1A1A1A1A1A120202020202020202020202020202020202020
+set collation_connection=gb2312_bin;
 select @@collation_connection;
 @@collation_connection
-big5_bin
+gb2312_bin
 select hex(weight_string('a'));
 hex(weight_string('a'))
 61
@@ -847,7 +851,7 @@ hex(weight_string('abc',25, 4, 0xC0))
 61626320202020202020202020202020202020202020202020
 select @@collation_connection;
 @@collation_connection
-big5_bin
+gb2312_bin
 select hex(weight_string('a' LEVEL 1));
 hex(weight_string('a' LEVEL 1))
 61
@@ -877,7 +881,7 @@ hex(weight_string('abc' as char(5) LEVEL 1 DESC REVERSE))
 DFDF9C9D9E
 select collation(cast(0xA1A1 as char));
 collation(cast(0xA1A1 as char))
-big5_bin
+gb2312_bin
 select hex(weight_string(cast(0x6141 as char)));
 hex(weight_string(cast(0x6141 as char)))
 6141
@@ -964,9 +968,9 @@ hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0))
 A1A1A1A1A1A120202020202020202020202020202020202020
 #
 # Bugs#12635232: VALGRIND WARNINGS: IS_IPV6, IS_IPV4, INET6_ATON,
-# INET6_NTOA + MULTIBYTE CHARSET. 
+# INET6_NTOA + MULTIBYTE CHARSET.
 #
-SET NAMES big5;
+SET NAMES gb2312;
 SELECT is_ipv4(inet_ntoa('1'));
 is_ipv4(inet_ntoa('1'))
 1
@@ -992,9 +996,9 @@ Warning	1411	Incorrect string value: 'soundex('a')' for function inet6_aton
 #
 # Bug#19047425 UNINITIALISED VALUE IN STR_TO_IPV6
 #
-do is_ipv4_mapped(inet6_aton(convert(_ascii "a:" using big5)));
+do is_ipv4_mapped(inet6_aton(convert(_ascii "a:" using gb2312)));
 Warnings:
-Warning	1411	Incorrect string value: 'convert(_ascii'a:' using big5)' for function inet6_aton
+Warning	1411	Incorrect string value: 'convert(_ascii'a:' using gb2312)' for function inet6_aton
 #
 # End of 5.6 tests
 #

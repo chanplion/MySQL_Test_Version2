@@ -1,6 +1,6 @@
 drop table if exists t1;
-SET @test_character_set= 'big5';
-SET @test_collation= 'big5_chinese_ci';
+SET @test_character_set= 'euckr';
+SET @test_collation= 'euckr_korean_ci';
 SET @safe_character_set_server= @@character_set_server;
 SET @safe_collation_server= @@collation_server;
 SET @safe_character_set_client= @@character_set_client;
@@ -12,7 +12,7 @@ USE d1;
 CREATE TABLE t1 (c1 varchar(15), KEY c1 (c1(2)));
 SHOW FULL COLUMNS FROM t1;
 Field	Type	Collation	Null	Key	Default	Extra	Privileges	Comment
-c1	varchar(15)	big5_chinese_ci	YES	MUL	NULL			
+c1	varchar(15)	euckr_korean_ci	YES	MUL	NULL			
 INSERT INTO t1 VALUES ('location'),('loberge'),('lotre'),('boabab');
 SELECT c1 as want3results from t1 where c1 like 'l%';
 want3results
@@ -69,7 +69,7 @@ Table	Create Table
 t1	CREATE TABLE `t1` (
   `name` varchar(10) DEFAULT NULL,
   `level` smallint(5) unsigned DEFAULT NULL
-) ENGINE=SEQUOIADB DEFAULT CHARSET=big5
+) ENGINE=SEQUOIADB DEFAULT CHARSET=euckr
 insert into t1 values ('string',1);
 select concat(name,space(level)), concat(name, repeat(' ',level)) from t1;
 concat(name,space(level))	concat(name, repeat(' ',level))
@@ -81,20 +81,20 @@ SET character_set_server= @safe_character_set_server;
 SET collation_server= @safe_collation_server;
 SET character_set_client= @safe_character_set_client;
 SET character_set_results= @safe_character_set_results;
-SET NAMES big5;
-SET collation_connection='big5_chinese_ci';
+SET NAMES euckr;
+SET collation_connection='euckr_korean_ci';
 create table t1 select repeat('a',4000) a;
 delete from t1;
 insert into t1 values ('a'), ('a '), ('a\t');
 select collation(a),hex(a) from t1 order by a;
 collation(a)	hex(a)
-big5_chinese_ci	6109
-big5_chinese_ci	61
-big5_chinese_ci	6120
+euckr_korean_ci	6109
+euckr_korean_ci	61
+euckr_korean_ci	6120
 drop table t1;
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+euckr_korean_ci
 create table t1 ROW_FORMAT=DYNAMIC select repeat('a',50) as c1 ;
 insert into t1 values('abcdef');
 insert into t1 values('_bcdef');
@@ -127,99 +127,19 @@ a	hex(b)	c
 3	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 4	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 DROP TABLE t1;
-drop table if exists t1;
-create table t1 select repeat('a',10) as c1;
-delete from t1;
-insert into t1 values (0x20),(0x21),(0x22),(0x23),(0x24),(0x25),(0x26),(0x27),(0x28),(0x29),(0x2A),(0x2B),(0x2C),(0x2D),(0x2E),(0x2F);
-insert into t1 values (0x30),(0x31),(0x32),(0x33),(0x34),(0x35),(0x36),(0x37),(0x38),(0x39),(0x3A),(0x3B),(0x3C),(0x3D),(0x3E),(0x3F);
-insert into t1 values (0x40),(0x41),(0x42),(0x43),(0x44),(0x45),(0x46),(0x47),(0x48),(0x49),(0x4A),(0x4B),(0x4C),(0x4D),(0x4E),(0x4F);
-insert into t1 values (0x50),(0x51),(0x52),(0x53),(0x54),(0x55),(0x56),(0x57),(0x58),(0x59),(0x5A),(0x5B),(0x5C),(0x5D),(0x5E),(0x5F);
-insert into t1 values (0x60),(0x61),(0x62),(0x63),(0x64),(0x65),(0x66),(0x67),(0x68),(0x69),(0x6A),(0x6B),(0x6C),(0x6D),(0x6E),(0x6F);
-insert into t1 values (0x70),(0x71),(0x72),(0x73),(0x74),(0x75),(0x76),(0x77),(0x78),(0x79),(0x7A),(0x7B),(0x7C),(0x7D),(0x7E),(0x7F);
-SELECT GROUP_CONCAT(c1 ORDER BY binary c1 SEPARATOR ''), GROUP_CONCAT(hex(c1) ORDER BY BINARY c1) FROM t1 GROUP BY c1;
-GROUP_CONCAT(c1 ORDER BY binary c1 SEPARATOR '')	GROUP_CONCAT(hex(c1) ORDER BY BINARY c1)
- 	20
-!	21
-"	22
-#	23
-$	24
-%	25
-&	26
-'	27
-(	28
-)	29
-*	2A
-+	2B
-,	2C
--	2D
-.	2E
-/	2F
-0	30
-1	31
-2	32
-3	33
-4	34
-5	35
-6	36
-7	37
-8	38
-9	39
-:	3A
-;	3B
-<	3C
-=	3D
->	3E
-?	3F
-@	40
-Aa	41,61
-Bb	42,62
-Cc	43,63
-Dd	44,64
-E`e	45,60,65
-Ff	46,66
-Gg	47,67
-Hh	48,68
-Ii	49,69
-Jj	4A,6A
-Kk	4B,6B
-Ll	4C,6C
-Mm	4D,6D
-Nn	4E,6E
-Oo	4F,6F
-Pp	50,70
-Qq	51,71
-Rr	52,72
-Ss	53,73
-Tt	54,74
-Uu	55,75
-Vv	56,76
-Ww	57,77
-Xx	58,78
-Yy~	59,79,7E
-Zz	5A,7A
-]	5D
-[	5B
-\	5C
-^	5E
-_	5F
-{	7B
-|	7C
-}	7D
-	7F
-drop table t1;
-SET collation_connection='big5_bin';
+SET collation_connection='euckr_bin';
 create table t1 select repeat('a',4000) a;
 delete from t1;
 insert into t1 values ('a'), ('a '), ('a\t');
 select collation(a),hex(a) from t1 order by a;
 collation(a)	hex(a)
-big5_bin	6109
-big5_bin	61
-big5_bin	6120
+euckr_bin	6109
+euckr_bin	61
+euckr_bin	6120
 drop table t1;
 select @@collation_connection;
 @@collation_connection
-big5_bin
+euckr_bin
 create table t1 ROW_FORMAT=DYNAMIC select repeat('a',50) as c1 ;
 insert into t1 values('abcdef');
 insert into t1 values('_bcdef');
@@ -252,54 +172,1615 @@ a	hex(b)	c
 3	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 4	F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2F1F2	NULL
 DROP TABLE t1;
-SET NAMES big5;
-CREATE TABLE t1 (a text) character set big5;
-INSERT INTO t1 VALUES ('��');
-SELECT * FROM t1;
-a
-��
-DROP TABLE t1;
-set names big5;
-create table t1 (a char character set big5);
-insert into t1 values (0xF9D6),(0xF9D7),(0xF9D8),(0xF9D9);
-insert into t1 values (0xF9DA),(0xF9DB),(0xF9DC);
-select hex(a) a, hex(@u:=convert(a using utf8)) b,
-hex(convert(@u using big5)) c from t1 order by a;
-a	b	c
-F9D6	E7A281	F9D6
-F9D7	E98AB9	F9D7
-F9D8	E8A38F	F9D8
-F9D9	E5A2BB	F9D9
-F9DA	E68192	F9DA
-F9DB	E7B2A7	F9DB
-F9DC	E5ABBA	F9DC
-drop table t1;
-select hex(convert(_big5 0xC84041 using ucs2));
-hex(convert(_big5 0xC84041 using ucs2))
-003F0041
-End of 4.1 tests
-set names big5;
-create table t1 (a blob);
-insert into t1 values (0xEE00);
-select * into outfile 'test/t1.txt' from t1;
-delete from t1;
-select hex(load_file('MYSQLD_DATADIR/test/t1.txt'));;
-hex(load_file('MYSQLD_DATADIR/test/t1.txt'))
-5CEE5C300A
-load data infile 't1.txt' into table t1;
-select hex(a) from t1;
+SET NAMES euckr;
+CREATE TABLE t1 (a text) character set euckr;
+INSERT INTO t1 VALUES (0xA2E6),(0xFEF7);
+SELECT hex(a) FROM t1 ORDER BY a;
 hex(a)
-EE00
+A2E6
+FEF7
+DROP TABLE t1;
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+create table t1 (s1 varchar(5) character set euckr);
+insert into t1 values (0xA141);
+insert into t1 values (0xA15A);
+insert into t1 values (0xA161);
+insert into t1 values (0xA17A);
+insert into t1 values (0xA181);
+insert into t1 values (0xA1FE);
+insert into t1 values (0xA140);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1@' for column 's1' at row 1
+insert into t1 values (0xA15B);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1[' for column 's1' at row 1
+insert into t1 values (0xA160);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1`' for column 's1' at row 1
+insert into t1 values (0xA17B);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1{' for column 's1' at row 1
+insert into t1 values (0xA180);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1\x80' for column 's1' at row 1
+insert into t1 values (0xA1FF);
+Warnings:
+Warning	1366	Incorrect string value: '\xA1\xFF' for column 's1' at row 1
+select hex(s1), hex(convert(s1 using utf8)) from t1 order by binary s1;
+hex(s1)	hex(convert(s1 using utf8))
+	
+	
+	
+	
+	
+	
+A141	ECA2A5
+A15A	ECA381
+A161	ECA382
+A17A	ECA3A5
+A181	ECA3A6
+A1FE	EFBFA2
 drop table t1;
+SET sql_mode = default;
 End of 5.0 tests
+Start of 5.4 tests
+#
+# WL#3997 New euckr characters
+#
+SET NAMES utf8;
+CREATE TABLE t1 (a varchar(10) character set euckr);
+INSERT INTO t1 VALUES (0xA2E6), (0xA2E7);
+SELECT hex(a), hex(@utf8:=convert(a using utf8)), hex(convert(@utf8 using euckr)) FROM t1;
+hex(a)	hex(@utf8:=convert(a using utf8))	hex(convert(@utf8 using euckr))
+A2E6	E282AC	A2E6
+A2E7	C2AE	A2E7
+DROP TABLE t1;
+#
+# WL#3332 Korean Enhancements
+# euckr valid codes are now [81..FE][41..5A,61..7A,81..FE]
+#
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+CREATE TABLE t1 (a binary(1));
+CREATE TABLE t2 (s VARCHAR(4), a VARCHAR(1) CHARACTER SET euckr);
+INSERT INTO t2
+SELECT hex(concat(t11.a, t12.a)), concat(t11.a, t12.a)
+FROM t1 t11, t1 t12
+WHERE t11.a >= 0x81 AND t11.a <= 0xFE
+AND   t12.a >= 0x41 AND t12.a <= 0xFE
+ORDER BY t11.a, t12.a;
+SELECT s as bad_code FROM t2 WHERE a='' ORDER BY s;
+bad_code
+815B
+815C
+815D
+815E
+815F
+8160
+817B
+817C
+817D
+817E
+817F
+8180
+825B
+825C
+825D
+825E
+825F
+8260
+827B
+827C
+827D
+827E
+827F
+8280
+835B
+835C
+835D
+835E
+835F
+8360
+837B
+837C
+837D
+837E
+837F
+8380
+845B
+845C
+845D
+845E
+845F
+8460
+847B
+847C
+847D
+847E
+847F
+8480
+855B
+855C
+855D
+855E
+855F
+8560
+857B
+857C
+857D
+857E
+857F
+8580
+865B
+865C
+865D
+865E
+865F
+8660
+867B
+867C
+867D
+867E
+867F
+8680
+875B
+875C
+875D
+875E
+875F
+8760
+877B
+877C
+877D
+877E
+877F
+8780
+885B
+885C
+885D
+885E
+885F
+8860
+887B
+887C
+887D
+887E
+887F
+8880
+895B
+895C
+895D
+895E
+895F
+8960
+897B
+897C
+897D
+897E
+897F
+8980
+8A5B
+8A5C
+8A5D
+8A5E
+8A5F
+8A60
+8A7B
+8A7C
+8A7D
+8A7E
+8A7F
+8A80
+8B5B
+8B5C
+8B5D
+8B5E
+8B5F
+8B60
+8B7B
+8B7C
+8B7D
+8B7E
+8B7F
+8B80
+8C5B
+8C5C
+8C5D
+8C5E
+8C5F
+8C60
+8C7B
+8C7C
+8C7D
+8C7E
+8C7F
+8C80
+8D5B
+8D5C
+8D5D
+8D5E
+8D5F
+8D60
+8D7B
+8D7C
+8D7D
+8D7E
+8D7F
+8D80
+8E5B
+8E5C
+8E5D
+8E5E
+8E5F
+8E60
+8E7B
+8E7C
+8E7D
+8E7E
+8E7F
+8E80
+8F5B
+8F5C
+8F5D
+8F5E
+8F5F
+8F60
+8F7B
+8F7C
+8F7D
+8F7E
+8F7F
+8F80
+905B
+905C
+905D
+905E
+905F
+9060
+907B
+907C
+907D
+907E
+907F
+9080
+915B
+915C
+915D
+915E
+915F
+9160
+917B
+917C
+917D
+917E
+917F
+9180
+925B
+925C
+925D
+925E
+925F
+9260
+927B
+927C
+927D
+927E
+927F
+9280
+935B
+935C
+935D
+935E
+935F
+9360
+937B
+937C
+937D
+937E
+937F
+9380
+945B
+945C
+945D
+945E
+945F
+9460
+947B
+947C
+947D
+947E
+947F
+9480
+955B
+955C
+955D
+955E
+955F
+9560
+957B
+957C
+957D
+957E
+957F
+9580
+965B
+965C
+965D
+965E
+965F
+9660
+967B
+967C
+967D
+967E
+967F
+9680
+975B
+975C
+975D
+975E
+975F
+9760
+977B
+977C
+977D
+977E
+977F
+9780
+985B
+985C
+985D
+985E
+985F
+9860
+987B
+987C
+987D
+987E
+987F
+9880
+995B
+995C
+995D
+995E
+995F
+9960
+997B
+997C
+997D
+997E
+997F
+9980
+9A5B
+9A5C
+9A5D
+9A5E
+9A5F
+9A60
+9A7B
+9A7C
+9A7D
+9A7E
+9A7F
+9A80
+9B5B
+9B5C
+9B5D
+9B5E
+9B5F
+9B60
+9B7B
+9B7C
+9B7D
+9B7E
+9B7F
+9B80
+9C5B
+9C5C
+9C5D
+9C5E
+9C5F
+9C60
+9C7B
+9C7C
+9C7D
+9C7E
+9C7F
+9C80
+9D5B
+9D5C
+9D5D
+9D5E
+9D5F
+9D60
+9D7B
+9D7C
+9D7D
+9D7E
+9D7F
+9D80
+9E5B
+9E5C
+9E5D
+9E5E
+9E5F
+9E60
+9E7B
+9E7C
+9E7D
+9E7E
+9E7F
+9E80
+9F5B
+9F5C
+9F5D
+9F5E
+9F5F
+9F60
+9F7B
+9F7C
+9F7D
+9F7E
+9F7F
+9F80
+A05B
+A05C
+A05D
+A05E
+A05F
+A060
+A07B
+A07C
+A07D
+A07E
+A07F
+A080
+A15B
+A15C
+A15D
+A15E
+A15F
+A160
+A17B
+A17C
+A17D
+A17E
+A17F
+A180
+A25B
+A25C
+A25D
+A25E
+A25F
+A260
+A27B
+A27C
+A27D
+A27E
+A27F
+A280
+A35B
+A35C
+A35D
+A35E
+A35F
+A360
+A37B
+A37C
+A37D
+A37E
+A37F
+A380
+A45B
+A45C
+A45D
+A45E
+A45F
+A460
+A47B
+A47C
+A47D
+A47E
+A47F
+A480
+A55B
+A55C
+A55D
+A55E
+A55F
+A560
+A57B
+A57C
+A57D
+A57E
+A57F
+A580
+A65B
+A65C
+A65D
+A65E
+A65F
+A660
+A67B
+A67C
+A67D
+A67E
+A67F
+A680
+A75B
+A75C
+A75D
+A75E
+A75F
+A760
+A77B
+A77C
+A77D
+A77E
+A77F
+A780
+A85B
+A85C
+A85D
+A85E
+A85F
+A860
+A87B
+A87C
+A87D
+A87E
+A87F
+A880
+A95B
+A95C
+A95D
+A95E
+A95F
+A960
+A97B
+A97C
+A97D
+A97E
+A97F
+A980
+AA5B
+AA5C
+AA5D
+AA5E
+AA5F
+AA60
+AA7B
+AA7C
+AA7D
+AA7E
+AA7F
+AA80
+AB5B
+AB5C
+AB5D
+AB5E
+AB5F
+AB60
+AB7B
+AB7C
+AB7D
+AB7E
+AB7F
+AB80
+AC5B
+AC5C
+AC5D
+AC5E
+AC5F
+AC60
+AC7B
+AC7C
+AC7D
+AC7E
+AC7F
+AC80
+AD5B
+AD5C
+AD5D
+AD5E
+AD5F
+AD60
+AD7B
+AD7C
+AD7D
+AD7E
+AD7F
+AD80
+AE5B
+AE5C
+AE5D
+AE5E
+AE5F
+AE60
+AE7B
+AE7C
+AE7D
+AE7E
+AE7F
+AE80
+AF5B
+AF5C
+AF5D
+AF5E
+AF5F
+AF60
+AF7B
+AF7C
+AF7D
+AF7E
+AF7F
+AF80
+B05B
+B05C
+B05D
+B05E
+B05F
+B060
+B07B
+B07C
+B07D
+B07E
+B07F
+B080
+B15B
+B15C
+B15D
+B15E
+B15F
+B160
+B17B
+B17C
+B17D
+B17E
+B17F
+B180
+B25B
+B25C
+B25D
+B25E
+B25F
+B260
+B27B
+B27C
+B27D
+B27E
+B27F
+B280
+B35B
+B35C
+B35D
+B35E
+B35F
+B360
+B37B
+B37C
+B37D
+B37E
+B37F
+B380
+B45B
+B45C
+B45D
+B45E
+B45F
+B460
+B47B
+B47C
+B47D
+B47E
+B47F
+B480
+B55B
+B55C
+B55D
+B55E
+B55F
+B560
+B57B
+B57C
+B57D
+B57E
+B57F
+B580
+B65B
+B65C
+B65D
+B65E
+B65F
+B660
+B67B
+B67C
+B67D
+B67E
+B67F
+B680
+B75B
+B75C
+B75D
+B75E
+B75F
+B760
+B77B
+B77C
+B77D
+B77E
+B77F
+B780
+B85B
+B85C
+B85D
+B85E
+B85F
+B860
+B87B
+B87C
+B87D
+B87E
+B87F
+B880
+B95B
+B95C
+B95D
+B95E
+B95F
+B960
+B97B
+B97C
+B97D
+B97E
+B97F
+B980
+BA5B
+BA5C
+BA5D
+BA5E
+BA5F
+BA60
+BA7B
+BA7C
+BA7D
+BA7E
+BA7F
+BA80
+BB5B
+BB5C
+BB5D
+BB5E
+BB5F
+BB60
+BB7B
+BB7C
+BB7D
+BB7E
+BB7F
+BB80
+BC5B
+BC5C
+BC5D
+BC5E
+BC5F
+BC60
+BC7B
+BC7C
+BC7D
+BC7E
+BC7F
+BC80
+BD5B
+BD5C
+BD5D
+BD5E
+BD5F
+BD60
+BD7B
+BD7C
+BD7D
+BD7E
+BD7F
+BD80
+BE5B
+BE5C
+BE5D
+BE5E
+BE5F
+BE60
+BE7B
+BE7C
+BE7D
+BE7E
+BE7F
+BE80
+BF5B
+BF5C
+BF5D
+BF5E
+BF5F
+BF60
+BF7B
+BF7C
+BF7D
+BF7E
+BF7F
+BF80
+C05B
+C05C
+C05D
+C05E
+C05F
+C060
+C07B
+C07C
+C07D
+C07E
+C07F
+C080
+C15B
+C15C
+C15D
+C15E
+C15F
+C160
+C17B
+C17C
+C17D
+C17E
+C17F
+C180
+C25B
+C25C
+C25D
+C25E
+C25F
+C260
+C27B
+C27C
+C27D
+C27E
+C27F
+C280
+C35B
+C35C
+C35D
+C35E
+C35F
+C360
+C37B
+C37C
+C37D
+C37E
+C37F
+C380
+C45B
+C45C
+C45D
+C45E
+C45F
+C460
+C47B
+C47C
+C47D
+C47E
+C47F
+C480
+C55B
+C55C
+C55D
+C55E
+C55F
+C560
+C57B
+C57C
+C57D
+C57E
+C57F
+C580
+C65B
+C65C
+C65D
+C65E
+C65F
+C660
+C67B
+C67C
+C67D
+C67E
+C67F
+C680
+C75B
+C75C
+C75D
+C75E
+C75F
+C760
+C77B
+C77C
+C77D
+C77E
+C77F
+C780
+C85B
+C85C
+C85D
+C85E
+C85F
+C860
+C87B
+C87C
+C87D
+C87E
+C87F
+C880
+C95B
+C95C
+C95D
+C95E
+C95F
+C960
+C97B
+C97C
+C97D
+C97E
+C97F
+C980
+CA5B
+CA5C
+CA5D
+CA5E
+CA5F
+CA60
+CA7B
+CA7C
+CA7D
+CA7E
+CA7F
+CA80
+CB5B
+CB5C
+CB5D
+CB5E
+CB5F
+CB60
+CB7B
+CB7C
+CB7D
+CB7E
+CB7F
+CB80
+CC5B
+CC5C
+CC5D
+CC5E
+CC5F
+CC60
+CC7B
+CC7C
+CC7D
+CC7E
+CC7F
+CC80
+CD5B
+CD5C
+CD5D
+CD5E
+CD5F
+CD60
+CD7B
+CD7C
+CD7D
+CD7E
+CD7F
+CD80
+CE5B
+CE5C
+CE5D
+CE5E
+CE5F
+CE60
+CE7B
+CE7C
+CE7D
+CE7E
+CE7F
+CE80
+CF5B
+CF5C
+CF5D
+CF5E
+CF5F
+CF60
+CF7B
+CF7C
+CF7D
+CF7E
+CF7F
+CF80
+D05B
+D05C
+D05D
+D05E
+D05F
+D060
+D07B
+D07C
+D07D
+D07E
+D07F
+D080
+D15B
+D15C
+D15D
+D15E
+D15F
+D160
+D17B
+D17C
+D17D
+D17E
+D17F
+D180
+D25B
+D25C
+D25D
+D25E
+D25F
+D260
+D27B
+D27C
+D27D
+D27E
+D27F
+D280
+D35B
+D35C
+D35D
+D35E
+D35F
+D360
+D37B
+D37C
+D37D
+D37E
+D37F
+D380
+D45B
+D45C
+D45D
+D45E
+D45F
+D460
+D47B
+D47C
+D47D
+D47E
+D47F
+D480
+D55B
+D55C
+D55D
+D55E
+D55F
+D560
+D57B
+D57C
+D57D
+D57E
+D57F
+D580
+D65B
+D65C
+D65D
+D65E
+D65F
+D660
+D67B
+D67C
+D67D
+D67E
+D67F
+D680
+D75B
+D75C
+D75D
+D75E
+D75F
+D760
+D77B
+D77C
+D77D
+D77E
+D77F
+D780
+D85B
+D85C
+D85D
+D85E
+D85F
+D860
+D87B
+D87C
+D87D
+D87E
+D87F
+D880
+D95B
+D95C
+D95D
+D95E
+D95F
+D960
+D97B
+D97C
+D97D
+D97E
+D97F
+D980
+DA5B
+DA5C
+DA5D
+DA5E
+DA5F
+DA60
+DA7B
+DA7C
+DA7D
+DA7E
+DA7F
+DA80
+DB5B
+DB5C
+DB5D
+DB5E
+DB5F
+DB60
+DB7B
+DB7C
+DB7D
+DB7E
+DB7F
+DB80
+DC5B
+DC5C
+DC5D
+DC5E
+DC5F
+DC60
+DC7B
+DC7C
+DC7D
+DC7E
+DC7F
+DC80
+DD5B
+DD5C
+DD5D
+DD5E
+DD5F
+DD60
+DD7B
+DD7C
+DD7D
+DD7E
+DD7F
+DD80
+DE5B
+DE5C
+DE5D
+DE5E
+DE5F
+DE60
+DE7B
+DE7C
+DE7D
+DE7E
+DE7F
+DE80
+DF5B
+DF5C
+DF5D
+DF5E
+DF5F
+DF60
+DF7B
+DF7C
+DF7D
+DF7E
+DF7F
+DF80
+E05B
+E05C
+E05D
+E05E
+E05F
+E060
+E07B
+E07C
+E07D
+E07E
+E07F
+E080
+E15B
+E15C
+E15D
+E15E
+E15F
+E160
+E17B
+E17C
+E17D
+E17E
+E17F
+E180
+E25B
+E25C
+E25D
+E25E
+E25F
+E260
+E27B
+E27C
+E27D
+E27E
+E27F
+E280
+E35B
+E35C
+E35D
+E35E
+E35F
+E360
+E37B
+E37C
+E37D
+E37E
+E37F
+E380
+E45B
+E45C
+E45D
+E45E
+E45F
+E460
+E47B
+E47C
+E47D
+E47E
+E47F
+E480
+E55B
+E55C
+E55D
+E55E
+E55F
+E560
+E57B
+E57C
+E57D
+E57E
+E57F
+E580
+E65B
+E65C
+E65D
+E65E
+E65F
+E660
+E67B
+E67C
+E67D
+E67E
+E67F
+E680
+E75B
+E75C
+E75D
+E75E
+E75F
+E760
+E77B
+E77C
+E77D
+E77E
+E77F
+E780
+E85B
+E85C
+E85D
+E85E
+E85F
+E860
+E87B
+E87C
+E87D
+E87E
+E87F
+E880
+E95B
+E95C
+E95D
+E95E
+E95F
+E960
+E97B
+E97C
+E97D
+E97E
+E97F
+E980
+EA5B
+EA5C
+EA5D
+EA5E
+EA5F
+EA60
+EA7B
+EA7C
+EA7D
+EA7E
+EA7F
+EA80
+EB5B
+EB5C
+EB5D
+EB5E
+EB5F
+EB60
+EB7B
+EB7C
+EB7D
+EB7E
+EB7F
+EB80
+EC5B
+EC5C
+EC5D
+EC5E
+EC5F
+EC60
+EC7B
+EC7C
+EC7D
+EC7E
+EC7F
+EC80
+ED5B
+ED5C
+ED5D
+ED5E
+ED5F
+ED60
+ED7B
+ED7C
+ED7D
+ED7E
+ED7F
+ED80
+EE5B
+EE5C
+EE5D
+EE5E
+EE5F
+EE60
+EE7B
+EE7C
+EE7D
+EE7E
+EE7F
+EE80
+EF5B
+EF5C
+EF5D
+EF5E
+EF5F
+EF60
+EF7B
+EF7C
+EF7D
+EF7E
+EF7F
+EF80
+F05B
+F05C
+F05D
+F05E
+F05F
+F060
+F07B
+F07C
+F07D
+F07E
+F07F
+F080
+F15B
+F15C
+F15D
+F15E
+F15F
+F160
+F17B
+F17C
+F17D
+F17E
+F17F
+F180
+F25B
+F25C
+F25D
+F25E
+F25F
+F260
+F27B
+F27C
+F27D
+F27E
+F27F
+F280
+F35B
+F35C
+F35D
+F35E
+F35F
+F360
+F37B
+F37C
+F37D
+F37E
+F37F
+F380
+F45B
+F45C
+F45D
+F45E
+F45F
+F460
+F47B
+F47C
+F47D
+F47E
+F47F
+F480
+F55B
+F55C
+F55D
+F55E
+F55F
+F560
+F57B
+F57C
+F57D
+F57E
+F57F
+F580
+F65B
+F65C
+F65D
+F65E
+F65F
+F660
+F67B
+F67C
+F67D
+F67E
+F67F
+F680
+F75B
+F75C
+F75D
+F75E
+F75F
+F760
+F77B
+F77C
+F77D
+F77E
+F77F
+F780
+F85B
+F85C
+F85D
+F85E
+F85F
+F860
+F87B
+F87C
+F87D
+F87E
+F87F
+F880
+F95B
+F95C
+F95D
+F95E
+F95F
+F960
+F97B
+F97C
+F97D
+F97E
+F97F
+F980
+FA5B
+FA5C
+FA5D
+FA5E
+FA5F
+FA60
+FA7B
+FA7C
+FA7D
+FA7E
+FA7F
+FA80
+FB5B
+FB5C
+FB5D
+FB5E
+FB5F
+FB60
+FB7B
+FB7C
+FB7D
+FB7E
+FB7F
+FB80
+FC5B
+FC5C
+FC5D
+FC5E
+FC5F
+FC60
+FC7B
+FC7C
+FC7D
+FC7E
+FC7F
+FC80
+FD5B
+FD5C
+FD5D
+FD5E
+FD5F
+FD60
+FD7B
+FD7C
+FD7D
+FD7E
+FD7F
+FD80
+FE5B
+FE5C
+FE5D
+FE5E
+FE5F
+FE60
+FE7B
+FE7C
+FE7D
+FE7E
+FE7F
+FE80
+DELETE FROM t2 WHERE a='';
+DROP TABLE t1, t2;
+SET sql_mode = default;
+End of 5.4 tests
 #
 # Start of 5.5 tests
 #
 #
 # Testing WL#4583 Case conversion in Asian character sets 
 #
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
 SET NAMES utf8;
-SET collation_connection=big5_chinese_ci;
+SET collation_connection=euckr_korean_ci;
 CREATE TABLE t1 (b VARCHAR(2));
 INSERT INTO t1 VALUES ('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7');
 INSERT INTO t1 VALUES ('8'),('9'),('A'),('B'),('C'),('D'),('E'),('F');
@@ -316,12 +1797,9 @@ SHOW CREATE TABLE t1;
 Table	Create Table
 t1	CREATE TABLE `t1` (
   `code` varchar(8) DEFAULT NULL,
-  `a` varchar(1) CHARACTER SET big5 NOT NULL DEFAULT ''
+  `a` varchar(1) CHARACTER SET euckr NOT NULL DEFAULT ''
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-SELECT COUNT(*) FROM t1;
-COUNT(*)
-28672
-UPDATE IGNORE t1 SET a=unhex(code) ORDER BY code;
+UPDATE t1 SET a=unhex(code) ORDER BY code;
 Warnings:
 Warning	1366	Incorrect string value: '\x80 ' for column 'a' at row 1
 Warning	1366	Incorrect string value: '\x80!' for column 'a' at row 2
@@ -389,184 +1867,257 @@ Warning	1366	Incorrect string value: '\x80^' for column 'a' at row 63
 Warning	1366	Incorrect string value: '\x80_' for column 'a' at row 64
 SELECT COUNT(*) FROM t1 WHERE a<>'';
 COUNT(*)
-13973
+22428
 SELECT code, hex(upper(a)), hex(lower(a)),a, upper(a), lower(a) FROM t1 WHERE hex(a)<>hex(upper(a)) OR hex(a)<>hex(lower(a));
 code	hex(upper(a))	hex(lower(a))	a	upper(a)	lower(a)
-A2CF	A2CF	A2E9	Ａ	Ａ	ａ
-A2D0	A2D0	A2EA	Ｂ	Ｂ	ｂ
-A2D1	A2D1	A2EB	Ｃ	Ｃ	ｃ
-A2D2	A2D2	A2EC	Ｄ	Ｄ	ｄ
-A2D3	A2D3	A2ED	Ｅ	Ｅ	ｅ
-A2D4	A2D4	A2EE	Ｆ	Ｆ	ｆ
-A2D5	A2D5	A2EF	Ｇ	Ｇ	ｇ
-A2D6	A2D6	A2F0	Ｈ	Ｈ	ｈ
-A2D7	A2D7	A2F1	Ｉ	Ｉ	ｉ
-A2D8	A2D8	A2F2	Ｊ	Ｊ	ｊ
-A2D9	A2D9	A2F3	Ｋ	Ｋ	ｋ
-A2DA	A2DA	A2F4	Ｌ	Ｌ	ｌ
-A2DB	A2DB	A2F5	Ｍ	Ｍ	ｍ
-A2DC	A2DC	A2F6	Ｎ	Ｎ	ｎ
-A2DD	A2DD	A2F7	Ｏ	Ｏ	ｏ
-A2DE	A2DE	A2F8	Ｐ	Ｐ	ｐ
-A2DF	A2DF	A2F9	Ｑ	Ｑ	ｑ
-A2E0	A2E0	A2FA	Ｒ	Ｒ	ｒ
-A2E1	A2E1	A2FB	Ｓ	Ｓ	ｓ
-A2E2	A2E2	A2FC	Ｔ	Ｔ	ｔ
-A2E3	A2E3	A2FD	Ｕ	Ｕ	ｕ
-A2E4	A2E4	A2FE	Ｖ	Ｖ	ｖ
-A2E5	A2E5	A340	Ｗ	Ｗ	ｗ
-A2E6	A2E6	A341	Ｘ	Ｘ	ｘ
-A2E7	A2E7	A342	Ｙ	Ｙ	ｙ
-A2E8	A2E8	A343	Ｚ	Ｚ	ｚ
-A2E9	A2CF	A2E9	ａ	Ａ	ａ
-A2EA	A2D0	A2EA	ｂ	Ｂ	ｂ
-A2EB	A2D1	A2EB	ｃ	Ｃ	ｃ
-A2EC	A2D2	A2EC	ｄ	Ｄ	ｄ
-A2ED	A2D3	A2ED	ｅ	Ｅ	ｅ
-A2EE	A2D4	A2EE	ｆ	Ｆ	ｆ
-A2EF	A2D5	A2EF	ｇ	Ｇ	ｇ
-A2F0	A2D6	A2F0	ｈ	Ｈ	ｈ
-A2F1	A2D7	A2F1	ｉ	Ｉ	ｉ
-A2F2	A2D8	A2F2	ｊ	Ｊ	ｊ
-A2F3	A2D9	A2F3	ｋ	Ｋ	ｋ
-A2F4	A2DA	A2F4	ｌ	Ｌ	ｌ
-A2F5	A2DB	A2F5	ｍ	Ｍ	ｍ
-A2F6	A2DC	A2F6	ｎ	Ｎ	ｎ
-A2F7	A2DD	A2F7	ｏ	Ｏ	ｏ
-A2F8	A2DE	A2F8	ｐ	Ｐ	ｐ
-A2F9	A2DF	A2F9	ｑ	Ｑ	ｑ
-A2FA	A2E0	A2FA	ｒ	Ｒ	ｒ
-A2FB	A2E1	A2FB	ｓ	Ｓ	ｓ
-A2FC	A2E2	A2FC	ｔ	Ｔ	ｔ
-A2FD	A2E3	A2FD	ｕ	Ｕ	ｕ
-A2FE	A2E4	A2FE	ｖ	Ｖ	ｖ
-A340	A2E5	A340	ｗ	Ｗ	ｗ
-A341	A2E6	A341	ｘ	Ｘ	ｘ
-A342	A2E7	A342	ｙ	Ｙ	ｙ
-A343	A2E8	A343	ｚ	Ｚ	ｚ
-A344	A344	A35C	Α	Α	α
-A345	A345	A35D	Β	Β	β
-A346	A346	A35E	Γ	Γ	γ
-A347	A347	A35F	Δ	Δ	δ
-A348	A348	A360	Ε	Ε	ε
-A349	A349	A361	Ζ	Ζ	ζ
-A34A	A34A	A362	Η	Η	η
-A34B	A34B	A363	Θ	Θ	θ
-A34C	A34C	A364	Ι	Ι	ι
-A34D	A34D	A365	Κ	Κ	κ
-A34E	A34E	A366	Λ	Λ	λ
-A34F	A34F	A367	Μ	Μ	μ
-A350	A350	A368	Ν	Ν	ν
-A351	A351	A369	Ξ	Ξ	ξ
-A352	A352	A36A	Ο	Ο	ο
-A353	A353	A36B	Π	Π	π
-A354	A354	A36C	Ρ	Ρ	ρ
-A355	A355	A36D	Σ	Σ	σ
-A356	A356	A36E	Τ	Τ	τ
-A357	A357	A36F	Υ	Υ	υ
-A358	A358	A370	Φ	Φ	φ
-A359	A359	A371	Χ	Χ	χ
-A35A	A35A	A372	Ψ	Ψ	ψ
-A35B	A35B	A373	Ω	Ω	ω
-A35C	A344	A35C	α	Α	α
-A35D	A345	A35D	β	Β	β
-A35E	A346	A35E	γ	Γ	γ
-A35F	A347	A35F	δ	Δ	δ
-A360	A348	A360	ε	Ε	ε
-A361	A349	A361	ζ	Ζ	ζ
-A362	A34A	A362	η	Η	η
-A363	A34B	A363	θ	Θ	θ
-A364	A34C	A364	ι	Ι	ι
-A365	A34D	A365	κ	Κ	κ
-A366	A34E	A366	λ	Λ	λ
-A367	A34F	A367	μ	Μ	μ
-A368	A350	A368	ν	Ν	ν
-A369	A351	A369	ξ	Ξ	ξ
-A36A	A352	A36A	ο	Ο	ο
-A36B	A353	A36B	π	Π	π
-A36C	A354	A36C	ρ	Ρ	ρ
-A36D	A355	A36D	σ	Σ	σ
-A36E	A356	A36E	τ	Τ	τ
-A36F	A357	A36F	υ	Υ	υ
-A370	A358	A370	φ	Φ	φ
-A371	A359	A371	χ	Χ	χ
-A372	A35A	A372	ψ	Ψ	ψ
-A373	A35B	A373	ω	Ω	ω
-C7B1	C7B1	C7CC	Д	Д	д
-C7B2	C7B2	C7CD	Е	Е	е
-C7B3	C7B3	C7CE	Ё	Ё	ё
-C7B4	C7B4	C7CF	Ж	Ж	ж
-C7B5	C7B5	C7D0	З	З	з
-C7B6	C7B6	C7D1	И	И	и
-C7B7	C7B7	C7D2	Й	Й	й
-C7B8	C7B8	C7D3	К	К	к
-C7B9	C7B9	C7D4	Л	Л	л
-C7BA	C7BA	C7D5	М	М	м
-C7BB	C7BB	C7DC	У	У	у
-C7BC	C7BC	C7DD	Ф	Ф	ф
-C7BD	C7BD	C7DE	Х	Х	х
-C7BE	C7BE	C7DF	Ц	Ц	ц
-C7BF	C7BF	C7E0	Ч	Ч	ч
-C7C0	C7C0	C7E1	Ш	Ш	ш
-C7C1	C7C1	C7E2	Щ	Щ	щ
-C7C2	C7C2	C7E3	Ъ	Ъ	ъ
-C7C3	C7C3	C7E4	Ы	Ы	ы
-C7C4	C7C4	C7E5	Ь	Ь	ь
-C7C5	C7C5	C7E6	Э	Э	э
-C7C6	C7C6	C7E7	Ю	Ю	ю
-C7C7	C7C7	C7E8	Я	Я	я
-C7CC	C7B1	C7CC	д	Д	д
-C7CD	C7B2	C7CD	е	Е	е
-C7CE	C7B3	C7CE	ё	Ё	ё
-C7CF	C7B4	C7CF	ж	Ж	ж
-C7D0	C7B5	C7D0	з	З	з
-C7D1	C7B6	C7D1	и	И	и
-C7D2	C7B7	C7D2	й	Й	й
-C7D3	C7B8	C7D3	к	К	к
-C7D4	C7B9	C7D4	л	Л	л
-C7D5	C7BA	C7D5	м	М	м
-C7DC	C7BB	C7DC	у	У	у
-C7DD	C7BC	C7DD	ф	Ф	ф
-C7DE	C7BD	C7DE	х	Х	х
-C7DF	C7BE	C7DF	ц	Ц	ц
-C7E0	C7BF	C7E0	ч	Ч	ч
-C7E1	C7C0	C7E1	ш	Ш	ш
-C7E2	C7C1	C7E2	щ	Щ	щ
-C7E3	C7C2	C7E3	ъ	Ъ	ъ
-C7E4	C7C3	C7E4	ы	Ы	ы
-C7E5	C7C4	C7E5	ь	Ь	ь
-C7E6	C7C5	C7E6	э	Э	э
-C7E7	C7C6	C7E7	ю	Ю	ю
-C7E8	C7C7	C7E8	я	Я	я
+A3C1	A3C1	A3E1	Ａ	Ａ	ａ
+A3C2	A3C2	A3E2	Ｂ	Ｂ	ｂ
+A3C3	A3C3	A3E3	Ｃ	Ｃ	ｃ
+A3C4	A3C4	A3E4	Ｄ	Ｄ	ｄ
+A3C5	A3C5	A3E5	Ｅ	Ｅ	ｅ
+A3C6	A3C6	A3E6	Ｆ	Ｆ	ｆ
+A3C7	A3C7	A3E7	Ｇ	Ｇ	ｇ
+A3C8	A3C8	A3E8	Ｈ	Ｈ	ｈ
+A3C9	A3C9	A3E9	Ｉ	Ｉ	ｉ
+A3CA	A3CA	A3EA	Ｊ	Ｊ	ｊ
+A3CB	A3CB	A3EB	Ｋ	Ｋ	ｋ
+A3CC	A3CC	A3EC	Ｌ	Ｌ	ｌ
+A3CD	A3CD	A3ED	Ｍ	Ｍ	ｍ
+A3CE	A3CE	A3EE	Ｎ	Ｎ	ｎ
+A3CF	A3CF	A3EF	Ｏ	Ｏ	ｏ
+A3D0	A3D0	A3F0	Ｐ	Ｐ	ｐ
+A3D1	A3D1	A3F1	Ｑ	Ｑ	ｑ
+A3D2	A3D2	A3F2	Ｒ	Ｒ	ｒ
+A3D3	A3D3	A3F3	Ｓ	Ｓ	ｓ
+A3D4	A3D4	A3F4	Ｔ	Ｔ	ｔ
+A3D5	A3D5	A3F5	Ｕ	Ｕ	ｕ
+A3D6	A3D6	A3F6	Ｖ	Ｖ	ｖ
+A3D7	A3D7	A3F7	Ｗ	Ｗ	ｗ
+A3D8	A3D8	A3F8	Ｘ	Ｘ	ｘ
+A3D9	A3D9	A3F9	Ｙ	Ｙ	ｙ
+A3DA	A3DA	A3FA	Ｚ	Ｚ	ｚ
+A3E1	A3C1	A3E1	ａ	Ａ	ａ
+A3E2	A3C2	A3E2	ｂ	Ｂ	ｂ
+A3E3	A3C3	A3E3	ｃ	Ｃ	ｃ
+A3E4	A3C4	A3E4	ｄ	Ｄ	ｄ
+A3E5	A3C5	A3E5	ｅ	Ｅ	ｅ
+A3E6	A3C6	A3E6	ｆ	Ｆ	ｆ
+A3E7	A3C7	A3E7	ｇ	Ｇ	ｇ
+A3E8	A3C8	A3E8	ｈ	Ｈ	ｈ
+A3E9	A3C9	A3E9	ｉ	Ｉ	ｉ
+A3EA	A3CA	A3EA	ｊ	Ｊ	ｊ
+A3EB	A3CB	A3EB	ｋ	Ｋ	ｋ
+A3EC	A3CC	A3EC	ｌ	Ｌ	ｌ
+A3ED	A3CD	A3ED	ｍ	Ｍ	ｍ
+A3EE	A3CE	A3EE	ｎ	Ｎ	ｎ
+A3EF	A3CF	A3EF	ｏ	Ｏ	ｏ
+A3F0	A3D0	A3F0	ｐ	Ｐ	ｐ
+A3F1	A3D1	A3F1	ｑ	Ｑ	ｑ
+A3F2	A3D2	A3F2	ｒ	Ｒ	ｒ
+A3F3	A3D3	A3F3	ｓ	Ｓ	ｓ
+A3F4	A3D4	A3F4	ｔ	Ｔ	ｔ
+A3F5	A3D5	A3F5	ｕ	Ｕ	ｕ
+A3F6	A3D6	A3F6	ｖ	Ｖ	ｖ
+A3F7	A3D7	A3F7	ｗ	Ｗ	ｗ
+A3F8	A3D8	A3F8	ｘ	Ｘ	ｘ
+A3F9	A3D9	A3F9	ｙ	Ｙ	ｙ
+A3FA	A3DA	A3FA	ｚ	Ｚ	ｚ
+A5A1	A5B0	A5A1	ⅰ	Ⅰ	ⅰ
+A5A2	A5B1	A5A2	ⅱ	Ⅱ	ⅱ
+A5A3	A5B2	A5A3	ⅲ	Ⅲ	ⅲ
+A5A4	A5B3	A5A4	ⅳ	Ⅳ	ⅳ
+A5A5	A5B4	A5A5	ⅴ	Ⅴ	ⅴ
+A5A6	A5B5	A5A6	ⅵ	Ⅵ	ⅵ
+A5A7	A5B6	A5A7	ⅶ	Ⅶ	ⅶ
+A5A8	A5B7	A5A8	ⅷ	Ⅷ	ⅷ
+A5A9	A5B8	A5A9	ⅸ	Ⅸ	ⅸ
+A5AA	A5B9	A5AA	ⅹ	Ⅹ	ⅹ
+A5B0	A5B0	A5A1	Ⅰ	Ⅰ	ⅰ
+A5B1	A5B1	A5A2	Ⅱ	Ⅱ	ⅱ
+A5B2	A5B2	A5A3	Ⅲ	Ⅲ	ⅲ
+A5B3	A5B3	A5A4	Ⅳ	Ⅳ	ⅳ
+A5B4	A5B4	A5A5	Ⅴ	Ⅴ	ⅴ
+A5B5	A5B5	A5A6	Ⅵ	Ⅵ	ⅵ
+A5B6	A5B6	A5A7	Ⅶ	Ⅶ	ⅶ
+A5B7	A5B7	A5A8	Ⅷ	Ⅷ	ⅷ
+A5B8	A5B8	A5A9	Ⅸ	Ⅸ	ⅸ
+A5B9	A5B9	A5AA	Ⅹ	Ⅹ	ⅹ
+A5C1	A5C1	A5E1	Α	Α	α
+A5C2	A5C2	A5E2	Β	Β	β
+A5C3	A5C3	A5E3	Γ	Γ	γ
+A5C4	A5C4	A5E4	Δ	Δ	δ
+A5C5	A5C5	A5E5	Ε	Ε	ε
+A5C6	A5C6	A5E6	Ζ	Ζ	ζ
+A5C7	A5C7	A5E7	Η	Η	η
+A5C8	A5C8	A5E8	Θ	Θ	θ
+A5C9	A5C9	A5E9	Ι	Ι	ι
+A5CA	A5CA	A5EA	Κ	Κ	κ
+A5CB	A5CB	A5EB	Λ	Λ	λ
+A5CC	A5CC	A5EC	Μ	Μ	μ
+A5CD	A5CD	A5ED	Ν	Ν	ν
+A5CE	A5CE	A5EE	Ξ	Ξ	ξ
+A5CF	A5CF	A5EF	Ο	Ο	ο
+A5D0	A5D0	A5F0	Π	Π	π
+A5D1	A5D1	A5F1	Ρ	Ρ	ρ
+A5D2	A5D2	A5F2	Σ	Σ	σ
+A5D3	A5D3	A5F3	Τ	Τ	τ
+A5D4	A5D4	A5F4	Υ	Υ	υ
+A5D5	A5D5	A5F5	Φ	Φ	φ
+A5D6	A5D6	A5F6	Χ	Χ	χ
+A5D7	A5D7	A5F7	Ψ	Ψ	ψ
+A5D8	A5D8	A5F8	Ω	Ω	ω
+A5E1	A5C1	A5E1	α	Α	α
+A5E2	A5C2	A5E2	β	Β	β
+A5E3	A5C3	A5E3	γ	Γ	γ
+A5E4	A5C4	A5E4	δ	Δ	δ
+A5E5	A5C5	A5E5	ε	Ε	ε
+A5E6	A5C6	A5E6	ζ	Ζ	ζ
+A5E7	A5C7	A5E7	η	Η	η
+A5E8	A5C8	A5E8	θ	Θ	θ
+A5E9	A5C9	A5E9	ι	Ι	ι
+A5EA	A5CA	A5EA	κ	Κ	κ
+A5EB	A5CB	A5EB	λ	Λ	λ
+A5EC	A5CC	A5EC	μ	Μ	μ
+A5ED	A5CD	A5ED	ν	Ν	ν
+A5EE	A5CE	A5EE	ξ	Ξ	ξ
+A5EF	A5CF	A5EF	ο	Ο	ο
+A5F0	A5D0	A5F0	π	Π	π
+A5F1	A5D1	A5F1	ρ	Ρ	ρ
+A5F2	A5D2	A5F2	σ	Σ	σ
+A5F3	A5D3	A5F3	τ	Τ	τ
+A5F4	A5D4	A5F4	υ	Υ	υ
+A5F5	A5D5	A5F5	φ	Φ	φ
+A5F6	A5D6	A5F6	χ	Χ	χ
+A5F7	A5D7	A5F7	ψ	Ψ	ψ
+A5F8	A5D8	A5F8	ω	Ω	ω
+A7D9	A7D9	A5F8	Ω	Ω	ω
+A8A1	A8A1	A9A1	Æ	Æ	æ
+A8A2	A8A2	A9A3	Ð	Ð	ð
+A8A4	A8A4	A9A4	Ħ	Ħ	ħ
+A8A6	A8A6	A9A6	Ĳ	Ĳ	ĳ
+A8A8	A8A8	A9A8	Ŀ	Ŀ	ŀ
+A8A9	A8A9	A9A9	Ł	Ł	ł
+A8AA	A8AA	A9AA	Ø	Ø	ø
+A8AB	A8AB	A9AB	Œ	Œ	œ
+A8AD	A8AD	A9AD	Þ	Þ	þ
+A8AE	A8AE	A9AE	Ŧ	Ŧ	ŧ
+A8AF	A8AF	A9AF	Ŋ	Ŋ	ŋ
+A9A1	A8A1	A9A1	æ	Æ	æ
+A9A3	A8A2	A9A3	ð	Ð	ð
+A9A4	A8A4	A9A4	ħ	Ħ	ħ
+A9A5	49	A9A5	ı	I	ı
+A9A6	A8A6	A9A6	ĳ	Ĳ	ĳ
+A9A8	A8A8	A9A8	ŀ	Ŀ	ŀ
+A9A9	A8A9	A9A9	ł	Ł	ł
+A9AA	A8AA	A9AA	ø	Ø	ø
+A9AB	A8AB	A9AB	œ	Œ	œ
+A9AD	A8AD	A9AD	þ	Þ	þ
+A9AE	A8AE	A9AE	ŧ	Ŧ	ŧ
+A9AF	A8AF	A9AF	ŋ	Ŋ	ŋ
+ACA1	ACA1	ACD1	А	А	а
+ACA2	ACA2	ACD2	Б	Б	б
+ACA3	ACA3	ACD3	В	В	в
+ACA4	ACA4	ACD4	Г	Г	г
+ACA5	ACA5	ACD5	Д	Д	д
+ACA6	ACA6	ACD6	Е	Е	е
+ACA7	ACA7	ACD7	Ё	Ё	ё
+ACA8	ACA8	ACD8	Ж	Ж	ж
+ACA9	ACA9	ACD9	З	З	з
+ACAA	ACAA	ACDA	И	И	и
+ACAB	ACAB	ACDB	Й	Й	й
+ACAC	ACAC	ACDC	К	К	к
+ACAD	ACAD	ACDD	Л	Л	л
+ACAE	ACAE	ACDE	М	М	м
+ACAF	ACAF	ACDF	Н	Н	н
+ACB0	ACB0	ACE0	О	О	о
+ACB1	ACB1	ACE1	П	П	п
+ACB2	ACB2	ACE2	Р	Р	р
+ACB3	ACB3	ACE3	С	С	с
+ACB4	ACB4	ACE4	Т	Т	т
+ACB5	ACB5	ACE5	У	У	у
+ACB6	ACB6	ACE6	Ф	Ф	ф
+ACB7	ACB7	ACE7	Х	Х	х
+ACB8	ACB8	ACE8	Ц	Ц	ц
+ACB9	ACB9	ACE9	Ч	Ч	ч
+ACBA	ACBA	ACEA	Ш	Ш	ш
+ACBB	ACBB	ACEB	Щ	Щ	щ
+ACBC	ACBC	ACEC	Ъ	Ъ	ъ
+ACBD	ACBD	ACED	Ы	Ы	ы
+ACBE	ACBE	ACEE	Ь	Ь	ь
+ACBF	ACBF	ACEF	Э	Э	э
+ACC0	ACC0	ACF0	Ю	Ю	ю
+ACC1	ACC1	ACF1	Я	Я	я
+ACD1	ACA1	ACD1	а	А	а
+ACD2	ACA2	ACD2	б	Б	б
+ACD3	ACA3	ACD3	в	В	в
+ACD4	ACA4	ACD4	г	Г	г
+ACD5	ACA5	ACD5	д	Д	д
+ACD6	ACA6	ACD6	е	Е	е
+ACD7	ACA7	ACD7	ё	Ё	ё
+ACD8	ACA8	ACD8	ж	Ж	ж
+ACD9	ACA9	ACD9	з	З	з
+ACDA	ACAA	ACDA	и	И	и
+ACDB	ACAB	ACDB	й	Й	й
+ACDC	ACAC	ACDC	к	К	к
+ACDD	ACAD	ACDD	л	Л	л
+ACDE	ACAE	ACDE	м	М	м
+ACDF	ACAF	ACDF	н	Н	н
+ACE0	ACB0	ACE0	о	О	о
+ACE1	ACB1	ACE1	п	П	п
+ACE2	ACB2	ACE2	р	Р	р
+ACE3	ACB3	ACE3	с	С	с
+ACE4	ACB4	ACE4	т	Т	т
+ACE5	ACB5	ACE5	у	У	у
+ACE6	ACB6	ACE6	ф	Ф	ф
+ACE7	ACB7	ACE7	х	Х	х
+ACE8	ACB8	ACE8	ц	Ц	ц
+ACE9	ACB9	ACE9	ч	Ч	ч
+ACEA	ACBA	ACEA	ш	Ш	ш
+ACEB	ACBB	ACEB	щ	Щ	щ
+ACEC	ACBC	ACEC	ъ	Ъ	ъ
+ACED	ACBD	ACED	ы	Ы	ы
+ACEE	ACBE	ACEE	ь	Ь	ь
+ACEF	ACBF	ACEF	э	Э	э
+ACF0	ACC0	ACF0	ю	Ю	ю
+ACF1	ACC1	ACF1	я	Я	я
 SELECT * FROM t1
 WHERE HEX(CAST(LOWER(a) AS CHAR CHARACTER SET utf8)) <>
 HEX(LOWER(CAST(a AS CHAR CHARACTER SET utf8))) ORDER BY code;
 code	a
-A2B9	Ⅰ
-A2BA	Ⅱ
-A2BB	Ⅲ
-A2BC	Ⅳ
-A2BD	Ⅴ
-A2BE	Ⅵ
-A2BF	Ⅶ
-A2C0	Ⅷ
-A2C1	Ⅸ
-A2C2	Ⅹ
+A1CA	Å
 SELECT * FROM t1
 WHERE HEX(CAST(UPPER(a) AS CHAR CHARACTER SET utf8)) <>
 HEX(UPPER(CAST(a AS CHAR CHARACTER SET utf8))) ORDER BY code;
 code	a
-C7C8	а
-C7C9	б
-C7CA	в
-C7CB	г
-C7D6	н
-C7D7	о
-C7D8	п
-C7D9	р
-C7DA	с
-C7DB	т
+A8CD	ⓐ
+A8CE	ⓑ
+A8CF	ⓒ
+A8D0	ⓓ
+A8D1	ⓔ
+A8D2	ⓕ
+A8D3	ⓖ
+A8D4	ⓗ
+A8D5	ⓘ
+A8D6	ⓙ
+A8D7	ⓚ
+A8D8	ⓛ
+A8D9	ⓜ
+A8DA	ⓝ
+A8DB	ⓞ
+A8DC	ⓟ
+A8DD	ⓠ
+A8DE	ⓡ
+A8DF	ⓢ
+A8E0	ⓣ
+A8E1	ⓤ
+A8E2	ⓥ
+A8E3	ⓦ
+A8E4	ⓧ
+A8E5	ⓨ
+A8E6	ⓩ
+A9A2	đ
 DROP TABLE t1;
+SET sql_mode = default;
 #
 # End of 5.5 tests
 #
@@ -576,10 +2127,10 @@ DROP TABLE t1;
 #
 # WL#3664 WEIGHT_STRING
 #
-set names big5;
+set names euckr;
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+euckr_korean_ci
 select hex(weight_string('a'));
 hex(weight_string('a'))
 41
@@ -654,7 +2205,7 @@ hex(weight_string('abc',25, 4, 0xC0))
 41424320202020202020202020202020202020202020202020
 select @@collation_connection;
 @@collation_connection
-big5_chinese_ci
+euckr_korean_ci
 select hex(weight_string('a' LEVEL 1));
 hex(weight_string('a' LEVEL 1))
 41
@@ -684,95 +2235,95 @@ hex(weight_string('abc' as char(5) LEVEL 1 DESC REVERSE))
 DFDFBCBDBE
 select collation(cast(0xA1A1 as char));
 collation(cast(0xA1A1 as char))
-big5_chinese_ci
+euckr_korean_ci
 select hex(weight_string(cast(0x6141 as char)));
 hex(weight_string(cast(0x6141 as char)))
 4141
 select hex(weight_string(cast(0xA1A1 as char)));
 hex(weight_string(cast(0xA1A1 as char)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1 as char) as char(1)));
 hex(weight_string(cast(0xA1A1 as char) as char(1)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1 as char) as char(1)));
 hex(weight_string(cast(0xA1A1A1A1 as char) as char(1)))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1 as char) as char(3)));
 hex(weight_string(cast(0xA1A1 as char) as char(3)))
-A1402020
+A1A12020
 select hex(weight_string(cast(0xA1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0xA1A1A1A1 as char) as char(3)))
-A140A14020
+A1A1A1A120
 select hex(weight_string(cast(0x40A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1 as char) as char(3)))
-40A14020
+40A1A120
 select hex(weight_string(cast(0x40A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1A1A1 as char) as char(3)))
-40A140A140
+40A1A1A1A1
 select hex(weight_string(cast(0x40A1A1A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x40A1A1A1A1A1A1 as char) as char(3)))
-40A140A140
+40A1A1A1A1
 select hex(weight_string(cast(0x4040A1A1A1A1A1A1 as char) as char(3)));
 hex(weight_string(cast(0x4040A1A1A1A1A1A1 as char) as char(3)))
-4040A140
+4040A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 2, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 2, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 2, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 2, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 2, 0xC0))
-A140A14020
+A1A1A1A120
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 2, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 2, 0xC0))
-A140A140202020202020202020202020202020202020202020
+A1A1A1A1202020202020202020202020202020202020202020
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 3, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 3, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 3, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 3, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 3, 0xC0))
-A140A140A1
+A1A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 3, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 3, 0xC0))
-A140A140A14020202020202020202020202020202020202020
+A1A1A1A1A1A120202020202020202020202020202020202020
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 1, 4, 0xC0))
 A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 2, 4, 0xC0))
-A140
+A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 3, 4, 0xC0))
-A140A1
+A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 4, 4, 0xC0))
-A140A140
+A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char), 5, 4, 0xC0))
-A140A140A1
+A1A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0))
-A140A140A14020202020202020202020202020202020202020
-set collation_connection=big5_bin;
+A1A1A1A1A1A120202020202020202020202020202020202020
+set collation_connection=euckr_bin;
 select @@collation_connection;
 @@collation_connection
-big5_bin
+euckr_bin
 select hex(weight_string('a'));
 hex(weight_string('a'))
 61
@@ -847,7 +2398,7 @@ hex(weight_string('abc',25, 4, 0xC0))
 61626320202020202020202020202020202020202020202020
 select @@collation_connection;
 @@collation_connection
-big5_bin
+euckr_bin
 select hex(weight_string('a' LEVEL 1));
 hex(weight_string('a' LEVEL 1))
 61
@@ -877,7 +2428,7 @@ hex(weight_string('abc' as char(5) LEVEL 1 DESC REVERSE))
 DFDF9C9D9E
 select collation(cast(0xA1A1 as char));
 collation(cast(0xA1A1 as char))
-big5_bin
+euckr_bin
 select hex(weight_string(cast(0x6141 as char)));
 hex(weight_string(cast(0x6141 as char)))
 6141
@@ -962,11 +2513,7 @@ A1A1A1A1A1
 select hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0));
 hex(weight_string(cast(0xA1A1A1A1A1A1 as char),25, 4, 0xC0))
 A1A1A1A1A1A120202020202020202020202020202020202020
-#
-# Bugs#12635232: VALGRIND WARNINGS: IS_IPV6, IS_IPV4, INET6_ATON,
-# INET6_NTOA + MULTIBYTE CHARSET. 
-#
-SET NAMES big5;
+SET NAMES euckr;
 SELECT is_ipv4(inet_ntoa('1'));
 is_ipv4(inet_ntoa('1'))
 1
@@ -992,9 +2539,9 @@ Warning	1411	Incorrect string value: 'soundex('a')' for function inet6_aton
 #
 # Bug#19047425 UNINITIALISED VALUE IN STR_TO_IPV6
 #
-do is_ipv4_mapped(inet6_aton(convert(_ascii "a:" using big5)));
+do is_ipv4_mapped(inet6_aton(convert(_ascii "a:" using euckr)));
 Warnings:
-Warning	1411	Incorrect string value: 'convert(_ascii'a:' using big5)' for function inet6_aton
+Warning	1411	Incorrect string value: 'convert(_ascii'a:' using euckr)' for function inet6_aton
 #
 # End of 5.6 tests
 #
