@@ -1807,6 +1807,7 @@ SELECT f1() FROM t1 LEFT JOIN (SELECT 1 AS a FROM t1 LIMIT 0) AS d ON 1 GROUP BY
 DROP FUNCTION f1;
 DROP TABLE t1;
 
+# Bug of SequoiaDB, create char index fail when length is larger than 255: SEQUOIADBMAINSTREAM-3564
 #SET NAMES latin1;
 #SET sql_mode='';
 #CREATE TABLE t1(a char(215) CHARACTER SET utf8 NOT NULL DEFAULT '', KEY(a));

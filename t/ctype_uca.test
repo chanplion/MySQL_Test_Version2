@@ -1,113 +1,113 @@
-	--source include/no_valgrind_without_big.inc
-	--source include/have_sequoiadb.inc
-	# Some bugs in this test have specific tests
+--source include/no_valgrind_without_big.inc
+--source include/have_sequoiadb.inc
+# Some bugs in this test have specific tests
 
-	-- source include/have_ucs2.inc
-	-- source include/have_utf8mb4.inc
+-- source include/have_ucs2.inc
+-- source include/have_utf8mb4.inc
 
-	--disable_warnings
-	DROP TABLE IF EXISTS t1;
-	--enable_warnings
+--disable_warnings
+DROP TABLE IF EXISTS t1;
+--enable_warnings
 
-	#
-	# Test Unicode collations.
-	#
-	set names utf8; 
+#
+# Test Unicode collations.
+#
+set names utf8; 
 
-	#
-	# Check trailing spaces
-	#
-	set collation_connection=utf8_unicode_ci;
+#
+# Check trailing spaces
+#
+set collation_connection=utf8_unicode_ci;
 
-	select 'a' = 'a', 'a' = 'a ', 'a ' = 'a';
+select 'a' = 'a', 'a' = 'a ', 'a ' = 'a';
 
-	select 'a\t' = 'a' , 'a\t' < 'a' , 'a\t' > 'a';
-	select 'a\t' = 'a ', 'a\t' < 'a ', 'a\t' > 'a ';
+select 'a\t' = 'a' , 'a\t' < 'a' , 'a\t' > 'a';
+select 'a\t' = 'a ', 'a\t' < 'a ', 'a\t' > 'a ';
 
-	select 'a' = 'a\t', 'a' < 'a\t', 'a' > 'a\t';
-	select 'a ' = 'a\t', 'a ' < 'a\t', 'a ' > 'a\t';
+select 'a' = 'a\t', 'a' < 'a\t', 'a' > 'a\t';
+select 'a ' = 'a\t', 'a ' < 'a\t', 'a ' > 'a\t';
 
-	select 'a  a' > 'a', 'a  \t' < 'a';
+select 'a  a' > 'a', 'a  \t' < 'a';
 
-	#
-	# Bug #6787 LIKE not working properly with _ and utf8 data
-	#
-	select 'c' like '\_' as want0; 
+#
+# Bug #6787 LIKE not working properly with _ and utf8 data
+#
+select 'c' like '\_' as want0; 
 
-	#
-	# Bug #5679 utf8_unicode_ci LIKE--trailing % doesn't equal zero characters
-	#
-	CREATE TABLE t (
-	  c char(20) NOT NULL
-	) ENGINE=SequoiaDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-	INSERT INTO t VALUES ('a'),('ab'),('aba');
-        # Bug of SequoiaDB, create char index with length will cause wrong results: SEQUOIADBMAINSTREAM-3568
-	#ALTER TABLE t ADD INDEX (c);
-	#SELECT c FROM t WHERE c LIKE 'a%';
-	#should find 3 rows but only found 2
-	DROP TABLE t;
+#
+# Bug #5679 utf8_unicode_ci LIKE--trailing % doesn't equal zero characters
+#
+CREATE TABLE t (
+c char(20) NOT NULL
+) ENGINE=SequoiaDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+INSERT INTO t VALUES ('a'),('ab'),('aba');
+# Bug of SequoiaDB, create char index with length will cause wrong results: SEQUOIADBMAINSTREAM-3568
+#ALTER TABLE t ADD INDEX (c);
+#SELECT c FROM t WHERE c LIKE 'a%';
+#should find 3 rows but only found 2
+DROP TABLE t;
 
-	create table t1 (c1 char(10) character set utf8 collate utf8_bin);
+create table t1 (c1 char(10) character set utf8 collate utf8_bin);
 
-	--source include/ctype_unicode_latin.inc
+--source include/ctype_unicode_latin.inc
 
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_unicode_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_icelandic_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_latvian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_romanian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_slovenian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_polish_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_estonian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_spanish_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_swedish_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_turkish_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_unicode_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_icelandic_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_latvian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_romanian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_slovenian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_polish_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_estonian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_spanish_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_swedish_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_turkish_ci;
 
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_czech_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_danish_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_lithuanian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_slovak_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_spanish2_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_roman_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_esperanto_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_hungarian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_croatian_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_german2_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_unicode_520_ci;
-	select group_concat(c1 order by c1) from t1 group by c1 collate utf8_vietnamese_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_czech_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_danish_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_lithuanian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_slovak_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_spanish2_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_roman_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_esperanto_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_hungarian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_croatian_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_german2_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_unicode_520_ci;
+select group_concat(c1 order by c1) from t1 group by c1 collate utf8_vietnamese_ci;
 
-	# NOW SequoiaDB not support ALTER FIELD	
-	#ALTER TABLE t1 CONVERT TO CHARACTER SET ucs2 COLLATE ucs2_bin;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_unicode_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_icelandic_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_latvian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_romanian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_slovenian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_polish_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_estonian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_spanish_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_swedish_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_turkish_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_czech_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_danish_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_lithuanian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_slovak_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_spanish2_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_roman_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_esperanto_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_hungarian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_croatian_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_german2_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_unicode_520_ci;
-	#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_vietnamese_ci;
+# NOW SequoiaDB not support ALTER FIELD	
+#ALTER TABLE t1 CONVERT TO CHARACTER SET ucs2 COLLATE ucs2_bin;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_unicode_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_icelandic_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_latvian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_romanian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_slovenian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_polish_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_estonian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_spanish_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_swedish_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_turkish_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_czech_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_danish_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_lithuanian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_slovak_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_spanish2_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_roman_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_esperanto_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_hungarian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_croatian_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_german2_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_unicode_520_ci;
+#SELECT GROUP_CONCAT(c1 ORDER BY c1) FROM t1 GROUP BY c1 COLLATE ucs2_vietnamese_ci;
 
-	drop table t1;
+drop table t1;
 
-	#
-	# Bug#5324
-	#
-	SET NAMES utf8;
-	#test1
-	# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
+#
+# Bug#5324
+#
+SET NAMES utf8;
+#test1
+# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
 CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_general_ci);
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x039C03C903B403B11F770308 USING utf8));
 #Check one row
@@ -142,7 +142,7 @@ COLLATE utf8_unicode_ci ORDER BY c;
 DROP TABLE t1;
 
 CREATE TABLE t1 (
-  col1 CHAR(32) CHARACTER SET utf8 NOT NULL
+col1 CHAR(32) CHARACTER SET utf8 NOT NULL
 );
 
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x0041004100410627 USING utf8));
@@ -336,8 +336,8 @@ DROP TABLE t1;
 # Test all characters that appear in utf8_persia_ci tailoring
 #
 CREATE TABLE t1 (
-  a VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_persian_ci,
-  offs INT NOT NULL
+a VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_persian_ci,
+offs INT NOT NULL
 );
 INSERT INTO t1 VALUES
 (_ucs2 0x066D, 1),(_ucs2 0x064E, 2),(_ucs2 0xFE76, 3),(_ucs2 0xFE77, 4),
@@ -420,7 +420,7 @@ DROP TABLE t1;
 # Bug #27079 Crash while grouping empty ucs2 strings
 #
 CREATE TABLE t1 (
- c1 text character set ucs2 collate ucs2_polish_ci NOT NULL
+c1 text character set ucs2 collate ucs2_polish_ci NOT NULL
 ) ENGINE=SequoiaDB;
 insert into t1 values (''),('a');
 SELECT COUNT(*), c1 FROM t1 GROUP BY c1;
@@ -432,7 +432,7 @@ DROP TABLE IF EXISTS t1;
 #Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
 set names utf8;
 create table t1 (
-  a varchar(255)
+a varchar(255)
 #  key a(a)
 ) character set utf8 collate utf8_danish_ci;
 insert into t1 values ('åaaaa'),('ååaaa'),('aaaaa');
@@ -452,7 +452,7 @@ drop table t1;
 
 # Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
 create table t1 (
-  a varchar(255)
+a varchar(255)
 #  key a(a)
 ) character set utf8 collate utf8_spanish2_ci;
 insert into t1 values ('aaaaa'),('lllll'),('zzzzz');
@@ -472,7 +472,7 @@ drop table t1;
 
 # Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
 create table t1 (
-  a varchar(255)
+a varchar(255)
 #  key a(a)
 ) character set utf8 collate utf8_czech_ci;
 # In Czech 'ch' is a single letter between 'h' and 'i'
@@ -576,14 +576,14 @@ SET NAMES utf8mb4 COLLATE utf8mb4_unicode_520_ci;
 <?xml version='1.0' encoding="utf-8"?>
 <charsets max-id="99">
 <charset name="utf8">
-  <family>Unicode</family>
-  <description>UTF-8 Unicode</description>
-  <alias>utf-8</alias>
-  <collation name="utf8_test"            id="999">
-    <rules>
-      <reset>A</reset>
-    </rules>
-  </collation>
+<family>Unicode</family>
+<description>UTF-8 Unicode</description>
+<alias>utf-8</alias>
+<collation name="utf8_test"            id="999">
+<rules>
+<reset>A</reset>
+</rules>
+</collation>
 </charset>
 </charsets>
 EOF
