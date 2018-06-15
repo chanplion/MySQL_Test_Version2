@@ -2214,23 +2214,6 @@ t1	CREATE TABLE `t1` (
   `c1` varchar(1) CHARACTER SET cp1251 DEFAULT NULL
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
-create table t1 as select repeat(' ', 64) as a limit 0;
-show create table t1;
-Table	Create Table
-t1	CREATE TABLE `t1` (
-  `a` varchar(64) CHARACTER SET cp1251 DEFAULT NULL
-) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
-insert into t1 values ("1.1"), ("2.1");
-select a, hex(a) from t1;
-a	hex(a)
-1.1	312E31
-2.1	322E31
-update t1 set a= a + 0.1;
-select a, hex(a) from t1;
-a	hex(a)
-1.2000000000000002	312E32303030303030303030303030303032
-2.2	322E32
-drop table t1;
 create table t1 (a tinyint);
 insert into t1 values (1);
 select hex(concat(a)) from t1;
