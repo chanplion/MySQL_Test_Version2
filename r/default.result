@@ -1,0 +1,119 @@
+drop table if exists t1,t2,t3,t4,t5,t6;
+drop database if exists mysqltest;
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+CREATE TABLE t1 (a varchar(30) binary NOT NULL DEFAULT ' ',
+b varchar(1) binary NOT NULL DEFAULT ' ',
+c varchar(4) binary NOT NULL DEFAULT '0000',
+d tinyblob NULL,
+e tinyblob NULL,
+f tinyblob NULL,
+g tinyblob NULL,
+h tinyblob NULL,
+i tinyblob NULL,
+j tinyblob NULL,
+k tinyblob NULL,
+l tinyblob NULL,
+m tinyblob NULL,
+n tinyblob NULL,
+o tinyblob NULL,
+p tinyblob NULL,
+q varchar(30) binary NOT NULL DEFAULT ' ',
+r varchar(30) binary NOT NULL DEFAULT ' ',
+s tinyblob NULL,
+t varchar(4) binary NOT NULL DEFAULT ' ',
+u varchar(1) binary NOT NULL DEFAULT ' ',
+v varchar(30) binary NOT NULL DEFAULT ' ',
+w varchar(30) binary NOT NULL DEFAULT ' ',
+x tinyblob NULL,
+y varchar(5) binary NOT NULL DEFAULT ' ',
+z varchar(20) binary NOT NULL DEFAULT ' ',
+a1 varchar(30) binary NOT NULL DEFAULT ' ',
+b1 tinyblob NULL)
+ENGINE=SequoiaDB DEFAULT CHARACTER SET = latin1 COLLATE latin1_bin;
+INSERT into t1 (b) values ('1');
+SHOW WARNINGS;
+Level	Code	Message
+SELECT * from t1;
+a	b	c	d	e	f	g	h	i	j	k	l	m	n	o	p	q	r	s	t	u	v	w	x	y	z	a1	b1
+ 	1	0000	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	 	 	NULL	 	 	 	 	NULL	 	 	 	NULL
+CREATE TABLE t2 (a varchar(30) binary NOT NULL DEFAULT ' ',
+b varchar(1) binary NOT NULL DEFAULT ' ',
+c varchar(4) binary NOT NULL DEFAULT '0000',
+d tinyblob NULL,
+e tinyblob NULL,
+f tinyblob NULL,
+g tinyblob NULL,
+h tinyblob NULL,
+i tinyblob NULL,
+j tinyblob NULL,
+k tinyblob NULL,
+l tinyblob NULL,
+m tinyblob NULL,
+n tinyblob NULL,
+o tinyblob NULL,
+p tinyblob NULL,
+q varchar(30) binary NOT NULL DEFAULT ' ',
+r varchar(30) binary NOT NULL DEFAULT ' ',
+s tinyblob NULL,
+t varchar(4) binary NOT NULL DEFAULT ' ',
+u varchar(1) binary NOT NULL DEFAULT ' ',
+v varchar(30) binary NOT NULL DEFAULT ' ',
+w varchar(30) binary NOT NULL DEFAULT ' ',
+x tinyblob NULL,
+y varchar(5) binary NOT NULL DEFAULT ' ',
+z varchar(20) binary NOT NULL DEFAULT ' ',
+a1 varchar(30) binary NOT NULL DEFAULT ' ',
+b1 tinyblob NULL)
+DEFAULT CHARACTER SET = latin1 COLLATE latin1_bin;
+SHOW CREATE TABLE t2;
+Table	Create Table
+t2	CREATE TABLE `t2` (
+  `a` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `b` varchar(1) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `c` varchar(4) COLLATE latin1_bin NOT NULL DEFAULT '0000',
+  `d` tinyblob,
+  `e` tinyblob,
+  `f` tinyblob,
+  `g` tinyblob,
+  `h` tinyblob,
+  `i` tinyblob,
+  `j` tinyblob,
+  `k` tinyblob,
+  `l` tinyblob,
+  `m` tinyblob,
+  `n` tinyblob,
+  `o` tinyblob,
+  `p` tinyblob,
+  `q` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `r` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `s` tinyblob,
+  `t` varchar(4) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `u` varchar(1) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `v` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `w` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `x` tinyblob,
+  `y` varchar(5) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `z` varchar(20) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `a1` varchar(30) COLLATE latin1_bin NOT NULL DEFAULT ' ',
+  `b1` tinyblob
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1 COLLATE=latin1_bin
+INSERT into t2 (b) values ('1');
+SHOW WARNINGS;
+Level	Code	Message
+SELECT * from t2;
+a	b	c	d	e	f	g	h	i	j	k	l	m	n	o	p	q	r	s	t	u	v	w	x	y	z	a1	b1
+ 	1	0000	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	NULL	 	 	NULL	 	 	 	 	NULL	 	 	 	NULL
+drop table t1;
+drop table t2;
+create table t1 (id int not null);
+insert into t1 values(default);
+Warnings:
+Warning	1364	Field 'id' doesn't have a default value
+create view v1 (c) as select id from t1;
+insert into t1 values(default);
+Warnings:
+Warning	1364	Field 'id' doesn't have a default value
+drop view v1;
+drop table t1;
+SET sql_mode = default;
+End of 5.0 tests.
