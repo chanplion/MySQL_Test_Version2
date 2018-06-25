@@ -1920,8 +1920,8 @@ insert into t1 values (2);
 insert into t2 values (1);
 insert into t4 values (1,1);
 
-explain select * from t1 left join t2 on id1 = id2 left join t3 on id1 = id3
-left join t4 on id3 = id4 where id2 = 1 or id4 = 1;
+#explain select * from t1 left join t2 on id1 = id2 left join t3 on id1 = id3
+#left join t4 on id3 = id4 where id2 = 1 or id4 = 1;
 select * from t1 left join t2 on id1 = id2 left join t3 on id1 = id3
 left join t4 on id3 = id4 where id2 = 1 or id4 = 1;
 
@@ -1952,9 +1952,9 @@ create table t1 (a integer,  b integer, index(a), index(b));
 create table t2 (c integer,  d integer, index(c), index(d));
 insert into t1 values (1,2), (2,2), (3,2), (4,2);
 insert into t2 values (1,3), (2,3), (3,4), (4,4);
-explain select * from t1 left join t2 on a=c where d in (4);
+#explain select * from t1 left join t2 on a=c where d in (4);
 select * from t1 left join t2 on a=c where d in (4);
-explain select * from t1 left join t2 on a=c where d = 4;
+#explain select * from t1 left join t2 on a=c where d = 4;
 select * from t1 left join t2 on a=c where d = 4;
 drop table t1, t2;
 
@@ -1973,7 +1973,7 @@ INSERT INTO t1 VALUES (1,'a');
 INSERT INTO t1 VALUES (2,'b');
 INSERT INTO t1 VALUES (3,'c');
 
-EXPLAIN SELECT i FROM t1 WHERE i=1;
+#EXPLAIN SELECT i FROM t1 WHERE i=1;
 
 DROP TABLE t1;
 
@@ -2002,9 +2002,9 @@ INSERT INTO t1 VALUES ('Paris');
 
 SELECT * FROM t1 WHERE city='London';
 SELECT * FROM t1 WHERE city='london';
-EXPLAIN SELECT * FROM t1 WHERE city='London' AND city='london';
+#EXPLAIN SELECT * FROM t1 WHERE city='London' AND city='london';
 SELECT * FROM t1 WHERE city='London' AND city='london';
-EXPLAIN SELECT * FROM t1 WHERE city LIKE '%london%' AND city='London';
+#EXPLAIN SELECT * FROM t1 WHERE city LIKE '%london%' AND city='London';
 SELECT * FROM t1 WHERE city LIKE '%london%' AND city='London';
 
 DROP TABLE t1;
@@ -2179,7 +2179,7 @@ drop table t1,t2;
 create table t2 (a tinyint unsigned);
 create index t2i on t2(a);
 insert into t2 values (0), (254), (255);
-explain select * from t2 where a > -1;
+#explain select * from t2 where a > -1;
 select * from t2 where a > -1;
 drop table t2;
 
@@ -2294,9 +2294,9 @@ insert into t2 values (1,'',''), (2,'','');
 CREATE TABLE t3 (a int, b int, PRIMARY KEY (a,b), KEY a (a), KEY b (b));
 insert into t3 values (1,1),(1,2);
 # must have "range checked" for t2
-explain select straight_join DISTINCT t2.a,t2.b, t1.c from t1, t3, t2 
- where (t1.c=t2.a or (t1.c=t3.a and t2.a=t3.b)) and t1.b=556476786 and 
-       t2.b like '%%' order by t2.b limit 0,1;
+#explain select straight_join DISTINCT t2.a,t2.b, t1.c from t1, t3, t2 
+# where (t1.c=t2.a or (t1.c=t3.a and t2.a=t3.b)) and t1.b=556476786 and 
+#       t2.b like '%%' order by t2.b limit 0,1;
 DROP TABLE t1,t2,t3;
 
 #
@@ -2306,7 +2306,7 @@ DROP TABLE t1,t2,t3;
 CREATE TABLE t1 (a int, INDEX idx(a));
 INSERT INTO t1 VALUES (2), (3), (1);
 
-EXPLAIN SELECT * FROM t1 IGNORE INDEX (idx);
+#EXPLAIN SELECT * FROM t1 IGNORE INDEX (idx);
 --error 1176
 EXPLAIN SELECT * FROM t1 IGNORE INDEX (a);
 --error 1176
@@ -2324,9 +2324,9 @@ CREATE TABLE t2 (a int PRIMARY KEY, b int, KEY b (b));
 INSERT INTO t2 VALUES (1,NULL), (2,10);
 ALTER TABLE t1 ENABLE KEYS;
 
-EXPLAIN SELECT STRAIGHT_JOIN SQL_NO_CACHE COUNT(*) FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
+#EXPLAIN SELECT STRAIGHT_JOIN SQL_NO_CACHE COUNT(*) FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
 SELECT STRAIGHT_JOIN SQL_NO_CACHE * FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
-EXPLAIN SELECT STRAIGHT_JOIN SQL_NO_CACHE COUNT(*) FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
+#EXPLAIN SELECT STRAIGHT_JOIN SQL_NO_CACHE COUNT(*) FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
 SELECT STRAIGHT_JOIN SQL_NO_CACHE * FROM t2, t1 WHERE t1.b = t2.b OR t2.b IS NULL;
 DROP TABLE IF EXISTS t1,t2;
 
@@ -2339,14 +2339,14 @@ CREATE TABLE t2 (key2 float default NULL, UNIQUE KEY key2 (key2));
 INSERT INTO t1 VALUES (0.3762),(0.3845),(0.6158),(0.7941);
 INSERT INTO t2 VALUES (1.3762),(1.3845),(1.6158),(1.7941);
 
-explain select max(key1) from t1 where key1 <= 0.6158;
-explain select max(key2) from t2 where key2 <= 1.6158;
-explain select min(key1) from t1 where key1 >= 0.3762;
-explain select min(key2) from t2 where key2 >= 1.3762;
-explain select max(key1), min(key2) from t1, t2
-where key1 <= 0.6158 and key2 >= 1.3762;
-explain select max(key1) from t1 where key1 <= 0.6158 and rand() + 0.5 >= 0.5;
-explain select min(key1) from t1 where key1 >= 0.3762 and rand() + 0.5 >= 0.5;
+#explain select max(key1) from t1 where key1 <= 0.6158;
+#explain select max(key2) from t2 where key2 <= 1.6158;
+#explain select min(key1) from t1 where key1 >= 0.3762;
+#explain select min(key2) from t2 where key2 >= 1.3762;
+#explain select max(key1), min(key2) from t1, t2
+#where key1 <= 0.6158 and key2 >= 1.3762;
+#explain select max(key1) from t1 where key1 <= 0.6158 and rand() + 0.5 >= 0.5;
+#explain select min(key1) from t1 where key1 >= 0.3762 and rand() + 0.5 >= 0.5;
 
 select max(key1) from t1 where key1 <= 0.6158;
 select max(key2) from t2 where key2 <= 1.6158;
@@ -2498,8 +2498,8 @@ INSERT INTO t2 VALUES (2), (4), (6);
 
 SELECT t1.a FROM t1 STRAIGHT_JOIN t2 ON t1.a=t2.a;
 
-EXPLAIN SELECT t1.a FROM t1 STRAIGHT_JOIN t2 ON t1.a=t2.a;
-EXPLAIN SELECT t1.a FROM t1 INNER JOIN t2 ON t1.a=t2.a;
+#EXPLAIN SELECT t1.a FROM t1 STRAIGHT_JOIN t2 ON t1.a=t2.a;
+#EXPLAIN SELECT t1.a FROM t1 INNER JOIN t2 ON t1.a=t2.a;
 
 DROP TABLE t1,t2;
 
@@ -2862,19 +2862,19 @@ SELECT t2.key_a,foo
   FROM t1 INNER JOIN t2 ON t1.key_a = t2.key_a
           INNER JOIN t3 ON t1.key_a = t3.key_a
     WHERE t2.key_a=2 and key_b=5;
-EXPLAIN SELECT t2.key_a,foo 
-  FROM t1 INNER JOIN t2 ON t1.key_a = t2.key_a
-          INNER JOIN t3 ON t1.key_a = t3.key_a
-    WHERE t2.key_a=2 and key_b=5;
+#EXPLAIN SELECT t2.key_a,foo 
+#  FROM t1 INNER JOIN t2 ON t1.key_a = t2.key_a
+#          INNER JOIN t3 ON t1.key_a = t3.key_a
+#    WHERE t2.key_a=2 and key_b=5;
 
 SELECT t2.key_a,foo 
   FROM t1 INNER JOIN t2 ON t2.key_a = t1.key_a
           INNER JOIN t3 ON t1.key_a = t3.key_a
     WHERE t2.key_a=2 and key_b=5;
-EXPLAIN SELECT t2.key_a,foo 
-  FROM t1 INNER JOIN t2 ON t2.key_a = t1.key_a
-          INNER JOIN t3 ON t1.key_a = t3.key_a
-    WHERE t2.key_a=2 and key_b=5;
+#EXPLAIN SELECT t2.key_a,foo 
+#  FROM t1 INNER JOIN t2 ON t2.key_a = t1.key_a
+#          INNER JOIN t3 ON t1.key_a = t3.key_a
+#    WHERE t2.key_a=2 and key_b=5;
 
 DROP TABLE t1,t2,t3;
 
@@ -2937,9 +2937,9 @@ INSERT INTO t2 VALUES
 
 SELECT t2.sku, t2.sppr, t2.name, t1.sku, t1.pr
   FROM t2, t1 WHERE t2.sku=20 AND (t2.sku=t1.sku OR t2.sppr=t1.sku);
-EXPLAIN
-SELECT t2.sku, t2.sppr, t2.name, t1.sku, t1.pr
-  FROM t2, t1 WHERE t2.sku=20 AND (t2.sku=t1.sku OR t2.sppr=t1.sku);
+#EXPLAIN
+#SELECT t2.sku, t2.sppr, t2.name, t1.sku, t1.pr
+#  FROM t2, t1 WHERE t2.sku=20 AND (t2.sku=t1.sku OR t2.sppr=t1.sku);
 
 
 DROP TABLE t1,t2;
@@ -2970,8 +2970,8 @@ insert into t2 select A.a, B.a, C.a, C.a from t1 A, t1 B, t1 C;
 analyze table t2;
 select 'In next EXPLAIN, B.rows must be exactly 10:' Z;
 
-explain select * from t2 a, t2 b where a.a=5 and a.b=5 and a.c<5
-          and b.a=5 and b.b=a.e and (b.b =1 or b.b = 3 or b.b=5);
+#explain select * from t2 a, t2 b where a.a=5 and a.b=5 and a.c<5
+#          and b.a=5 and b.b=a.e and (b.b =1 or b.b = 3 or b.b=5);
 drop table t1, t2;
 
 #
@@ -2988,10 +2988,10 @@ INSERT INTO t2 VALUES
  (5,0,0), (5,0,1), (6,0,0), (0,0,1), (7,0,0), (7,0,1),
  (0,0,0), (0,0,1), (8,0,0), (8,0,1), (9,0,0), (9,0,1);
 
-EXPLAIN
-SELECT a, c, d, f FROM t1,t2 WHERE a=c AND b BETWEEN 4 AND 6;
-EXPLAIN
-SELECT a, c, d, f FROM t1,t2 WHERE a=c AND b BETWEEN 4 AND 6 AND a > 0;
+#EXPLAIN
+#SELECT a, c, d, f FROM t1,t2 WHERE a=c AND b BETWEEN 4 AND 6;
+#EXPLAIN
+#SELECT a, c, d, f FROM t1,t2 WHERE a=c AND b BETWEEN 4 AND 6 AND a > 0;
 
 DROP TABLE t1, t2;
 
@@ -3047,8 +3047,8 @@ INSERT INTO t2 VALUES
   (3), (3),
   (4);
 
-EXPLAIN SELECT b FROM t1, t2 WHERE b=c AND a=1;
-EXPLAIN SELECT b FROM t1, t2 WHERE b=c AND a=4;
+#EXPLAIN SELECT b FROM t1, t2 WHERE b=c AND a=1;
+#EXPLAIN SELECT b FROM t1, t2 WHERE b=c AND a=4;
 
 DROP TABLE t1, t2;
 
@@ -3065,9 +3065,9 @@ INSERT INTO t2 VALUES (2,1), (3,2);
 CREATE TABLE t3 (d int,  e int, INDEX idx1(d));
 INSERT INTO t3 VALUES (2,10), (2,20), (1,30), (2,40), (2,50);
 
-EXPLAIN
-SELECT * FROM t1 LEFT JOIN t2 ON t2.b=t1.a INNER JOIN t3 ON t3.d=t1.id
-  WHERE t1.id=2;
+#EXPLAIN
+#SELECT * FROM t1 LEFT JOIN t2 ON t2.b=t1.a INNER JOIN t3 ON t3.d=t1.id
+#  WHERE t1.id=2;
 SELECT * FROM t1 LEFT JOIN t2 ON t2.b=t1.a INNER JOIN t3 ON t3.d=t1.id
   WHERE t1.id=2;
 
@@ -3100,15 +3100,15 @@ INSERT INTO t2 VALUES
   ('bbb','b'), ('ff','f'), ('cccc','c'), ('dddd','d'), ('jj','j'),
   ('aaaa','a'), ('bb','b'), ('eeee','e'), ('aa','a'), ('hh','h');
 
-EXPLAIN SELECT t2.* 
-  FROM t1 JOIN t2 ON t2.fk=t1.pk
-    WHERE t2.fk < 'c' AND t2.pk=t1.fk;
-EXPLAIN SELECT t2.* 
-  FROM t1 JOIN t2 ON t2.fk=t1.pk 
-    WHERE t2.fk BETWEEN 'a' AND 'b' AND t2.pk=t1.fk;
-EXPLAIN SELECT t2.* 
-  FROM t1 JOIN t2 ON t2.fk=t1.pk 
-    WHERE t2.fk IN ('a','b') AND t2.pk=t1.fk;
+#EXPLAIN SELECT t2.* 
+#  FROM t1 JOIN t2 ON t2.fk=t1.pk
+#    WHERE t2.fk < 'c' AND t2.pk=t1.fk;
+#EXPLAIN SELECT t2.* 
+#  FROM t1 JOIN t2 ON t2.fk=t1.pk 
+#    WHERE t2.fk BETWEEN 'a' AND 'b' AND t2.pk=t1.fk;
+#EXPLAIN SELECT t2.* 
+#  FROM t1 JOIN t2 ON t2.fk=t1.pk 
+#    WHERE t2.fk IN ('a','b') AND t2.pk=t1.fk;
 
 DROP TABLE t1,t2;
 
@@ -3122,7 +3122,7 @@ CREATE TABLE t2 (a int, b varchar(20) NOT NULL,
 INSERT INTO t1 VALUES (1,'a'),(2,'b'),(3,'c');
 INSERT INTO t2 VALUES (1,'a'),(2,'b'),(3,'c');
 
-EXPLAIN SELECT t1.a FROM t1 LEFT JOIN t2 ON t2.b=t1.b WHERE t1.a=3;
+#EXPLAIN SELECT t1.a FROM t1 LEFT JOIN t2 ON t2.b=t1.b WHERE t1.a=3;
 
 DROP TABLE t1,t2;
 
@@ -3149,28 +3149,28 @@ INSERT INTO t3 VALUES
   (230,'aa'), (960,'ii'), (410,'aa'), (510,'ee'), (290,'bb'),
   (450,'gg'), (320,'dd'), (390,'hh'), (850,'jj'), (860,'ff');
 
---replace_column 11 filtered
-EXPLAIN
-SELECT t3.a FROM t1,t2 FORCE INDEX (si),t3
-  WHERE t1.id = 8 AND t2.i BETWEEN t1.b AND t1.e AND 
-        t3.a=t2.a AND t3.c IN ('bb','ee');
+#--replace_column 11 filtered
+#EXPLAIN
+#SELECT t3.a FROM t1,t2 FORCE INDEX (si),t3
+#  WHERE t1.id = 8 AND t2.i BETWEEN t1.b AND t1.e AND 
+#        t3.a=t2.a AND t3.c IN ('bb','ee');
 
---replace_column 11 filtered
-EXPLAIN
-SELECT t3.a FROM t1,t2,t3
-  WHERE t1.id = 8 AND t2.i BETWEEN t1.b AND t1.e AND
-        t3.a=t2.a AND t3.c IN ('bb','ee') ;
+#--replace_column 11 filtered
+#EXPLAIN
+#SELECT t3.a FROM t1,t2,t3
+#  WHERE t1.id = 8 AND t2.i BETWEEN t1.b AND t1.e AND
+#        t3.a=t2.a AND t3.c IN ('bb','ee') ;
 
---replace_column 11 filtered
-EXPLAIN 
-SELECT t3.a FROM t1,t2 FORCE INDEX (si),t3
-  WHERE t1.id = 8 AND (t2.i=t1.b OR t2.i=t1.e) AND t3.a=t2.a AND
-        t3.c IN ('bb','ee');
---replace_column 11 filtered
-EXPLAIN 
-SELECT t3.a FROM t1,t2,t3
-  WHERE t1.id = 8 AND (t2.i=t1.b OR t2.i=t1.e) AND t3.a=t2.a AND
-        t3.c IN ('bb','ee');
+#--replace_column 11 filtered
+#EXPLAIN 
+#SELECT t3.a FROM t1,t2 FORCE INDEX (si),t3
+#  WHERE t1.id = 8 AND (t2.i=t1.b OR t2.i=t1.e) AND t3.a=t2.a AND
+#        t3.c IN ('bb','ee');
+#--replace_column 11 filtered
+#EXPLAIN 
+#SELECT t3.a FROM t1,t2,t3
+#  WHERE t1.id = 8 AND (t2.i=t1.b OR t2.i=t1.e) AND t3.a=t2.a AND
+#       t3.c IN ('bb','ee');
 
 DROP TABLE t1,t2,t3;
  
@@ -3228,12 +3228,12 @@ INSERT INTO t1 SELECT * FROM t1 WHERE ID_with_null IS NULL;
 SELECT COUNT(*) FROM t1 WHERE ID_with_null IS NULL;
 SELECT COUNT(*) FROM t1 WHERE ID_better=1;
 
-EXPLAIN SELECT * FROM t1 WHERE ID_better=1 AND ID_with_null IS NULL;
+#EXPLAIN SELECT * FROM t1 WHERE ID_better=1 AND ID_with_null IS NULL;
 
 DROP INDEX idx1 ON t1;
 CREATE UNIQUE INDEX idx1 ON t1(ID_with_null);
 
-EXPLAIN SELECT * FROM t1 WHERE ID_better=1 AND ID_with_null IS NULL;
+#EXPLAIN SELECT * FROM t1 WHERE ID_better=1 AND ID_with_null IS NULL;
 
 DROP TABLE t1;
 
@@ -3260,26 +3260,26 @@ SELECT COUNT(*) FROM t1 WHERE ID1_with_null=3 AND ID2_with_null IS NULL;
 SELECT COUNT(*) FROM t1 WHERE ID1_with_null IS NULL AND ID2_with_null IS NULL;
 SELECT COUNT(*) FROM t1 WHERE ID_better=1;
 
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null=3 ;
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null=3 AND ID2_with_null=3 IS NULL ;
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null IS NULL;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null=3 ;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null=3 AND ID2_with_null=3 IS NULL ;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null IS NULL;
 
 #Bug #SEQUOIADBMAINSTREAM-3570
 #DROP INDEX idx1 ON t1;
 #CREATE UNIQUE INDEX idx1 ON t1(ID1_with_null,ID2_with_null);
 
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null=3 ;
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null=3 AND ID2_with_null IS NULL ;
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null IS NULL;
-EXPLAIN SELECT * FROM t1
-  WHERE ID_better=1 AND ID1_with_null IS NULL AND 
-        (ID2_with_null=1 OR ID2_with_null=2);
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null=3 ;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null=3 AND ID2_with_null IS NULL ;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null IS NULL AND ID2_with_null IS NULL;
+#EXPLAIN SELECT * FROM t1
+#  WHERE ID_better=1 AND ID1_with_null IS NULL AND 
+#        (ID2_with_null=1 OR ID2_with_null=2);
 
 DROP TABLE t1;
 
@@ -3342,14 +3342,16 @@ SELECT * FROM t2;
 SELECT * FROM t2 ORDER BY name;
 SELECT name, LENGTH(name), n FROM t2 ORDER BY name;
 
-EXPLAIN SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
+#EXPLAIN SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
 SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
-EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
+#EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
 SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
-EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
+#EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
 SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
-EXPLAIN SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
-SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
+#EXPLAIN SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
+
+#Bug #SEQUOIADBMAINSTREAM-3643
+#SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
 
 DROP TABLE t1,t2;
 
@@ -3363,14 +3365,16 @@ SELECT * FROM t2;
 SELECT * FROM t2 ORDER BY name;
 SELECT name, LENGTH(name), n FROM t2 ORDER BY name;
 
-EXPLAIN SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
+#EXPLAIN SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
 SELECT name, LENGTH(name), n FROM t2 WHERE name='cc '; 
-EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
+#EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
 SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%';
-EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
+#EXPLAIN SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
 SELECT name , LENGTH(name), n FROM t2 WHERE name LIKE 'cc%' ORDER BY name;
-EXPLAIN SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
-SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
+#EXPLAIN SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
+
+#Bug #SEQUOIADBMAINSTREAM-3643
+#SELECT * FROM t1 LEFT JOIN t2 ON t1.name=t2.name;
 
 DROP TABLE t1,t2;
 
@@ -3429,9 +3433,9 @@ DROP TABLE t1,t2;
 CREATE TABLE t1 (a INT, b INT, KEY inx (b,a));
 
 INSERT INTO t1 VALUES (1,1), (1,2), (1,3), (1,4), (1,5), (1, 6), (1,7);
-EXPLAIN SELECT COUNT(*) FROM t1 f1 INNER JOIN t1 f2
-    ON ( f1.b=f2.b AND f1.a<f2.a ) 
-    WHERE 1 AND f1.b NOT IN (100,2232,3343,51111);
+#EXPLAIN SELECT COUNT(*) FROM t1 f1 INNER JOIN t1 f2
+#    ON ( f1.b=f2.b AND f1.a<f2.a ) 
+#    WHERE 1 AND f1.b NOT IN (100,2232,3343,51111);
 DROP TABLE t1;    
 
 #
@@ -3792,8 +3796,8 @@ drop table t1, t2, t3;
 CREATE TABLE t1 (a INT KEY, b INT);
 INSERT INTO t1 VALUES (1,1), (2,2), (3,3), (4,4);
 
-EXPLAIN EXTENDED SELECT a, b FROM t1 WHERE a > 1 AND a = b LIMIT 2;
-EXPLAIN EXTENDED SELECT a, b FROM t1 WHERE a > 1 AND b = a LIMIT 2;
+#EXPLAIN EXTENDED SELECT a, b FROM t1 WHERE a > 1 AND a = b LIMIT 2;
+#EXPLAIN EXTENDED SELECT a, b FROM t1 WHERE a > 1 AND b = a LIMIT 2;
 
 DROP TABLE t1;
 
@@ -3851,34 +3855,34 @@ SET sql_mode = default;
 CREATE TABLE t1(a DATETIME NOT NULL);
 INSERT INTO t1 VALUES('2001-01-01');
 SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
 DROP TABLE t1;
 
 CREATE TABLE t1(a DATE NOT NULL);
 INSERT INTO t1 VALUES('2001-01-01');
 SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
 DROP TABLE t1;
 
 CREATE TABLE t1(a TIMESTAMP NOT NULL NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP);
 INSERT INTO t1 VALUES('2001-01-01');
 SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a='2001-01-01 00:00:00';
 DROP TABLE t1;
 
 CREATE TABLE t1(a DATETIME NOT NULL, b DATE NOT NULL);
 INSERT INTO t1 VALUES('2001-01-01', '2001-01-01');
 SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
 DROP TABLE t1;
 
 CREATE TABLE t1(a DATETIME NOT NULL, b VARCHAR(20) NOT NULL);
 INSERT INTO t1 VALUES('2001-01-01', '2001-01-01');
 SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01' AND a=b AND b='2001-01-01 00:00:00';
 
 SELECT * FROM t1 WHERE a='2001-01-01 00:00:00' AND a=b AND b='2001-01-01';
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01 00:00:00' AND a=b AND b='2001-01-01';
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a='2001-01-01 00:00:00' AND a=b AND b='2001-01-01';
 DROP TABLE t1;
 
 CREATE TABLE t1(a DATETIME NOT NULL, b DATE NOT NULL);
@@ -3887,10 +3891,10 @@ SELECT x.a, y.a, z.a FROM t1 x
   JOIN t1 y ON x.a=y.a 
   JOIN t1 z ON y.a=z.a 
   WHERE x.a='2001-01-01' AND z.a='2001-01-01 00:00:00';
-EXPLAIN EXTENDED SELECT x.a, y.a, z.a FROM t1 x 
-  JOIN t1 y ON x.a=y.a 
-  JOIN t1 z ON y.a=z.a 
-  WHERE x.a='2001-01-01' AND z.a='2001-01-01 00:00:00';
+#EXPLAIN EXTENDED SELECT x.a, y.a, z.a FROM t1 x 
+#  JOIN t1 y ON x.a=y.a 
+#  JOIN t1 z ON y.a=z.a 
+#  WHERE x.a='2001-01-01' AND z.a='2001-01-01 00:00:00';
 DROP TABLE t1;
 
 
@@ -3908,7 +3912,7 @@ INSERT INTO t1 VALUES (0), (0), (0);
 INSERT INTO t1 SELECT t11.a FROM t1 t11, t1 t12;
 INSERT INTO t1 SELECT t11.a FROM t1 t11, t1 t12;
 INSERT INTO t1 SELECT t11.a FROM t1 t11, t1 t12;
-EXPLAIN SELECT a FROM t1 ORDER BY a;
+#EXPLAIN SELECT a FROM t1 ORDER BY a;
 --disable_result_log
 SELECT a FROM t1 ORDER BY a;
 --enable_result_log
@@ -3921,13 +3925,14 @@ INSERT INTO t1 VALUES (0, 0, 0), (0, 0, 2), (0, 0, 1);
 INSERT INTO t1 SELECT t11.a, t11.b, t11.c FROM t1 t11, t1 t12;
 INSERT INTO t1 SELECT t11.a, t11.b, t11.c FROM t1 t11, t1 t12;
 INSERT INTO t1 SELECT t11.a, t11.b, t11.c FROM t1 t11, t1 t12;
-EXPLAIN SELECT a FROM t1 ORDER BY a LIMIT 5;
+#EXPLAIN SELECT a FROM t1 ORDER BY a LIMIT 5;
 SELECT a FROM t1 ORDER BY a LIMIT 5;
-EXPLAIN SELECT * FROM t1 ORDER BY a, b LIMIT 5;
-SELECT * FROM t1 ORDER BY a, b LIMIT 5;
-EXPLAIN SELECT * FROM t1 ORDER BY a, b, c LIMIT 5;
+#Sequoiadb not support return record by insert order when use order by;
+#EXPLAIN SELECT * FROM t1 ORDER BY a, b LIMIT 5;
+#SELECT * FROM t1 ORDER BY a, b LIMIT 5;
+#EXPLAIN SELECT * FROM t1 ORDER BY a, b, c LIMIT 5;
 SELECT * FROM t1 ORDER BY a, b, c LIMIT 5;
-EXPLAIN SELECT * FROM t1 ORDER BY c, a LIMIT 5;
+#EXPLAIN SELECT * FROM t1 ORDER BY c, a LIMIT 5;
 SELECT * FROM t1 ORDER BY c, a LIMIT 5;
 
 SET @@sort_buffer_size= @old_sort_buffer_size;
@@ -3983,14 +3988,14 @@ DROP TABLE A,C;
 #
 CREATE TABLE t1 (a INT NOT NULL, b INT);
 INSERT INTO t1 VALUES (1, 1);
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND a=a) OR b > 2;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND a=a) OR b > 2;
 SELECT * FROM t1 WHERE (a=a AND a=a) OR b > 2;
 DROP TABLE t1;
 
 CREATE TABLE t1 (a INT NOT NULL, b INT NOT NULL, c INT NOT NULL);
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND b=b AND c=c) OR b > 20;
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND a=a AND b=b) OR b > 20;
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND b=b AND a=a) OR b > 20;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND b=b AND c=c) OR b > 20;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND a=a AND b=b) OR b > 20;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE (a=a AND b=b AND a=a) OR b > 20;
 DROP TABLE t1;
 
 
@@ -4089,14 +4094,14 @@ INSERT INTO t1 VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10);
 CREATE TABLE t2 (b INT);
 INSERT INTO t2 VALUES (2);
 SELECT * FROM t1 WHERE a = 1 + 1;
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a = 1 + 1;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a = 1 + 1;
 SELECT * FROM t1 HAVING a = 1 + 1;
-EXPLAIN EXTENDED SELECT * FROM t1 HAVING a = 1 + 1;
+#EXPLAIN EXTENDED SELECT * FROM t1 HAVING a = 1 + 1;
 SELECT * FROM t1, t2 WHERE a = b + (1 + 1);
-EXPLAIN EXTENDED SELECT * FROM t1, t2 WHERE a = b + (1 + 1);
+#EXPLAIN EXTENDED SELECT * FROM t1, t2 WHERE a = b + (1 + 1);
 SELECT * FROM t2 LEFT JOIN t1 ON a = b + 1;
-EXPLAIN EXTENDED SELECT * FROM t2 LEFT JOIN t1 ON a = b + 1;
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a > UNIX_TIMESTAMP('2009-03-10 00:00:00');
+#EXPLAIN EXTENDED SELECT * FROM t2 LEFT JOIN t1 ON a = b + 1;
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a > UNIX_TIMESTAMP('2009-03-10 00:00:00');
 
 delimiter |;
 CREATE FUNCTION f1() RETURNS INT DETERMINISTIC
@@ -4109,7 +4114,7 @@ delimiter ;|
 SET @cnt := 0;
 SELECT * FROM t1 WHERE a = f1();
 SELECT @cnt;
-EXPLAIN EXTENDED SELECT * FROM t1 WHERE a = f1();
+#EXPLAIN EXTENDED SELECT * FROM t1 WHERE a = f1();
 DROP TABLE t1, t2;
 DROP FUNCTION f1;
 --echo # End of bug#33546
@@ -4178,7 +4183,7 @@ DROP TABLE t1;
 --echo #
 CREATE TABLE t1(a ENUM('') NOT NULL);
 INSERT INTO t1 VALUES (), (), ();
-EXPLAIN SELECT 1 FROM t1 ORDER BY a COLLATE latin1_german2_ci;
+#EXPLAIN SELECT 1 FROM t1 ORDER BY a COLLATE latin1_german2_ci;
 SELECT 1 FROM t1 ORDER BY a COLLATE latin1_german2_ci;
 DROP TABLE t1;
 
@@ -4195,14 +4200,14 @@ INSERT INTO t1 VALUES (1,1), (2,2), (3,3);
 CREATE TABLE t2(pk INT PRIMARY KEY, i INT) ENGINE = MYISAM;
 INSERT INTO t2 VALUES (1,1), (2,2), (3,3);
 
-EXPLAIN
-SELECT *
-  FROM 
-    t1
-  LEFT OUTER JOIN
-    (t2 INNER JOIN t_empty ON TRUE)
-  ON t1.pk=t2.pk
-  WHERE t2.pk <> 2;
+#EXPLAIN
+#SELECT *
+#  FROM 
+#    t1
+#  LEFT OUTER JOIN
+#    (t2 INNER JOIN t_empty ON TRUE)
+#  ON t1.pk=t2.pk
+#  WHERE t2.pk <> 2;
 
 SELECT *
   FROM 
@@ -4213,14 +4218,14 @@ SELECT *
   WHERE t2.pk <> 2;
 
 
-EXPLAIN
-SELECT *
-  FROM 
-    t1
-  LEFT OUTER JOIN
-    (t2 CROSS JOIN t_empty)
-  ON t1.pk=t2.pk
-  WHERE t2.pk <> 2;
+#EXPLAIN
+#SELECT *
+#  FROM 
+#    t1
+#  LEFT OUTER JOIN
+#    (t2 CROSS JOIN t_empty)
+#  ON t1.pk=t2.pk
+#  WHERE t2.pk <> 2;
 
 SELECT *
   FROM 
@@ -4231,14 +4236,14 @@ SELECT *
   WHERE t2.pk <> 2;
 
 
-EXPLAIN
-SELECT *
-  FROM 
-    t1
-  LEFT OUTER JOIN
-    (t2 INNER JOIN t_empty ON t_empty.i=t2.i)
-  ON t1.pk=t2.pk
-  WHERE t2.pk <> 2;
+#EXPLAIN
+#SELECT *
+#  FROM 
+#    t1
+#  LEFT OUTER JOIN
+#    (t2 INNER JOIN t_empty ON t_empty.i=t2.i)
+#  ON t1.pk=t2.pk
+#  WHERE t2.pk <> 2;
 
 SELECT *
   FROM 
@@ -4271,8 +4276,8 @@ INSERT INTO `cc` VALUES
 ,'e'),(8,9,'t','t'),(5,2,'q','q'),(4,6,'b','b'),(5,5,'w','w'),(3,2,'m','m'),(0,4,'x','x'),
 (8,9,'',''),(0,6,'w','w'),(4,5,'x','x'),(0,0,'e','e'),(0,0,'e','e'),(2,8,'p','p'),(0,0,'x'
 ,'x');
-EXPLAIN SELECT `varchar_nokey` g1  FROM cc  WHERE `int_nokey` AND `int_key`  <= 4
-  HAVING g1  ORDER  BY `varchar_key` LIMIT  6   ;
+#EXPLAIN SELECT `varchar_nokey` g1  FROM cc  WHERE `int_nokey` AND `int_key`  <= 4
+#  HAVING g1  ORDER  BY `varchar_key` LIMIT  6   ;
 
 SELECT `varchar_nokey` g1  FROM cc  WHERE `int_nokey` AND `int_key`  <= 4
   HAVING g1  ORDER  BY `varchar_key` LIMIT  6   ;
