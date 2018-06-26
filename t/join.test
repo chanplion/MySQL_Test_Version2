@@ -1,9 +1,7 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB,
-#but needs to be kept for tests that would need myisam in future.
 # (#case 13306: query with join)
 
---source include/force_myisam_default.inc
 --source include/have_sequoiadb.inc
 
 #

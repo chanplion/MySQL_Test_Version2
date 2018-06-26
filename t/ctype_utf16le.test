@@ -444,10 +444,11 @@ SELECT POSITION('bb' IN 'abba');
 --echo #
 --echo # Testing cs->coll->hash_sort()
 --echo #
-SET NAMES utf8, collation_connection=utf16le_bin;
---source include/ctype_heap.inc
-SET NAMES utf8, collation_connection=utf16le_general_ci;
---source include/ctype_heap.inc
+# NOW not concern engine heap
+#SET NAMES utf8, collation_connection=utf16le_bin;
+#--source include/ctype_heap.inc
+#SET NAMES utf8, collation_connection=utf16le_general_ci;
+#--source include/ctype_heap.inc
 
 --echo #
 --echo # Testing cs->cset->numchars()

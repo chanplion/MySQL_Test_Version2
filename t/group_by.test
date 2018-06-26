@@ -1681,7 +1681,7 @@ INSERT INTO t2 VALUES (1),(2);
 
 --source include/turn_off_only_full_group_by.inc
 
-#Modify Expect Result Use Engine = Sequoiadb As Same AS The Engine= InnoDB
+#Modify Expect Result Use Engine = Sequoiadb As Same AS The Engine= SequoiaDB
 --echo
 SELECT i, j, COUNT(i) FROM t1 JOIN t2 WHERE j=3;
 
@@ -2100,7 +2100,7 @@ DROP TABLE t1;
 #  kp2 INT,
 #  INDEX idx_noncov(kp1),
 #  INDEX idx_cov(kp1,kp2)
-#) ENGINE=InnoDB;
+#) ENGINE=SequoiaDB;
 #
 #INSERT INTO t1 VALUES (NULL, 1, 1);
 #
@@ -2254,7 +2254,7 @@ DROP TABLE t1;
 --echo #               BITMAP_IS_SET(TABLE->READ_SET,
 --echo # 
 
-CREATE TABLE r(c BLOB) ENGINE=INNODB;
+CREATE TABLE r(c BLOB) ENGINE=SEQUOIADB;
 
 INSERT INTO r VALUES('');
 
@@ -2334,7 +2334,7 @@ SET GLOBAL innodb_large_prefix=default;
 --echo # Bug#20262196 ASSERTION FAILED: !IMPLICIT_GROUPING || TMP_TABLE_PARAM.SUM_FUNC_COUNT
 --echo #
 
-CREATE TABLE t1(a INT, b INT) ENGINE=INNODB;
+CREATE TABLE t1(a INT, b INT) ENGINE=SEQUOIADB;
 INSERT INTO t1 VALUES (1,2), (3,4);
 
 SELECT
@@ -2378,7 +2378,7 @@ DROP VIEW v1;
 #  KEY idx1 (a),
 #  KEY idx2 (b, a),
 #  KEY idx3 (a, b)
-#) ENGINE = InnoDB;
+#) ENGINE = SequoiaDB;
 #
 #INSERT INTO t1 (a, b) SELECT t01.a, t02.a FROM t0 t01, t0 t02;
 #
@@ -2420,7 +2420,7 @@ DROP VIEW v1;
 --echo #
 
 CREATE TABLE cc (pk int,  i int, c varchar(1),
-                 PRIMARY KEY (pk, i), KEY c_key(c)) ENGINE=InnoDB;
+                 PRIMARY KEY (pk, i), KEY c_key(c)) ENGINE=SequoiaDB;
 
 SELECT c, i, pk FROM cc WHERE (cc.pk = 1)  GROUP BY c, i, pk;
 

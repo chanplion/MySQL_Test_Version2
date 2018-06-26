@@ -1,9 +1,7 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB,
-#but needs to be kept for tests that would need MyISAM in future.
 #(Case #13097: Check insert/update/delete/select of NULL)
 
---source include/force_myisam_default.inc
 --source include/have_sequoiadb.inc
 
 # Initialise

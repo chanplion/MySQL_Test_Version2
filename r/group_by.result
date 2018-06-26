@@ -2473,7 +2473,7 @@ DROP TABLE t1;
 # Bug#18487060: ASSERTION FAILED: !TABLE || (!TABLE->READ_SET || 
 #               BITMAP_IS_SET(TABLE->READ_SET,
 # 
-CREATE TABLE r(c BLOB) ENGINE=INNODB;
+CREATE TABLE r(c BLOB) ENGINE=SEQUOIADB;
 INSERT INTO r VALUES('');
 SELECT 1 FROM r GROUP BY MAKE_SET(1,c) WITH ROLLUP;
 1
@@ -2497,7 +2497,7 @@ Warning	131	Using innodb_large_prefix is deprecated and the parameter may be rem
 #
 # Bug#20262196 ASSERTION FAILED: !IMPLICIT_GROUPING || TMP_TABLE_PARAM.SUM_FUNC_COUNT
 #
-CREATE TABLE t1(a INT, b INT) ENGINE=INNODB;
+CREATE TABLE t1(a INT, b INT) ENGINE=SEQUOIADB;
 INSERT INTO t1 VALUES (1,2), (3,4);
 SELECT
 EXISTS
@@ -2537,7 +2537,7 @@ DROP VIEW v1;
 # Used to give ASAN error on the SELECT: addressing beyond allocated memory
 #
 CREATE TABLE cc (pk int,  i int, c varchar(1),
-PRIMARY KEY (pk, i), KEY c_key(c)) ENGINE=InnoDB;
+PRIMARY KEY (pk, i), KEY c_key(c)) ENGINE=SequoiaDB;
 SELECT c, i, pk FROM cc WHERE (cc.pk = 1)  GROUP BY c, i, pk;
 c	i	pk
 DROP TABLE cc;

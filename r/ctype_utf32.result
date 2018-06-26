@@ -592,7 +592,7 @@ deallocate prepare stmt;
 create table t1 (
 a char(10) character set utf32 not null, 
 index a (a)
-) engine=myisam;
+) engine=sequoiadb;
 insert into t1 values (repeat(0x0000201f, 10));
 insert into t1 values (repeat(0x00002020, 10));
 insert into t1 values (repeat(0x00002021, 10));
@@ -671,7 +671,7 @@ set collation_connection=utf32_general_ci;
 select position('bb' in 'abba');
 position('bb' in 'abba')
 2
-create table t1 (a varchar(10) character set utf32) engine=heap;
+create table t1 (a varchar(10) character set utf32) engine=sequoiadb;
 insert into t1 values ('a'),('A'),('b'),('B');
 select * from t1 where a='a' order by binary a;
 a
