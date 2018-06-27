@@ -1,0 +1,11 @@
+# The include statement below is a temp one for tests that are yet to
+#be ported to run with Sequoiadb.
+
+# 
+# Run subquery_all.test with BKA enabled 
+#
+set optimizer_switch='batched_key_access=on,block_nested_loop=off,mrr_cost_based=off';
+
+--source t/subquery_all.test
+
+set optimizer_switch=default;
