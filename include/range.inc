@@ -455,10 +455,13 @@ insert into t1 select 18446744073709551615;
 insert into t1 select 18446744073709551614;
 
 #explain select * from t1 where a <> -1;
+--sorted_result
 select * from t1 where a <> -1;
 #explain select * from t1 where a > -1 or a < -1;
+--sorted_result
 select * from t1 where a > -1 or a < -1;
 #explain select * from t1 where a > -1;
+--sorted_result
 select * from t1 where a > -1;
 #explain select * from t1 where a < -1;
 select * from t1 where a < -1;

@@ -771,7 +771,7 @@ USE test;
 #CREATE TEMPORARY TABLE t4 SELECT * FROM t1;
 #--echo # Check that we do *not* allow creation of MERGE table with underlying
 #--echo # temporary table without additional privileges.
-#CREATE TEMPORARY TABLE t5(a INT) ENGINE = MyISAM;
+#CREATE TEMPORARY TABLE t5(a INT) ENGINE = SequoiaDB;
 #--error ER_TABLEACCESS_DENIED_ERROR
 #CREATE TEMPORARY TABLE t6(a INT) ENGINE = MERGE UNION = (t5);
 #--echo # Check that we allow creation of MERGE table with no underlying table

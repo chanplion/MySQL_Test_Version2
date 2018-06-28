@@ -2,7 +2,6 @@
 #be ported to run with SequoiaDB,
 # (#Case #13131: Check transaction rollback)
 
---source include/have_myisam.inc
 --source include/have_sequoiadb.inc
 
 #

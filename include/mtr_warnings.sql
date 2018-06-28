@@ -23,7 +23,7 @@ use mtr||
 --
 CREATE TABLE test_suppressions (
   pattern VARCHAR(255)
-) ENGINE=MyISAM||
+) ENGINE=SequoiaDB||
 
 
 --
@@ -55,7 +55,7 @@ SET @@collation_connection = @collation_connection_saved||
 --
 CREATE TABLE global_suppressions (
   pattern VARCHAR(255)
-) ENGINE=MyISAM||
+) ENGINE=SequoiaDB||
 
 
 -- Declare a trigger that makes sure

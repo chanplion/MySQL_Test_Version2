@@ -150,7 +150,7 @@ DROP TABLE t1;
 
 # Just testing for SequoiaDB, don't concern other engine
 #--disable_warnings
-#CREATE TABLE t1 ENGINE=INNODB AS SELECT repeat('a', 5) AS s1 LIMIT 0;
+#CREATE TABLE t1 ENGINE=SEQUOIADB AS SELECT repeat('a', 5) AS s1 LIMIT 0;
 #--enable_warnings
 #INSERT INTO t1 VALUES ('x'),('y'),('z'),('X'),('Y'),('Z');
 #SELECT * FROM t1 GROUP BY s1;

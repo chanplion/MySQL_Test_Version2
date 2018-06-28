@@ -39,13 +39,14 @@ create table t2 select auto+1 from t1;
 drop table if exists t1,t2;
 --error 1167
 create table t1 (b char(0) not null, index(b));
---error 1163
-create table t1 (a int not null,b text) engine=heap;
+# engine heap will return error, but sequoiadb not
+#--error 1163
+#create table t1 (a int not null,b text) engine=sequoiadb;
 drop table if exists t1;
 
 # Now SequoiaDB not support auto_increment
 #-error 1075
-#reate table t1 (ordid int(8) not null auto_increment, ord  varchar(50) not null, primary key (ord,ordid)) engine=heap;
+#reate table t1 (ordid int(8) not null auto_increment, ord  varchar(50) not null, primary key (ord,ordid)) engine=sequoiadb;
 
 -- error 1049
 create table not_existing_database.test (a int);
@@ -1199,7 +1200,7 @@ DROP TABLE t2;
 
 #--echo
 
-#CREATE TABLE t3(c1 DATETIME NOT NULL) ENGINE=MYISAM;
+#CREATE TABLE t3(c1 DATETIME NOT NULL) ENGINE=SEQUOIADB;
 #INSERT INTO t3 VALUES (0);
 
 #--echo

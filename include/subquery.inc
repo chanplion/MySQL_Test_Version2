@@ -19,11 +19,11 @@ SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 drop table if exists t1,t2,t3,t4,t5,t6,t7,t8,t11,t12;
 --enable_warnings
 select (select 2);
-explain extended select (select 2);
+#explain extended select (select 2);
 SELECT (SELECT 1) UNION SELECT (SELECT 2);
-explain extended SELECT (SELECT 1) UNION SELECT (SELECT 2);
+#explain extended SELECT (SELECT 1) UNION SELECT (SELECT 2);
 SELECT (SELECT (SELECT 0 UNION SELECT 0));
-explain extended SELECT (SELECT (SELECT 0 UNION SELECT 0));
+#explain extended SELECT (SELECT (SELECT 0 UNION SELECT 0));
 -- error ER_ILLEGAL_REFERENCE
 SELECT (SELECT 1 FROM (SELECT 1) as b HAVING a=1) as a;
 -- error ER_ILLEGAL_REFERENCE
@@ -31,7 +31,7 @@ SELECT (SELECT 1 FROM (SELECT 1) as b HAVING b=1) as a,(SELECT 1 FROM (SELECT 1)
 SELECT (SELECT 1),MAX(1) FROM (SELECT 1) as a;
 -- error ER_ILLEGAL_REFERENCE
 SELECT (SELECT a) as a;
-EXPLAIN EXTENDED SELECT 1 FROM (SELECT 1 as a) as b  HAVING (SELECT a)=1;
+#EXPLAIN EXTENDED SELECT 1 FROM (SELECT 1 as a) as b  HAVING (SELECT a)=1;
 SELECT 1 FROM (SELECT 1 as a) as b HAVING (SELECT a)=1;
 -- error ER_BAD_FIELD_ERROR
 SELECT (SELECT 1), a;
@@ -91,17 +91,17 @@ insert into t3 values (6),(7),(3);
 select * from t2 where t2.b=(select a from t3 order by 1 desc limit 1);
 (select * from t2 where t2.b=(select a from t3 order by 1 desc limit 1)) union (select * from t4 order by a limit 2) limit 3;
 (select * from t2 where t2.b=(select a from t3 order by 1 desc limit 1)) union (select * from t4 where t4.b=(select max(t2.a)*4 from t2) order by a);
-explain extended (select * from t2 where t2.b=(select a from t3 order by 1 desc limit 1)) union (select * from t4 where t4.b=(select max(t2.a)*4 from t2) order by a);
+#explain extended (select * from t2 where t2.b=(select a from t3 order by 1 desc limit 1)) union (select * from t4 where t4.b=(select max(t2.a)*4 from t2) order by a);
 select (select a from t3 where a<t2.a*4 order by 1 desc limit 1), a from t2;
 select (select t3.a from t3 where a<8 order by 1 desc limit 1), a from
 (select * from t2 where a>1) as tt;
-explain extended select (select t3.a from t3 where a<8 order by 1 desc limit 1), a from
-(select * from t2 where a>1) as tt;
+#explain extended select (select t3.a from t3 where a<8 order by 1 desc limit 1), a from
+#(select * from t2 where a>1) as tt;
 select * from t1 where t1.a=(select t2.a from t2 where t2.b=(select max(a) from t3) order by 1 desc limit 1);
 select * from t1 where t1.a=(select t2.a from t2 where t2.b=(select max(a) from t3 where t3.a > t1.a) order by 1 desc limit 1);
 select * from t1 where t1.a=(select t2.a from t2 where t2.b=(select max(a) from t3 where t3.a < t1.a) order by 1 desc limit 1);
 select b,(select avg(t2.a+(select min(t3.a) from t3 where t3.a >= t4.a)) from t2) from t4;
-explain extended select b,(select avg(t2.a+(select min(t3.a) from t3 where t3.a >= t4.a)) from t2) from t4;
+#explain extended select b,(select avg(t2.a+(select min(t3.a) from t3 where t3.a >= t4.a)) from t2) from t4;
 #Bug #SEQUOIADBMAINSTREAM-3576
 #select * from t3 where exists (select * from t2 where t2.b=t3.a);
 select * from t3 where not exists (select * from t2 where t2.b=t3.a);
@@ -118,7 +118,7 @@ insert into t2 values (100, 5);
 select * from t3 where a < any (select b from t2);
 select * from t3 where a < all (select b from t2);
 select * from t3 where a >= any (select b from t2);
-explain extended select * from t3 where a >= any (select b from t2);
+#explain extended select * from t3 where a >= any (select b from t2);
 select * from t3 where a >= all (select b from t2);
 delete from t2 where a=100;
 -- error ER_OPERAND_COLUMNS
@@ -138,7 +138,7 @@ insert into t5 values (5);
 select (select a from t1 where t1.a=t2.a union select a from t5 where t5.a=t2.a), a from t2;
 insert into t5 values (2);
 select (select a from t1 where t1.a=t2.a union select a from t5 where t5.a=t2.a), a from t2;
-explain extended select (select a from t1 where t1.a=t2.a union select a from t5 where t5.a=t2.a), a from t2;
+#explain extended select (select a from t1 where t1.a=t2.a union select a from t5 where t5.a=t2.a), a from t2;
 -- error ER_SUBQUERY_NO_1_ROW
 select (select a from t1 where t1.a=t2.a union all select a from t5 where t5.a=t2.a), a from t2;
 create table t6 (patient_uq int, clinic_uq int, index i1 (clinic_uq));
@@ -176,7 +176,7 @@ CREATE TABLE `t8` (
 INSERT INTO t8 (pseudo,email) VALUES ('joce','test');
 INSERT INTO t8 (pseudo,email) VALUES ('joce1','test1');
 INSERT INTO t8 (pseudo,email) VALUES ('2joce1','2test1');
-EXPLAIN EXTENDED SELECT pseudo,(SELECT email FROM t8 WHERE pseudo=(SELECT pseudo FROM t8 WHERE pseudo='joce')) FROM t8 WHERE pseudo=(SELECT pseudo FROM t8 WHERE pseudo='joce');
+#EXPLAIN EXTENDED SELECT pseudo,(SELECT email FROM t8 WHERE pseudo=(SELECT pseudo FROM t8 WHERE pseudo='joce')) FROM t8 WHERE pseudo=(SELECT pseudo FROM t8 WHERE pseudo='joce');
 -- error ER_OPERAND_COLUMNS
 SELECT pseudo FROM t8 WHERE pseudo=(SELECT pseudo,email FROM
 t8 WHERE pseudo='joce');
@@ -416,11 +416,11 @@ SELECT * FROM (SELECT 1) b WHERE 1 IN (SELECT *);
 CREATE TABLE t2 (id int(11) default NULL, KEY id (id)) ENGINE=SequoiaDB CHARSET=latin1;
 INSERT INTO t2 VALUES (1),(2);
 SELECT * FROM t2 WHERE id IN (SELECT 1);
-EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1);
+#EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1);
 SELECT * FROM t2 WHERE id IN (SELECT 1 UNION SELECT 3);
 SELECT * FROM t2 WHERE id IN (SELECT 1+(select 1));
-EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1+(select 1));
-EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1 UNION SELECT 3);
+#EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1+(select 1));
+#EXPLAIN EXTENDED SELECT * FROM t2 WHERE id IN (SELECT 1 UNION SELECT 3);
 SELECT * FROM t2 WHERE id IN (SELECT 5 UNION SELECT 3);
 SELECT * FROM t2 WHERE id IN (SELECT 5 UNION SELECT 2);
 -- error ER_UPDATE_TABLE_USED
@@ -491,11 +491,11 @@ CREATE TABLE t2 (a int(11) default '0', INDEX (a));
 INSERT INTO t1 VALUES (1),(2),(3),(4);
 INSERT INTO t2 VALUES (1),(2),(3);
 SELECT t1.a, t1.a in (select t2.a from t2) FROM t1;
-explain extended SELECT t1.a, t1.a in (select t2.a from t2) FROM t1;
+#explain extended SELECT t1.a, t1.a in (select t2.a from t2) FROM t1;
 CREATE TABLE t3 (a int(11) default '0');
 INSERT INTO t3 VALUES (1),(2),(3);
 SELECT t1.a, t1.a in (select t2.a from t2,t3 where t3.a=t2.a) FROM t1;
-explain extended SELECT t1.a, t1.a in (select t2.a from t2,t3 where t3.a=t2.a) FROM t1;
+#explain extended SELECT t1.a, t1.a in (select t2.a from t2,t3 where t3.a=t2.a) FROM t1;
 drop table t1,t2,t3;
 
 #LIMIT is not supported now
@@ -578,9 +578,9 @@ drop table t1;
 
 #test of uncacheable subqueries
 CREATE TABLE t1 (a int(1));
-EXPLAIN EXTENDED SELECT (SELECT RAND() FROM t1) FROM t1;
-EXPLAIN EXTENDED SELECT (SELECT ENCRYPT('test') FROM t1) FROM t1;
-EXPLAIN EXTENDED SELECT (SELECT BENCHMARK(1,1) FROM t1) FROM t1;
+#EXPLAIN EXTENDED SELECT (SELECT RAND() FROM t1) FROM t1;
+#EXPLAIN EXTENDED SELECT (SELECT ENCRYPT('test') FROM t1) FROM t1;
+#EXPLAIN EXTENDED SELECT (SELECT BENCHMARK(1,1) FROM t1) FROM t1;
 drop table t1;
 
 # NOW SequoiaDB not support index of Date
@@ -644,8 +644,8 @@ drop table t1;
 
 create table t1 (a int);
 insert into t1 values (1), (2), (3);
-explain extended select a,(select (select rand() from t1 limit 1)  from t1 limit 1)
-from t1;
+#explain extended select a,(select (select rand() from t1 limit 1)  from t1 limit 1)
+#from t1;
 drop table t1;
 
 #
@@ -878,7 +878,7 @@ create table t1 (s1 char(5));
 select (select 'a','b' from t1 union select 'a','b' from t1) from t1;
 insert into t1 values ('tttt');
 select * from t1 where ('a','b')=(select 'a','b' from t1 union select 'a','b' from t1);
-explain extended (select * from t1);
+#explain extended (select * from t1);
 (select * from t1);
 drop table t1;
 
@@ -893,10 +893,10 @@ select s1, s1 NOT IN (SELECT s1 FROM t2) from t1;
 select s1, s1 = ANY (SELECT s1 FROM t2) from t1;
 select s1, s1 <> ALL (SELECT s1 FROM t2) from t1;
 select s1, s1 NOT IN (SELECT s1 FROM t2 WHERE s1 < 'a2') from t1;
-explain extended select s1, s1 NOT IN (SELECT s1 FROM t2) from t1;
-explain extended select s1, s1 = ANY (SELECT s1 FROM t2) from t1;
-explain extended select s1, s1 <> ALL (SELECT s1 FROM t2) from t1;
-explain extended select s1, s1 NOT IN (SELECT s1 FROM t2 WHERE s1 < 'a2') from t1;
+#explain extended select s1, s1 NOT IN (SELECT s1 FROM t2) from t1;
+#explain extended select s1, s1 = ANY (SELECT s1 FROM t2) from t1;
+#explain extended select s1, s1 <> ALL (SELECT s1 FROM t2) from t1;
+#explain extended select s1, s1 NOT IN (SELECT s1 FROM t2 WHERE s1 < 'a2') from t1;
 drop table t1,t2;
 
 #
@@ -906,27 +906,27 @@ create table t2 (a int, b int);
 create table t3 (a int);
 insert into t3 values (6),(7),(3);
 select * from t3 where a >= all (select b from t2);
-explain extended select * from t3 where a >= all (select b from t2);
+#explain extended select * from t3 where a >= all (select b from t2);
 select * from t3 where a >= some (select b from t2);
-explain extended select * from t3 where a >= some (select b from t2);
+#explain extended select * from t3 where a >= some (select b from t2);
 select * from t3 where a >= all (select b from t2 group by 1);
-explain extended select * from t3 where a >= all (select b from t2 group by 1);
+#explain extended select * from t3 where a >= all (select b from t2 group by 1);
 select * from t3 where a >= some (select b from t2 group by 1);
-explain extended select * from t3 where a >= some (select b from t2 group by 1);
+#explain extended select * from t3 where a >= some (select b from t2 group by 1);
 select * from t3 where NULL >= any (select b from t2);
-explain extended select * from t3 where NULL >= any (select b from t2);
+#explain extended select * from t3 where NULL >= any (select b from t2);
 select * from t3 where NULL >= any (select b from t2 group by 1);
-explain extended select * from t3 where NULL >= any (select b from t2 group by 1);
+#explain extended select * from t3 where NULL >= any (select b from t2 group by 1);
 select * from t3 where NULL >= some (select b from t2);
-explain extended select * from t3 where NULL >= some (select b from t2);
+#explain extended select * from t3 where NULL >= some (select b from t2);
 select * from t3 where NULL >= some (select b from t2 group by 1);
-explain extended select * from t3 where NULL >= some (select b from t2 group by 1);
+#explain extended select * from t3 where NULL >= some (select b from t2 group by 1);
 #
 # optimized static ALL/ANY with grouping
 #
 insert into t2 values (2,2), (2,1), (3,3), (3,1);
 select * from t3 where a > all (select max(b) from t2 group by a);
-explain extended select * from t3 where a > all (select max(b) from t2 group by a);
+#explain extended select * from t3 where a > all (select max(b) from t2 group by a);
 drop table t2, t3;
 
 #
@@ -975,7 +975,7 @@ create table t1 (s1 char);
 insert into t1 values ('e');
 select * from t1 where 'f' > any (select s1 from t1);
 select * from t1 where 'f' > any (select s1 from t1 union select s1 from t1);
-explain extended select * from t1 where 'f' > any (select s1 from t1 union select s1 from t1);
+#explain extended select * from t1 where 'f' > any (select s1 from t1 union select s1 from t1);
 drop table t1;
 
 #
@@ -1098,13 +1098,13 @@ create table t1 (id int not null, text varchar(20) not null default '', primary 
 insert into t1 (id, text) values (1, 'text1'), (2, 'text2'), (3, 'text3'), (4, 'text4'), (5, 'text5'), (6, 'text6'), (7, 'text7'), (8, 'text8'), (9, 'text9'), (10, 'text10'), (11, 'text11'), (12, 'text12');
 select * from t1 where id not in (select id from t1 where id < 8);
 select * from t1 as tt where not exists (select id from t1 where id < 8 and (id = tt.id or id is null) having id is not null);
-explain extended select * from t1 where id not in (select id from t1 where id < 8);
-explain extended select * from t1 as tt where not exists (select id from t1 where id < 8 and (id = tt.id or id is null) having id is not null);
+#explain extended select * from t1 where id not in (select id from t1 where id < 8);
+#explain extended select * from t1 as tt where not exists (select id from t1 where id < 8 and (id = tt.id or id is null) having id is not null);
 insert into t1 (id, text) values (1000, 'text1000'), (1001, 'text1001');
 create table t2 (id int not null, text varchar(20) not null default '', primary key (id));
 insert into t2 (id, text) values (1, 'text1'), (2, 'text2'), (3, 'text3'), (4, 'text4'), (5, 'text5'), (6, 'text6'), (7, 'text7'), (8, 'text8'), (9, 'text9'), (10, 'text10'), (11, 'text1'), (12, 'text2'), (13, 'text3'), (14, 'text4'), (15, 'text5'), (16, 'text6'), (17, 'text7'), (18, 'text8'), (19, 'text9'), (20, 'text10'),(21, 'text1'), (22, 'text2'), (23, 'text3'), (24, 'text4'), (25, 'text5'), (26, 'text6'), (27, 'text7'), (28, 'text8'), (29, 'text9'), (30, 'text10'), (31, 'text1'), (32, 'text2'), (33, 'text3'), (34, 'text4'), (35, 'text5'), (36, 'text6'), (37, 'text7'), (38, 'text8'), (39, 'text9'), (40, 'text10'), (41, 'text1'), (42, 'text2'), (43, 'text3'), (44, 'text4'), (45, 'text5'), (46, 'text6'), (47, 'text7'), (48, 'text8'), (49, 'text9'), (50, 'text10');
 select * from t1 a left join t2 b on (a.id=b.id or b.id is null) join t1 c on (if(isnull(b.id), 1000, b.id)=c.id);
-explain extended select * from t1 a left join t2 b on (a.id=b.id or b.id is null) join t1 c on (if(isnull(b.id), 1000, b.id)=c.id);
+#explain extended select * from t1 a left join t2 b on (a.id=b.id or b.id is null) join t1 c on (if(isnull(b.id), 1000, b.id)=c.id);
 drop table t1,t2;
 
 #
@@ -1112,7 +1112,7 @@ drop table t1,t2;
 #
 create table t1 (a int);
 insert into t1 values (1);
-explain select benchmark(1000, (select a from t1 where a=sha(rand())));
+#explain select benchmark(1000, (select a from t1 where a=sha(rand())));
 drop table t1;
 
 
@@ -1465,14 +1465,14 @@ create table t1 (a int not null, b int not null, c int, primary key (a,b));
 insert into t1 values (1,1,1), (2,2,2), (3,3,3);
 set @b:= 0;
 # Let us check that subquery will use covering index
-explain select sum(a) from t1 where b > @b;
+#explain select sum(a) from t1 where b > @b;
 # This should not crash -debug server due to failing assertion
 set @a:= (select sum(a) from t1 where b > @b);
 # And this should not falsely report index usage
-explain select a from t1 where c=2;
+#explain select a from t1 where c=2;
 # Same for DO statement
 do @a:= (select sum(a) from t1 where b > @b);
-explain select a from t1 where c=2;
+#explain select a from t1 where c=2;
 drop table t1;
 
 #
@@ -1888,16 +1888,16 @@ insert into t1 values (10);
 create table t2 (a int primary key, b varchar(32), c int, unique key b(c, b));
 insert into t2(a, c, b) values (1,10,'359'), (2,10,'35988'), (3,10,'35989');
 
-explain SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
-  ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
-             ORDER BY t2.c DESC, t2.b DESC LIMIT 1) WHERE t1.a = 10;
+#explain SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
+#  ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
+#             ORDER BY t2.c DESC, t2.b DESC LIMIT 1) WHERE t1.a = 10;
 SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
   ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
             ORDER BY t2.c DESC, t2.b DESC LIMIT 1) WHERE t1.a = 10;
 
-explain SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
-  ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
-            ORDER BY t2.c, t2.b LIMIT 1) WHERE t1.a = 10;
+#explain SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
+#  ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
+#            ORDER BY t2.c, t2.b LIMIT 1) WHERE t1.a = 10;
 SELECT sql_no_cache t1.a, r.a, r.b FROM t1 LEFT JOIN t2 r
   ON r.a = (SELECT t2.a FROM t2 WHERE t2.c = t1.a AND t2.b <= '359899'
             ORDER BY t2.c, t2.b LIMIT 1) WHERE t1.a = 10;
@@ -1955,7 +1955,7 @@ INSERT INTO t1 VALUES (NULL);
 CREATE TABLE t2(a int);
 INSERT INTO t2 VALUES (1),(2),(3);
 
-EXPLAIN SELECT a, a IN (SELECT a FROM t1) FROM t2;
+#EXPLAIN SELECT a, a IN (SELECT a FROM t1) FROM t2;
 SELECT a, a IN (SELECT a FROM t1) FROM t2;
 
 DROP TABLE t1,t2;
@@ -1987,7 +1987,7 @@ INSERT INTO t1 VALUES (1), (2);
 
 SELECT a FROM t1 WHERE (SELECT 1 FROM DUAL WHERE 1=0) > 0;
 SELECT a FROM t1 WHERE (SELECT 1 FROM DUAL WHERE 1=0) IS NULL;
-EXPLAIN SELECT a FROM t1 WHERE (SELECT 1 FROM DUAL WHERE 1=0) IS NULL;
+#EXPLAIN SELECT a FROM t1 WHERE (SELECT 1 FROM DUAL WHERE 1=0) IS NULL;
 
 DROP TABLE t1;
 
@@ -2452,12 +2452,12 @@ SELECT * FROM t1
 WHERE NOT EXISTS (((SELECT i FROM t1) UNION (SELECT i FROM t1)));
 
 #TODO:not supported
---error ER_PARSE_ERROR
-explain select ((select t11.i from t1 t11) union (select t12.i from t1 t12))
-  from t1;
+#--error ER_PARSE_ERROR
+#explain select ((select t11.i from t1 t11) union (select t12.i from t1 t12))
+#  from t1;
 
-explain select * from t1 where not exists
-  ((select t11.i from t1 t11) union (select t12.i from t1 t12));
+#explain select * from t1 where not exists
+#  ((select t11.i from t1 t11) union (select t12.i from t1 t12));
 
 DROP TABLE t1;
 
@@ -2869,7 +2869,7 @@ DROP TABLE t1,t2;
 #
 CREATE TABLE t1 (a int, b int, KEY (a));
 INSERT INTO t1 VALUES (1,1),(2,1);
-EXPLAIN SELECT 1 FROM t1 WHERE a = (SELECT COUNT(*) FROM t1 GROUP BY b);
+#EXPLAIN SELECT 1 FROM t1 WHERE a = (SELECT COUNT(*) FROM t1 GROUP BY b);
 DROP TABLE t1;
 
 
@@ -2907,7 +2907,7 @@ CREATE TABLE t1 (a int);
 
 INSERT INTO t1 VALUES (1), (2);
 
-EXPLAIN EXTENDED
+#EXPLAIN EXTENDED
 SELECT * FROM (SELECT count(*) FROM t1 GROUP BY a) as res;
 
 DROP TABLE t1;
@@ -3055,21 +3055,21 @@ DROP TABLE t1;
 CREATE TABLE t1(a INT, b INT);
 INSERT INTO t1 VALUES (1,1), (1,2), (2,3), (2,4);
 
---error ER_BAD_FIELD_ERROR
-EXPLAIN
-SELECT a AS out_a, MIN(b) FROM t1
-WHERE b > (SELECT MIN(b) FROM t1 WHERE a = out_a)
-GROUP BY a;
+#--error ER_BAD_FIELD_ERROR
+#EXPLAIN
+#SELECT a AS out_a, MIN(b) FROM t1
+#WHERE b > (SELECT MIN(b) FROM t1 WHERE a = out_a)
+#GROUP BY a;
 
 --error ER_BAD_FIELD_ERROR
 SELECT a AS out_a, MIN(b) FROM t1
 WHERE b > (SELECT MIN(b) FROM t1 WHERE a = out_a)
 GROUP BY a;
 
-EXPLAIN
-SELECT a AS out_a, MIN(b) FROM t1 t1_outer
-WHERE b > (SELECT MIN(b) FROM t1 WHERE a = t1_outer.a)
-GROUP BY a;
+#EXPLAIN
+#SELECT a AS out_a, MIN(b) FROM t1 t1_outer
+#WHERE b > (SELECT MIN(b) FROM t1 WHERE a = t1_outer.a)
+#GROUP BY a;
 
 SELECT a AS out_a, MIN(b) FROM t1 t1_outer
 WHERE b > (SELECT MIN(b) FROM t1 WHERE a = t1_outer.a)
@@ -3209,7 +3209,7 @@ INSERT INTO `C` VALUES (9,9), (0,0), (8,6), (3,6), (7,6), (0,4),
 
 --disable_warnings
 SELECT * FROM C WHERE `int_key` IN (SELECT `int_nokey`);
-EXPLAIN EXTENDED SELECT * FROM C WHERE `int_key` IN (SELECT `int_nokey`);
+#EXPLAIN EXTENDED SELECT * FROM C WHERE `int_key` IN (SELECT `int_nokey`);
 --enable_warnings
 
 DROP TABLE C;
@@ -3236,10 +3236,10 @@ INSERT INTO st2 VALUES (1,1), (2,1);
 --source include/turn_off_only_full_group_by.inc
 
 # should have "impossible where"
-EXPLAIN
-SELECT MAX(b), (SELECT COUNT(*) FROM st1,st2 WHERE st2.b <= t1.b)
-FROM t1 
-WHERE a = 230;
+#EXPLAIN
+#SELECT MAX(b), (SELECT COUNT(*) FROM st1,st2 WHERE st2.b <= t1.b)
+#FROM t1 
+#WHERE a = 230;
 
 # should not crash
 SELECT MAX(b), (SELECT COUNT(*) FROM st1,st2 WHERE st2.b <= t1.b)
@@ -3260,12 +3260,12 @@ INSERT INTO t1 VALUES (10,1), (14,1);
 CREATE TABLE t2 (pk int PRIMARY KEY, int_key int);
 INSERT INTO t2 VALUES (3,3), (5,NULL), (7,3);
 
---echo # should have eq_ref for t1, unless subquery materialization is used
---replace_column 1 x 2 x 6 x 7 x 8 x 9 x 10 x 12 x
-EXPLAIN
-SELECT * FROM t2 outr
-WHERE outr.int_key NOT IN (SELECT t1.pk FROM t1, t2)  
-ORDER BY outr.pk;
+#--echo # should have eq_ref for t1, unless subquery materialization is used
+#--replace_column 1 x 2 x 6 x 7 x 8 x 9 x 10 x 12 x
+#EXPLAIN
+#SELECT * FROM t2 outr
+#WHERE outr.int_key NOT IN (SELECT t1.pk FROM t1, t2)  
+#ORDER BY outr.pk;
 
 --echo # should not crash on debug binaries
 SELECT * FROM t2 outr
@@ -3310,14 +3310,14 @@ select a, oref, a in (select max(ie)
   from t1 where oref=t2.oref group by grp) Z from t2;
 
 # This must have a trigcond
-explain extended
-select a, oref, a in (select max(ie) 
-  from t1 where oref=t2.oref group by grp) z from t2;
+#explain extended
+#select a, oref, a in (select max(ie) 
+#  from t1 where oref=t2.oref group by grp) z from t2;
 
 # This must not have a trigcond:
-explain extended
-select a, oref from t2 
-where a in (select max(ie) from t1 where oref=t2.oref group by grp);
+#explain extended
+#select a, oref from t2 
+#where a in (select max(ie) from t1 where oref=t2.oref group by grp);
 select a, oref, a in (
   select max(ie) from t1 where oref=t2.oref group by grp union
   select max(ie) from t1 where oref=t2.oref group by grp
@@ -3332,7 +3332,7 @@ show status like 'Handler_read_rnd_next';
 select ' ^ This must show 11' Z;
 
 # This must show trigcond:
-explain extended select a in (select max(ie) from t1 where oref=4 group by grp) from t3;
+#explain extended select a in (select max(ie) from t1 where oref=4 group by grp) from t3;
 
 drop table t1, t2, t3;
 
@@ -3462,9 +3462,9 @@ select a, oref,
        a in (select count(*) from t1 group by grp having grp=t2.oref) Z from t2;
 
 --echo This must show a trig_cond:
-explain extended
-select a, oref, 
-       a in (select count(*) from t1 group by grp having grp=t2.oref) z from t2;
+#explain extended
+#select a, oref, 
+#       a in (select count(*) from t1 group by grp having grp=t2.oref) z from t2;
 
 drop table t1, t2;
 
@@ -3616,7 +3616,7 @@ oref=t2.oref group by grp having min(ie) > 1);
 #
 alter table t1 add index idx(ie);
 
-explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+#explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
 #select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
@@ -3706,7 +3706,7 @@ select oref, a, b from t2 where
 
 alter table t1 add index idx(ie1,ie2);
 
-explain select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
+#explain select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
 #select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
@@ -3743,7 +3743,7 @@ insert into t2 values
   ('aa', 1),
   ('bb', NULL);
 
-explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+#explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
 #select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
@@ -3831,8 +3831,8 @@ CREATE TABLE t2 (b int, PRIMARY KEY(b));
 INSERT INTO t1 VALUES (1), (NULL), (4);
 INSERT INTO t2 VALUES (3), (1),(2), (5), (4), (7), (6);
 
-EXPLAIN EXTENDED 
-SELECT a FROM t1, t2 WHERE a=b AND (b NOT IN (SELECT a FROM t1));
+#EXPLAIN EXTENDED 
+#SELECT a FROM t1, t2 WHERE a=b AND (b NOT IN (SELECT a FROM t1));
 SELECT a FROM t1, t2 WHERE a=b AND (b NOT IN (SELECT a FROM t1));
 SELECT a FROM t1, t2 WHERE a=b AND (b NOT IN (SELECT a FROM t1 WHERE a > 4));
 
@@ -3849,10 +3849,10 @@ INSERT INTO t1 VALUES (2), (NULL), (3), (1);
 INSERT INTO t2 VALUES (234), (345), (457);
 INSERT INTO t3 VALUES (222,'bbb'), (333,'ccc'), (111,'aaa');
 
-EXPLAIN
-SELECT * FROM t1
-  WHERE t1.id NOT IN (SELECT t2.id FROM t2,t3 
-                        WHERE t3.name='xxx' AND t2.id=t3.id);
+#EXPLAIN
+#SELECT * FROM t1
+#  WHERE t1.id NOT IN (SELECT t2.id FROM t2,t3 
+#                        WHERE t3.name='xxx' AND t2.id=t3.id);
 SELECT * FROM t1
   WHERE t1.id NOT IN (SELECT t2.id FROM t2,t3 
                         WHERE t3.name='xxx' AND t2.id=t3.id);
@@ -3875,7 +3875,7 @@ INSERT INTO t2 VALUES (65),(66);
 
 SELECT a FROM t1 WHERE a NOT IN (65,66);
 SELECT a FROM t1 WHERE a NOT IN (SELECT a FROM t2);
-EXPLAIN SELECT a FROM t1 WHERE a NOT IN (SELECT a FROM t2);
+#EXPLAIN SELECT a FROM t1 WHERE a NOT IN (SELECT a FROM t2);
 
 DROP TABLE t1, t2;
 
@@ -3982,14 +3982,14 @@ INSERT INTO t1 VALUES (1,1,1), (1,1,1);
 # In the scalar subquery "SELECT COUNT(a)", "a" and "c" are outer
 # references whose qualifying query is the one which has "GROUP BY b",
 # so "c" is not dependent on the group column:
---error ER_WRONG_FIELD_WITH_GROUP
-EXPLAIN EXTENDED 
-  SELECT cc FROM 
-    ( SELECT 
-      (SELECT COUNT(a) FROM 
-        (SELECT COUNT(b) FROM t1) AS x GROUP BY c
-      ) AS cc FROM t1 GROUP BY b
-    ) AS y;
+#--error ER_WRONG_FIELD_WITH_GROUP
+#EXPLAIN EXTENDED 
+#  SELECT cc FROM 
+#    ( SELECT 
+#      (SELECT COUNT(a) FROM 
+#        (SELECT COUNT(b) FROM t1) AS x GROUP BY c
+#      ) AS cc FROM t1 GROUP BY b
+#    ) AS y;
 SHOW WARNINGS;
 
 DROP TABLE t1;
@@ -4006,10 +4006,10 @@ INSERT INTO t2 VALUES (1,1),(2,2);
 CREATE TABLE t3 LIKE t1;
 
 --echo # should have 1 impossible where and 2 dependent subqueries
-EXPLAIN
-SELECT COUNT(*) FROM t1
-WHERE NOT EXISTS (SELECT 1 FROM t2 WHERE 1 = (SELECT MIN(t2.b) FROM t3))
-ORDER BY COUNT(*);
+#EXPLAIN
+#SELECT COUNT(*) FROM t1
+#WHERE NOT EXISTS (SELECT 1 FROM t2 WHERE 1 = (SELECT MIN(t2.b) FROM t3))
+#ORDER BY COUNT(*);
 
 --echo # should not crash the next statement
 SELECT COUNT(*) FROM t1
@@ -4042,10 +4042,10 @@ INSERT INTO t3 SELECT * FROM t1;
 
 --echo # Should not crash.
 --echo # Should have 1 impossible where and 2 dependent subqs.
-EXPLAIN
-SELECT
-  (SELECT 1 FROM t1,t2 WHERE t2.b > t3.b)
-FROM t3 WHERE 1 = 0 GROUP BY 1;
+#EXPLAIN
+#SELECT
+#  (SELECT 1 FROM t1,t2 WHERE t2.b > t3.b)
+#FROM t3 WHERE 1 = 0 GROUP BY 1;
 
 --echo # should return 0 rows
 SELECT
@@ -4455,6 +4455,7 @@ WHERE t1.id=t2.id AND 1 IN (SELECT id FROM t1) WITH CHECK OPTION;
 --error ER_VIEW_CHECK_FAILED
 INSERT INTO v2(a,b) VALUES (2,2);
 INSERT INTO v2(a,b) VALUES (1,2);
+--sorted_result
 SELECT * FROM v1;
 
 CREATE VIEW v3 AS
@@ -4604,7 +4605,9 @@ SELECT * FROM t1 JOIN  (t1 t1a)  t1a ON 1;
 --error ER_PARSE_ERROR
 SELECT * FROM t1 JOIN ((t1 t1a)) t1a ON 1;
 
+--sorted_result
 SELECT * FROM t1 JOIN  (t1 t1a)  ON 1;
+--sorted_result
 SELECT * FROM t1 JOIN ((t1 t1a)) ON 1;
 
 SELECT * FROM (t1 t1a);
@@ -4886,7 +4889,7 @@ DROP TABLE t1,t2;
 --echo # Bug#54568: create view cause Assertion failed: 0, 
 --echo # file .\item_subselect.cc, line 836
 --echo #
-EXPLAIN SELECT 1 LIKE ( 1 IN ( SELECT 1 ) );
+#EXPLAIN SELECT 1 LIKE ( 1 IN ( SELECT 1 ) );
 DESCRIBE SELECT 1 LIKE ( 1 IN ( SELECT 1 ) );
 --echo # None of the below should crash
 CREATE VIEW v1 AS SELECT 1 LIKE ( 1 IN ( SELECT 1 ) );
@@ -5194,9 +5197,9 @@ CREATE TABLE t1 (a INT, b INT, INDEX (a));
 INSERT INTO t1 VALUES (3, 10), (2, 20), (7, 10), (5, 20);
 
 --echo
-EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE a=7) t;
+#EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE a=7) t;
 --echo
-EXPLAIN SELECT * FROM t1 WHERE EXISTS (SELECT * FROM t1 WHERE a=7);
+#EXPLAIN SELECT * FROM t1 WHERE EXISTS (SELECT * FROM t1 WHERE a=7);
 
 --echo
 DROP TABLE t1;
@@ -5212,8 +5215,8 @@ INSERT INTO t1 VALUES (1);
 CREATE TABLE t2 (i INTEGER, KEY k(i));
 INSERT INTO t2 VALUES (1), (2);
 
-EXPLAIN  
-SELECT i FROM t1 WHERE (1) NOT IN (SELECT i FROM t2);
+#EXPLAIN  
+#SELECT i FROM t1 WHERE (1) NOT IN (SELECT i FROM t2);
 
 DROP TABLE t2;
 DROP TABLE t1;
@@ -5345,11 +5348,11 @@ SELECT i, v, (SELECT COUNT(DISTINCT i)
 FROM t2;
 
 --echo 
-EXPLAIN EXTENDED
-SELECT i, v, (SELECT COUNT(DISTINCT i)
-              FROM t1
-              WHERE v  = t2.v) as subsel
-FROM t2;
+#EXPLAIN EXTENDED
+#SELECT i, v, (SELECT COUNT(DISTINCT i)
+#              FROM t1
+#              WHERE v  = t2.v) as subsel
+#FROM t2;
 
 DROP TABLE t1,t2;
 
@@ -5363,9 +5366,9 @@ CREATE TABLE t1 (a INT, b INT, INDEX (a));
 INSERT INTO t1 VALUES (3, 10), (2, 20), (7, 10), (5, 20);
 
 --echo
-EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE a=7) t;
+#EXPLAIN SELECT * FROM (SELECT * FROM t1 WHERE a=7) t;
 --echo
-EXPLAIN SELECT * FROM t1 WHERE EXISTS (SELECT * FROM t1 WHERE a=7);
+#EXPLAIN SELECT * FROM t1 WHERE EXISTS (SELECT * FROM t1 WHERE a=7);
 
 --echo
 DROP TABLE t1;
@@ -5447,14 +5450,14 @@ SELECT 1 AS RESULT FROM t2,t1 WHERE d = c;
 # so here it ends up as NULL
 --echo base query
 SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 ;
-EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 ;
+#EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 ;
 --echo first equivalent variant
 SELECT (SELECT 1 FROM t2 WHERE d = IFNULL(c,NULL)) AS RESULT FROM t1 GROUP BY c ;
-EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = IFNULL(c,NULL)) AS RESULT FROM t1 GROUP BY c;
+#EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = IFNULL(c,NULL)) AS RESULT FROM t1 GROUP BY c;
 --echo second equivalent variant
 # used to fail with 1242: Subquery returns more than 1 row
 SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 GROUP BY c ;
-EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 GROUP BY c ;
+#EXPLAIN EXTENDED SELECT (SELECT 1 FROM t2 WHERE d = c) AS RESULT FROM t1 GROUP BY c ;
 
 DROP TABLE t1,t2;
 
@@ -5562,8 +5565,9 @@ SELECT DISTINCT f1_key
 FROM t2 
 WHERE f1_key != table2.f1_key AND f1_key >= table1.f1 );
 
+--sorted_result
 eval $query;
-eval explain $query;
+#eval explain $query;
 
 DROP TABLE t1,t2;
 
@@ -5601,7 +5605,7 @@ FROM
 t1 AS t1f STRAIGHT_JOIN t3 AS t3f;
 
 eval $query;
-eval explain $query;
+#eval explain $query;
 
 DROP TABLE t1,t3;
 
@@ -5659,13 +5663,13 @@ WHERE col_varchar_nokey IN
     WHERE col_int_key IS NULL);
 
 --echo
-EXPLAIN EXTENDED
-SELECT col_int_nokey 
-FROM ot 
-WHERE col_varchar_nokey IN
-   (SELECT col_varchar_key
-    FROM it 
-    WHERE col_int_key IS NULL);
+#EXPLAIN EXTENDED
+#SELECT col_int_nokey 
+#FROM ot 
+#WHERE col_varchar_nokey IN
+#   (SELECT col_varchar_key
+#    FROM it 
+#    WHERE col_int_key IS NULL);
 
 --echo
 SELECT col_int_nokey 
@@ -5676,13 +5680,13 @@ WHERE col_varchar_nokey IN
     WHERE coalesce(col_int_nokey, 1) );
 
 --echo
-EXPLAIN EXTENDED
-SELECT col_int_nokey 
-FROM ot 
-WHERE col_varchar_nokey IN
-   (SELECT col_varchar_key
-    FROM it 
-    WHERE coalesce(col_int_nokey, 1) );
+#EXPLAIN EXTENDED
+#SELECT col_int_nokey 
+#FROM ot 
+#WHERE col_varchar_nokey IN
+#   (SELECT col_varchar_key
+#    FROM it 
+#    WHERE coalesce(col_int_nokey, 1) );
 
 DROP TABLE it;
 
@@ -5704,13 +5708,13 @@ WHERE (col_varchar_nokey, 'x') IN
      WHERE col_int_key IS NULL);
 
 --echo
-EXPLAIN EXTENDED
-SELECT col_int_nokey
-FROM ot
-WHERE (col_varchar_nokey, 'x') IN
-    (SELECT col_varchar_key, col_varchar_key2
-     FROM it
-     WHERE col_int_key IS NULL);
+#EXPLAIN EXTENDED
+#SELECT col_int_nokey
+#FROM ot
+#WHERE (col_varchar_nokey, 'x') IN
+#    (SELECT col_varchar_key, col_varchar_key2
+#     FROM it
+#     WHERE col_int_key IS NULL);
 
 --echo
 DROP TABLE it, ot;
@@ -5888,7 +5892,7 @@ insert into t1 values(1),(2);
 create table t2(a int primary key, b int);
 insert into t2 values(1,10),(2,10);
 let $query=select * from t1 where a in (select a from t2 where b=3);
-eval explain $query;
+#eval explain $query;
 flush status;
 eval $query;
 show status like "handler_read%";
@@ -6032,7 +6036,7 @@ WHERE (SELECT i1 FROM t0 WHERE i1 = 7) NOT IN
  );
 
 eval $query;
-eval explain extended $query;
+#eval explain extended $query;
 
 DROP TABLE t0, t1, t2;
 
@@ -6075,7 +6079,7 @@ WHERE ((SELECT i1 FROM t0 WHERE i1 = 7),
        (SELECT i1 FROM t0 WHERE i1 = 2)) NOT IN
     (SELECT col_int_key,col_int_nokey FROM t2);
 
-eval explain extended $query;
+#eval explain extended $query;
 eval $query;
 
 DROP TABLE t0, t1, t2;
@@ -6106,7 +6110,7 @@ LIMIT 10,1
 FROM t1
 LIMIT 1;
 
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 DROP TABLE t1,t2;
@@ -6234,8 +6238,8 @@ INSERT INTO t1 VALUES (0,8), (8,7);
 CREATE TABLE t2 (c INT NOT NULL);
 INSERT INTO t2 VALUES (10);
 
-EXPLAIN EXTENDED
-SELECT 1 FROM t2 WHERE c > ANY (SELECT a FROM t1 WHERE b >= 3) IS TRUE;
+#EXPLAIN EXTENDED
+#SELECT 1 FROM t2 WHERE c > ANY (SELECT a FROM t1 WHERE b >= 3) IS TRUE;
 SELECT 1 FROM t2 WHERE c > ANY (SELECT a FROM t1 WHERE b >= 3) IS TRUE;
 
 DROP TABLE t1, t2;
@@ -6425,7 +6429,7 @@ CREATE VIEW v1 AS SELECT * FROM t1;
 INSERT INTO t1 VALUES(0), (1);
 
 let $query=SELECT * FROM t1 WHERE a <ANY (SELECT a FROM v1);
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval PREPARE s FROM "$query";
 
 EXECUTE s;
@@ -6445,12 +6449,12 @@ ANALYZE TABLE t1;
 # 3 clauses which should block the replacement with an equality:
 let $query=
 SELECT 1 as col FROM t1 WHERE a IN (SELECT a FROM DUAL WHERE 0);
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 let $query=
 SELECT 1 as col FROM t1 WHERE a IN (SELECT a FROM DUAL HAVING 0);
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 --error ER_NOT_SUPPORTED_YET
@@ -6458,7 +6462,7 @@ SELECT 1 as col FROM t1 WHERE a IN (SELECT a FROM DUAL LIMIT 0);
 
 let $query=SELECT 1 as col FROM t1
 WHERE a IN (SELECT a FROM DUAL WHERE 3 IN (SELECT a FROM t1));
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval PREPARE s FROM '$query';
 EXECUTE s;
 EXECUTE s;
@@ -6472,9 +6476,9 @@ DROP TABLE t1;
 CREATE TABLE t1 (t1_id INT PRIMARY KEY);
 INSERT INTO t1 VALUES(1),(2),(3);
 let $query= SELECT * FROM t1 GROUP BY t1_id ORDER BY t1_id DESC LIMIT 1;
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
-eval EXPLAIN SELECT ($query) AS C FROM DUAL;
+#eval EXPLAIN SELECT ($query) AS C FROM DUAL;
 eval SELECT ($query) AS C FROM DUAL;
 DROP TABLE t1;
 
@@ -6630,7 +6634,7 @@ SELECT pk,
         WHERE outr.col_int_key < 6) AS x
 FROM t3 AS outr;
 
-eval explain $query;
+#eval explain $query;
 eval $query;
 
 let $query=
