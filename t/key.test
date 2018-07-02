@@ -572,9 +572,8 @@ INSERT INTO t1 (a, b)
      (1,1), (1,2), (1,3), (1,4), (1,5),
      (2,2), (2,3), (2,1), (3,1), (4,1), (4,2), (4,3), (4,4), (4,5), (4,6),
      (5,1), (5,2), (5,3), (5,4), (5,5);
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-EXPLAIN SELECT 1 FROM t1 AS t1_outer WHERE 
-  (SELECT max(b) FROM t1 GROUP BY a HAVING a < 2) > 12;
+#EXPLAIN SELECT 1 FROM t1 AS t1_outer WHERE 
+#  (SELECT max(b) FROM t1 GROUP BY a HAVING a < 2) > 12;
 SELECT 1 as RES FROM t1 AS t1_outer WHERE 
   (SELECT max(b) FROM t1 GROUP BY a HAVING a < 2) > 12;
 
@@ -589,18 +588,15 @@ DROP TABLE t1;
 CREATE TABLE t1( a INT, b INT, KEY( a ) ) engine=sequoiadb;  
 INSERT INTO t1 values (1, 2), (1, 3), (2, 3), (2, 4), (3, 4), (3, 5);
 
---replace_column 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-EXPLAIN SELECT a, SUM( b ) FROM t1 GROUP BY a;
+#EXPLAIN SELECT a, SUM( b ) FROM t1 GROUP BY a;
 # NOW SequoiaDB not concern query cost
 #SHOW STATUS LIKE 'Last_query_cost';
 
---replace_column 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-EXPLAIN SELECT a, SUM( b ) FROM t1 USE INDEX( a ) GROUP BY a;
+#EXPLAIN SELECT a, SUM( b ) FROM t1 USE INDEX( a ) GROUP BY a;
 # NOW SequoiaDB not concern query cost
 #SHOW STATUS LIKE 'Last_query_cost';
 
---replace_column 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-EXPLAIN SELECT a, SUM( b ) FROM t1 FORCE INDEX( a ) GROUP BY a;
+#EXPLAIN SELECT a, SUM( b ) FROM t1 FORCE INDEX( a ) GROUP BY a;
 # NOW SequoiaDB not concern query cost
 #SHOW STATUS LIKE 'Last_query_cost';
 

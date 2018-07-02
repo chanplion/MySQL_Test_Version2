@@ -236,9 +236,9 @@ drop table t1;
 #
 create table t1 (a int);
 insert into t1 values (1),(2),(3),(4),(5),(6),(7);
-explain select count(*) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
+#explain select count(*) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
 select count(*) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
-explain select sum(a) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
+#explain select sum(a) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
 select sum(a) c FROM t1 WHERE a > 0 ORDER BY c LIMIT 3;
 drop table t1;
 # End of 4.1 tests
@@ -275,16 +275,16 @@ select 1 as a limit 4294967296,10;
 
 --echo End of 5.1 tests
 
---echo #
---echo # Bug #11747810: EXPLAIN EXTENDED SHOWS BOGUS VALUE FOR
---echo #                'FILTERED' COLUMN FOR LIMIT QUERY
---echo #
+#--echo #
+#--echo # Bug #11747810: EXPLAIN EXTENDED SHOWS BOGUS VALUE FOR
+#--echo #                'FILTERED' COLUMN FOR LIMIT QUERY
+#--echo #
 
-CREATE TABLE t1 (a INT, KEY (a)) ENGINE=SequoiaDB;
-INSERT INTO t1 VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
-EXPLAIN SELECT * FROM t1 ORDER BY a LIMIT 1;
-DROP TABLE t1;
+#CREATE TABLE t1 (a INT, KEY (a)) ENGINE=SequoiaDB;
+#INSERT INTO t1 VALUES (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
+#EXPLAIN SELECT * FROM t1 ORDER BY a LIMIT 1;
+#DROP TABLE t1;
 
---echo #End of test for Bug#11747810
+#--echo #End of test for Bug#11747810
 
 --source include/uninstall_sequoiadb.inc

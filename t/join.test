@@ -61,10 +61,8 @@ select t1.id, count(t2.id) from t1,t2 where t2.id = t1.id group by t2.id;
 # Test problems with impossible ON or WHERE
 #
 select t1.id,t2.id from t2 left join t1 on t1.id>=74 and t1.id<=0 where t2.id=75 and t1.id is null;
---replace_column 10 n 11 n 12 n
-explain select t1.id,t2.id from t2 left join t1 on t1.id>=74 and t1.id<=0 where t2.id=75 and t1.id is null;
---replace_column 10 n 11 n 12 n
-explain select t1.id, t2.id from t1, t2 where t2.id = t1.id and t1.id <0 and t1.id > 0;
+#explain select t1.id,t2.id from t2 left join t1 on t1.id>=74 and t1.id<=0 where t2.id=75 and t1.id is null;
+#explain select t1.id, t2.id from t1, t2 where t2.id = t1.id and t1.id <0 and t1.id > 0;
 drop table t1,t2;
 
 #
@@ -367,10 +365,9 @@ INSERT INTO t2 (a, d) SELECT a+4, a+4 FROM t2;
 INSERT INTO t2 (a, d) SELECT a+8, a+8 FROM t2;
 
 # should use join cache
---replace_column 10 n 11 n 12 n
-EXPLAIN
-SELECT STRAIGHT_JOIN t2.e FROM t1,t2 WHERE t2.d=1 AND t1.b=t2.e
-  ORDER BY t1.b, t1.c;
+#EXPLAIN
+#SELECT STRAIGHT_JOIN t2.e FROM t1,t2 WHERE t2.d=1 AND t1.b=t2.e
+#  ORDER BY t1.b, t1.c;
 SELECT STRAIGHT_JOIN t2.e FROM t1,t2 WHERE t2.d=1 AND t1.b=t2.e
   ORDER BY t1.b, t1.c;
 
@@ -681,8 +678,7 @@ insert into t3 values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
 
 flush status;
 select * from t1, t2, t3 where t3.a=t1.a and t2.a=t1.b;
---replace_column 10 n 11 n 12 n
-explain select * from t1, t2, t3 where t3.a=t1.a and t2.a=t1.b;
+#explain select * from t1, t2, t3 where t3.a=t1.a and t2.a=t1.b;
 # NOW SequoiaDB not concern the query cost 
 #--echo We expect rnd_next=5, and read_key must be 0 because of short-cutting:
 #show status like 'Handler_read%'; 
@@ -702,8 +698,7 @@ insert into t2
 insert into t3 select * from t2 where a < 800;
 
 # The order of tables must be t2,t3:
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-explain select * from t2,t3 where t2.a < 200 and t2.b=t3.b;
+#explain select * from t2,t3 where t2.a < 200 and t2.b=t3.b;
 
 drop table t1, t2, t3;
 
@@ -715,15 +710,14 @@ insert into t1 values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
 create table t2 (a int, b int, primary key(a));
 insert into t2 select @v:=A.a+10*B.a, @v  from t1 A, t1 B;
 
-explain select * from t1;
+#explain select * from t1;
 # NOW SequoiaDB not concern the explain cost
 #show status like '%cost%';
 select 'The cost of accessing t1 (dont care if it changes' '^';
 
 select 'vv: Following query must use ALL(t1), eq_ref(A), eq_ref(B): vv' Z;
 
---replace_column 10 n 11 n 12 n
-explain select * from t1, t2 a, t2 b where a.a = t1.a and b.a=a.b;
+#explain select * from t1, t2 a, t2 b where a.a = t1.a and b.a=a.b;
 # NOW SequoiaDB not concern the explain cost
 #show status like '%cost%';
 select '^^: The above should be ~= 20 + cost(select * from t1). Value less than 20 is an error' Z;
@@ -749,18 +743,14 @@ INSERT INTO t1 SELECT a + 64, b FROM t1;
 INSERT INTO t2 SELECT a, b FROM t1;
 
 #expect indexed ORDER BY
---replace_column 10 n 11 n 12 n
-EXPLAIN SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a LIMIT 2;
---replace_column 10 n 11 n 12 n
-EXPLAIN SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a LIMIT 2;
+#EXPLAIN SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a LIMIT 2;
+#EXPLAIN SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a LIMIT 2;
 SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a LIMIT 2;
 SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a LIMIT 2;
 
 #expect filesort
---replace_column 10 n 11 n 12 n
-EXPLAIN SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a;
---replace_column 10 n 11 n 12 n
-EXPLAIN SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a;
+#EXPLAIN SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a;
+#EXPLAIN SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a;
 SELECT * FROM t1 JOIN t2 ON b=c ORDER BY a;
 SELECT * FROM t1 JOIN t2 ON a=c ORDER BY a;
 
@@ -785,23 +775,22 @@ INSERT INTO t2 VALUES
 INSERT INTO t3 VALUES
 (3), (3), (3), (3), (3), (3), (3), (3), (3), (3);
 
---replace_column 10 n 11 n 12 n
-EXPLAIN
-SELECT * 
-FROM 
-  t1 JOIN t2 ON t1.a = t2.a 
-  LEFT JOIN 
-  (
-   (
-    t3 LEFT JOIN t4 ON t3.a = t4.a
-   ) 
-   LEFT JOIN 
-   (
-     t5 LEFT JOIN t6 ON t5.a = t6.a
-   ) 
-   ON t4.a = t5.a
-  ) 
-  ON t1.a = t3.a;
+#EXPLAIN
+#SELECT * 
+#FROM 
+#  t1 JOIN t2 ON t1.a = t2.a 
+#  LEFT JOIN 
+#  (
+#   (
+#    t3 LEFT JOIN t4 ON t3.a = t4.a
+#   ) 
+#   LEFT JOIN 
+#   (
+#     t5 LEFT JOIN t6 ON t5.a = t6.a
+#   ) 
+#   ON t4.a = t5.a
+#  ) 
+#  ON t1.a = t3.a;
 
 SELECT * 
 FROM 
@@ -828,8 +817,8 @@ DROP TABLE t1,t2,t3,t4,t5,t6;
 CREATE TABLE t1(f1 INT);
 INSERT INTO t1 VALUES (1),(2);
 CREATE VIEW v1 AS SELECT 1 FROM t1 LEFT JOIN t1 AS t2 on 1=1;
-EXPLAIN EXTENDED
-SELECT 1 FROM v1 right join v1 AS v2 ON RAND();
+#EXPLAIN EXTENDED
+#SELECT 1 FROM v1 right join v1 AS v2 ON RAND();
 DROP VIEW v1;
 DROP TABLE t1;
 
@@ -839,9 +828,9 @@ DROP TABLE t1;
 CREATE TABLE t1 (a TINYINT, b TEXT, KEY (a));
 INSERT INTO t1 VALUES (0,''),(0,'');
 FLUSH TABLES;
-EXPLAIN SELECT 1 FROM t1 LEFT JOIN t1 a ON 1
-WHERE ROW(t1.a, 1111.11) = ROW(1111.11, 1111.11) AND
-ROW(t1.b, 1111.11) <=> ROW('','');
+#EXPLAIN SELECT 1 FROM t1 LEFT JOIN t1 a ON 1
+#WHERE ROW(t1.a, 1111.11) = ROW(1111.11, 1111.11) AND
+#ROW(t1.b, 1111.11) <=> ROW('','');
 DROP TABLE t1;
 
 --echo #
@@ -984,8 +973,7 @@ let $query=
 SELECT t2.pk, t2.c1 FROM t2, t1 
 WHERE t2.pk = t1.c1 AND t2.pk >= 2;
 
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 # Create a view on one of the tables. The same query plan should
@@ -996,8 +984,7 @@ let $query=
 SELECT v_t2.pk, v_t2.c1 FROM v_t2, t1 
 WHERE v_t2.pk = t1.c1 AND v_t2.pk >= 2;
 
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 DROP VIEW v_t2;
@@ -1029,8 +1016,7 @@ GROUP BY t1.pk
 ORDER BY v1.i2;
 
 --source include/turn_off_only_full_group_by.inc
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 --source include/restore_sql_mode_after_turn_off_only_full_group_by.inc
 
@@ -1040,7 +1026,7 @@ FROM v1, t1
 WHERE (v1.i2 = 211 AND v1.i2 > 7)
    OR (t1.i1 < 3 AND v1.i2 < 10);
 
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 DROP VIEW v1;
@@ -1067,12 +1053,9 @@ insert into t1 values(3,'c');
 let $rest_of_query=(t1 join t3 on t3.ref_t1 =
 t1.c1 join t2 on t2.ref_t1 = t1.c1) on t4.ref_t1 = t1.c1;
 
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN SELECT * FROM t4 JOIN $rest_of_query;
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN SELECT STRAIGHT_JOIN * FROM t4 JOIN $rest_of_query;
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-eval EXPLAIN SELECT * FROM t4 STRAIGHT_JOIN $rest_of_query;
+#eval EXPLAIN SELECT * FROM t4 JOIN $rest_of_query;
+#eval EXPLAIN SELECT STRAIGHT_JOIN * FROM t4 JOIN $rest_of_query;
+#eval EXPLAIN SELECT * FROM t4 STRAIGHT_JOIN $rest_of_query;
 
 drop table t1,t2,t3,t4;
 

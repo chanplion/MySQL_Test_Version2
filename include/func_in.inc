@@ -73,7 +73,7 @@ select * from t1 where 'a' in (a,b,c);
 select * from t1 where 'a' collate latin1_general_ci in (a,b,c);
 select * from t1 where 'a' collate latin1_bin in (a,b,c);
 select * from t1 where 'a' in (a,b,c collate latin1_bin);
-explain extended select * from t1 where 'a' in (a,b,c collate latin1_bin);
+#explain extended select * from t1 where 'a' in (a,b,c collate latin1_bin);
 drop table t1;
 
 set names utf8;
@@ -159,12 +159,12 @@ create table t2 (a int, filler char(200), key(a));
 insert into t2 select C.a*2,   'no'  from t1 A, t1 B, t1 C;
 insert into t2 select C.a*2+1, 'yes' from t1 C;
 
-explain 
-select * from t2 where a NOT IN (0, 2,4,6,8,10,12,14,16,18);
+#explain 
+#select * from t2 where a NOT IN (0, 2,4,6,8,10,12,14,16,18);
 select * from t2 where a NOT IN (0, 2,4,6,8,10,12,14,16,18);
 
-explain select * from t2 force index(a) where a NOT IN (2,2,2,2,2,2);
-explain select * from t2 force index(a) where a <> 2;
+#explain select * from t2 force index(a) where a NOT IN (2,2,2,2,2,2);
+#explain select * from t2 force index(a) where a <> 2;
 
 drop table t2;
 
@@ -202,7 +202,7 @@ insert into t2 select 'bazbazbaz', 'no' from t1 A, t1 B;
 insert into t2 values ('fon', '1'), ('fop','1'), ('barbaq','1'), 
   ('barbas','1'), ('bazbazbay', '1'),('zz','1');
 
-explain select * from t2 where a not in('foo','barbar', 'bazbazbaz');
+#explain select * from t2 where a not in('foo','barbar', 'bazbazbaz');
 
 drop table t2;
 
@@ -398,19 +398,19 @@ select f1 from t1 where f1 in ('a',1);
 select f1, case f1 when 'a' then '+' when 1 then '-' end from t1;
 create index t1f1_idx on t1(f1);
 select f1 from t1 where f1 in ('a',1);
-explain select f1 from t1 where f1 in ('a',1);
+#explain select f1 from t1 where f1 in ('a',1);
 select f1 from t1 where f1 in ('a','b');
-explain select f1 from t1 where f1 in ('a','b');
+#explain select f1 from t1 where f1 in ('a','b');
 select f1 from t1 where f1 in (2,1);
-explain select f1 from t1 where f1 in (2,1);
+#explain select f1 from t1 where f1 in (2,1);
 create table t2(f2 int, index t2f2(f2));
 insert into t2 values(0),(1),(2);
 select f2 from t2 where f2 in ('a',2);
-explain select f2 from t2 where f2 in ('a',2);
+#explain select f2 from t2 where f2 in ('a',2);
 select f2 from t2 where f2 in ('a','b');
-explain select f2 from t2 where f2 in ('a','b');
+#explain select f2 from t2 where f2 in ('a','b');
 select f2 from t2 where f2 in (1,'b');
-explain select f2 from t2 where f2 in (1,'b');
+#explain select f2 from t2 where f2 in (1,'b');
 drop table t1, t2;
 
 #

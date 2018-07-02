@@ -367,10 +367,8 @@ CREATE TABLE t1 (
 INSERT INTO t1 VALUES (REPEAT(_ucs2 0x201f, 10));
 INSERT INTO t1 VALUES (REPEAT(_ucs2 0x2020, 10));
 INSERT INTO t1 VALUES (REPEAT(_ucs2 0x2021, 10));
---echo # make sure "index read" is used
-# not concern explain result
---replace_column 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-explain SELECT HEX(a) FROM t1 ORDER BY a;
+#--echo # make sure "index read" is used
+#explain SELECT HEX(a) FROM t1 ORDER BY a;
 SELECT HEX(a) FROM t1 ORDER BY a;
 ALTER TABLE t1 DROP INDEX a;
 SELECT HEX(a) FROM t1 ORDER BY a;

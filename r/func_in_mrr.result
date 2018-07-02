@@ -135,12 +135,6 @@ a	c	c
 select * from t1 where 'a' in (a,b,c collate latin1_bin);
 a	b	c
 a	c	c
-explain extended select * from t1 where 'a' in (a,b,c collate latin1_bin);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t1	NULL	ALL	NULL	NULL	NULL	NULL	2	100.00	Using where
-Warnings:
-Warning	1681	'EXTENDED' is deprecated and will be removed in a future release.
-Note	1003	/* select#1 */ select `test`.`t1`.`a` AS `a`,`test`.`t1`.`b` AS `b`,`test`.`t1`.`c` AS `c` from `test`.`t1` where ('a' in (`test`.`t1`.`a`,`test`.`t1`.`b`,(`test`.`t1`.`c` collate latin1_bin)))
 drop table t1;
 set names utf8;
 create table t1 (a char(10) character set utf8 not null);
@@ -232,12 +226,6 @@ insert into t1 values (0),(1),(2),(3),(4),(5),(6),(7),(8),(9);
 create table t2 (a int, filler char(200), key(a));
 insert into t2 select C.a*2,   'no'  from t1 A, t1 B, t1 C;
 insert into t2 select C.a*2+1, 'yes' from t1 C;
-explain 
-select * from t2 where a NOT IN (0, 2,4,6,8,10,12,14,16,18);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	a	a	5	NULL	11	100.00	Using where with pushed condition (`test`.`t2`.`a` not in (0,2,4,6,8,10,12,14,16,18))
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`a` AS `a`,`test`.`t2`.`filler` AS `filler` from `test`.`t2` where (`test`.`t2`.`a` not in (0,2,4,6,8,10,12,14,16,18))
 select * from t2 where a NOT IN (0, 2,4,6,8,10,12,14,16,18);
 a	filler
 1	yes
@@ -250,16 +238,6 @@ a	filler
 15	yes
 17	yes
 19	yes
-explain select * from t2 force index(a) where a NOT IN (2,2,2,2,2,2);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	a	a	5	NULL	2	100.00	Using where with pushed condition (`test`.`t2`.`a` not in (2,2,2,2,2,2))
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`a` AS `a`,`test`.`t2`.`filler` AS `filler` from `test`.`t2` FORCE INDEX (`a`) where (`test`.`t2`.`a` not in (2,2,2,2,2,2))
-explain select * from t2 force index(a) where a <> 2;
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	a	a	5	NULL	2	100.00	Using where with pushed condition (`test`.`t2`.`a` <> 2)
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`a` AS `a`,`test`.`t2`.`filler` AS `filler` from `test`.`t2` FORCE INDEX (`a`) where (`test`.`t2`.`a` <> 2)
 drop table t2;
 create table t2 (a datetime, filler char(200));
 insert into t2 select '2006-04-25 10:00:00' + interval C.a minute,
@@ -287,11 +265,6 @@ insert into t2 select 'barbar', 'no' from t1 A, t1 B;
 insert into t2 select 'bazbazbaz', 'no' from t1 A, t1 B;
 insert into t2 values ('fon', '1'), ('fop','1'), ('barbaq','1'), 
 ('barbas','1'), ('bazbazbay', '1'),('zz','1');
-explain select * from t2 where a not in('foo','barbar', 'bazbazbaz');
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	a	a	13	NULL	4	100.00	Using where with pushed condition (`test`.`t2`.`a` not in ('foo','barbar','bazbazbaz'))
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`a` AS `a`,`test`.`t2`.`filler` AS `filler` from `test`.`t2` where (`test`.`t2`.`a` not in ('foo','barbar','bazbazbaz'))
 drop table t2;
 create table t2 (a decimal(10,5), filler char(200));
 insert into t2 select 345.67890, 'no' from t1 A, t1 B;
@@ -490,33 +463,16 @@ a
 1
 Warnings:
 Warning	1292	Truncated incorrect DOUBLE value: 'b'
-explain select f1 from t1 where f1 in ('a',1);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t1	NULL	ALL	t1f1_idx	NULL	NULL	NULL	3	50.00	Using where
-Warnings:
-Warning	1739	Cannot use range access on index 't1f1_idx' due to type or collation conversion on field 'f1'
-Note	1003	/* select#1 */ select `test`.`t1`.`f1` AS `f1` from `test`.`t1` where (`test`.`t1`.`f1` in ('a',1))
 select f1 from t1 where f1 in ('a','b');
 f1
 a
 b
-explain select f1 from t1 where f1 in ('a','b');
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t1	NULL	range	t1f1_idx	t1f1_idx	2	NULL	2	100.00	Using where with pushed condition (`test`.`t1`.`f1` in ('a','b'))
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t1`.`f1` AS `f1` from `test`.`t1` where (`test`.`t1`.`f1` in ('a','b'))
 select f1 from t1 where f1 in (2,1);
 f1
 1
 Warnings:
 Warning	1292	Truncated incorrect DOUBLE value: 'a'
 Warning	1292	Truncated incorrect DOUBLE value: 'b'
-explain select f1 from t1 where f1 in (2,1);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t1	NULL	ALL	t1f1_idx	NULL	NULL	NULL	3	50.00	Using where
-Warnings:
-Warning	1739	Cannot use range access on index 't1f1_idx' due to type or collation conversion on field 'f1'
-Note	1003	/* select#1 */ select `test`.`t1`.`f1` AS `f1` from `test`.`t1` where (`test`.`t1`.`f1` in (2,1))
 create table t2(f2 int, index t2f2(f2));
 insert into t2 values(0),(1),(2);
 select f2 from t2 where f2 in ('a',2);
@@ -526,35 +482,18 @@ f2
 Warnings:
 Warning	1292	Truncated incorrect DOUBLE value: 'a'
 Warning	1292	Truncated incorrect DOUBLE value: 'a'
-explain select f2 from t2 where f2 in ('a',2);
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	t2f2	t2f2	5	NULL	2	100.00	Using where
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`f2` AS `f2` from `test`.`t2` where (`test`.`t2`.`f2` in ('a',2))
 select f2 from t2 where f2 in ('a','b');
 f2
 0
 Warnings:
 Warning	1292	Truncated incorrect DOUBLE value: 'a'
 Warning	1292	Truncated incorrect DOUBLE value: 'b'
-explain select f2 from t2 where f2 in ('a','b');
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	t2f2	t2f2	5	NULL	1	100.00	Using where
-Warnings:
-Warning	1292	Truncated incorrect DOUBLE value: 'a'
-Warning	1292	Truncated incorrect DOUBLE value: 'b'
-Note	1003	/* select#1 */ select `test`.`t2`.`f2` AS `f2` from `test`.`t2` where (`test`.`t2`.`f2` in ('a','b'))
 select f2 from t2 where f2 in (1,'b');
 f2
 0
 1
 Warnings:
 Warning	1292	Truncated incorrect DOUBLE value: 'b'
-explain select f2 from t2 where f2 in (1,'b');
-id	select_type	table	partitions	type	possible_keys	key	key_len	ref	rows	filtered	Extra
-1	SIMPLE	t2	NULL	range	t2f2	t2f2	5	NULL	2	100.00	Using where
-Warnings:
-Note	1003	/* select#1 */ select `test`.`t2`.`f2` AS `f2` from `test`.`t2` where (`test`.`t2`.`f2` in (1,'b'))
 drop table t1, t2;
 create table t1 (a time);
 insert into t1 values (),(),(),(),(),(),(),(),(),();

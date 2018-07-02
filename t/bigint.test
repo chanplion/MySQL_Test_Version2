@@ -27,15 +27,17 @@ select conv(1,10,16),conv((1<<2)-1,10,16),conv((1<<10)-2,10,16),conv((1<<16)-3,1
 # In 3.23 we have to disable the test of column to bigint as
 # this fails on AIX powerpc (the resolution for double is not good enough)
 # This will work on 4.0 as we then have internal handling of bigint variables.
-# Bug of SequoiaDB, query record of unsigned type with primary index will return wrong results: SEQUOIADBMAINSTREAM: 3556
-#create table t1 (a bigint unsigned not null, primary key(a));
-#insert into t1 values (18446744073709551615), (0xFFFFFFFFFFFFFFFE), (18446744073709551613), (18446744073709551612);
-#select * from t1;
-#select * from t1 where a=18446744073709551615;
-#delete from t1 where a=18446744073709551615;
-
-#select * from t1;
-#drop table t1;
+# Bug of SequoiaDB, query unsigned bigint with index will cause wrong results: SEQUOIADBMAINSTREAM-3563
+create table t1 (a bigint unsigned not null, primary key(a));
+insert into t1 values (18446744073709551615), (0xFFFFFFFFFFFFFFFE), (18446744073709551613), (18446744073709551612);
+--sorted_result
+select * from t1;
+select * from t1 where a=18446744073709551615;
+#select * from t1 where a='18446744073709551615';
+delete from t1 where a=18446744073709551615;
+--sorted_result
+select * from t1;
+drop table t1;
 
 create table t1 ( a int not null default 1, big bigint );
 insert into t1 (big) values (-1),(12345678901234567),(9223372036854775807),(18446744073709551615);

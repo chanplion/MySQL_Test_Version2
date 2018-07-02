@@ -408,8 +408,7 @@ insert into t1 values (repeat(0x2020, 10));
 insert into t1 values (repeat(0x2021, 10));
 # make sure "index read" is used
 # not concern explain result
---replace_column 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-explain select hex(a) from t1 order by a;
+#explain select hex(a) from t1 order by a;
 select hex(a) from t1 order by a;
 alter table t1 drop index a;
 select hex(a) from t1 order by a;
