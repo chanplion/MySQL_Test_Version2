@@ -442,7 +442,7 @@ select count(*) from t1 where x < -16;
 select count(*) from t1 where x = -16;
 select count(*) from t1 where x > -16;
 #Bug #SEQUOIADBMAINSTREAM-3563
-#select count(*) from t1 where x = 18446744073709551601;
+select count(*) from t1 where x = 18446744073709551601;
 
 drop table t1;
 

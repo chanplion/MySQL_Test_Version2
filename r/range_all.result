@@ -181,6 +181,9 @@ count(*)
 select count(*) from t1 where x > -16;
 count(*)
 2
+select count(*) from t1 where x = 18446744073709551601;
+count(*)
+1
 drop table t1;
 create table t1 (a bigint unsigned);
 create index t1i on t1(a);
