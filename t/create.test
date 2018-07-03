@@ -1843,4 +1843,54 @@ DROP DATABASE db_created_with_mkdir_and_an_unrelated_file_in_data_directory;
 --remove_file $MYSQLD_DATADIR/db_created_with_mkdir_and_an_unrelated_file_in_data_directory/intruder.txt
 DROP DATABASE db_created_with_mkdir_and_an_unrelated_file_in_data_directory;
 
+#
+# max key length is 1024 bytes on engine Sequoiadb, key is primary key, data type is varchar
+#
+CREATE TABLE t1 (word varchar(1024) NOT NULL, PRIMARY KEY (word))engine=sequoiadb;
+show create table t1;
+insert into t1 values(repeat('a',960));
+insert into t1 values(repeat('b',960));
+insert into t1 values(repeat('c',960));
+select * from t1 where word=repeat('a',960);
+alter table t1 drop primary key;
+show create table t1;
+alter table t1 add primary key(word);
+show create table t1;
+select * from t1 where word=repeat('a',960);
+drop table t1;
+
+--error ER_TOO_LONG_KEY
+CREATE TABLE t1 (word varchar(1025) NOT NULL, PRIMARY KEY (word))engine=sequoiadb;
+
+#
+# max key length is 1024 bytes on engine Sequoiadb, data type is text
+#
+CREATE TABLE t1 (word text NOT NULL, KEY (word(1024)))engine=sequoiadb;
+show create table t1;
+insert into t1 values(repeat('a',960));
+insert into t1 values(repeat('b',960));
+insert into t1 values(repeat('c',960));
+select * from t1 where word=repeat('a',960);
+alter table t1 drop key word;
+show create table t1;
+alter table t1 add key(word(1024));
+show create table t1;
+select * from t1 where word=repeat('a',960);
+drop index word on t1;
+show create table t1;
+create index word on t1(word(1024));
+show create table t1;
+select * from t1 where word=repeat('a',960);
+drop index word on t1;
+--error ER_TOO_LONG_KEY
+create index word on t1(word(1025));
+drop table t1;
+
+--error ER_TOO_LONG_KEY
+CREATE TABLE t1 (word text NOT NULL, KEY (word(1025)))engine=sequoiadb;
+
+
+--error ER_TOO_LONG_KEY
+CREATE TABLE t1 (a char,b varchar(1024),KEY (a,b))engine=sequoiadb;
+
 --source include/uninstall_sequoiadb.inc
