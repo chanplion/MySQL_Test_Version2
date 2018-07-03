@@ -68,9 +68,8 @@ drop table t1;
 SET NAMES utf8;
 
 #Minimized the varchar length for InnoDB so that it does not throw max keylength exceeded error
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (c varchar(150) CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL, INDEX (c));
-CREATE TABLE t1 (c varchar(150) CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL);
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (c varchar(150) CHARACTER SET utf16 COLLATE utf16_general_ci NOT NULL, INDEX (c));
 INSERT INTO t1 VALUES (0x039C03C903B403B11F770308);
 #Check one row
 SELECT * FROM t1 WHERE c LIKE _utf16 0x039C0025 COLLATE utf16_general_ci;

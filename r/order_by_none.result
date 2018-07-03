@@ -1,3 +1,6 @@
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
 create table t1 (first char(10),last char(10));
 insert into t1 values ("Michael","Widenius");
 insert into t1 values ("Allan","Larsson");
@@ -1302,6 +1305,55 @@ id1
 14
 15
 16
+DROP TABLE t1;
+CREATE TABLE t1 (
+a INT,
+b INT NOT NULL,
+c char(100),
+KEY (b, c),
+KEY (b, a, c)
+)
+DEFAULT CHARSET = utf8;
+INSERT INTO t1 VALUES 
+(1,  1, 1),
+(2,  2, 2),
+(3,  3, 3),
+(4,  4, 4),
+(5,  5, 5),
+(6,  6, 6),
+(7,  7, 7),
+(8,  8, 8),
+(9,  9, 9);
+INSERT INTO t1 SELECT a + 10,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 20,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 40,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 80,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 160, b, c FROM t1;
+INSERT INTO t1 SELECT a + 320, b, c FROM t1;
+INSERT INTO t1 SELECT a + 640, b, c FROM t1;
+INSERT INTO t1 SELECT a + 1280, b, c FROM t1 ORDER BY a LIMIT 80;
+SELECT a FROM t1 WHERE b = 1 ORDER BY a DESC LIMIT 9;
+a
+1361
+1351
+1341
+1331
+1321
+1311
+1301
+1291
+1281
+SELECT DISTINCT a FROM t1 WHERE b = 1 ORDER BY a DESC LIMIT 0, 9;
+a
+1361
+1351
+1341
+1331
+1321
+1311
+1301
+1291
+1281
 DROP TABLE t1;
 #
 # Bug #43029: FORCE INDEX FOR ORDER BY is ignored when join buffering 

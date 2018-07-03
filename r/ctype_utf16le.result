@@ -304,7 +304,7 @@ a
 фЫва
 фЫвапролдж
 DROP TABLE t1;
-CREATE TABLE t1 (word VARCHAR(64) NOT NULL)
+CREATE TABLE t1 (word VARCHAR(64) NOT NULL, PRIMARY KEY (word))
 CHARACTER SET utf16le;
 INSERT INTO t1 (word) VALUES ("cat");
 SELECT * FROM t1 WHERE word LIKE "c%";
@@ -345,9 +345,60 @@ SET NAMES utf8, collation_connection=utf16le_general_ci;
 #
 # Two fields, index
 #
+CREATE TABLE t1 (
+word VARCHAR(64),
+bar INT(11) DEFAULT 0,
+PRIMARY KEY (word))
+ENGINE=SequoiaDB
+CHARSET utf16le
+COLLATE utf16le_general_ci ;
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
+SELECT * FROM t1 ORDER BY word;
+word	bar
+a	0
+aar	0
+aardvar	0
+aardvara	0
+aardvark	0
+aardvarz	0
+SELECT word FROM t1 ORDER by word;
+word
+a
+aar
+aardvar
+aardvara
+aardvark
+aardvarz
+DROP TABLE t1;
 #
 # One field, index
 #
+CREATE TABLE t1 (
+word VARCHAR(64) ,
+PRIMARY KEY (word))
+ENGINE=SequoiaDB
+CHARSET utf16le
+COLLATE utf16le_general_ci;
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
+SELECT * FROM t1 ORDER BY word;
+word
+a
+aar
+aardvar
+aardvara
+aardvark
+aardvarz
+DROP TABLE t1;
 #
 # Two fields, no index
 #
@@ -1031,11 +1082,37 @@ t1	CREATE TABLE `t1` (
 DROP TABLE t1;
 SET sql_mode = default;
 #
-# Testing that maximim possible key length is 1000 bytes for SequoiaDB
+# Testing that maximim possible key length is 1024 bytes for SequoiaDB
 #
+CREATE TABLE t1 (a VARCHAR(256) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` varchar(256) CHARACTER SET utf16le NOT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+DROP TABLE t1;
+CREATE TABLE t1 (a VARCHAR(257) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
+ERROR 42000: Specified key was too long; max key length is 1024 bytes
 #
-# Testing that maximim possible key length is 767 bytes for SequoiaDB
+# Testing that maximim possible key length is 1024 bytes for SequoiaDB
 #
+CREATE TABLE t1 (a VARCHAR(256) CHARACTER SET utf16le PRIMARY KEY);
+SHOW CREATE TABLE t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` varchar(256) CHARACTER SET utf16le NOT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+DROP TABLE t1;
+SET GLOBAL innodb_large_prefix=OFF;
+Warnings:
+Warning	131	Using innodb_large_prefix is deprecated and the parameter may be removed in future releases. See http://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html
+CREATE TABLE t1 (a VARCHAR(257) CHARACTER SET utf16le PRIMARY KEY);
+ERROR 42000: Specified key was too long; max key length is 1024 bytes
+SET GLOBAL innodb_large_prefix=default;
+Warnings:
+Warning	131	Using innodb_large_prefix is deprecated and the parameter may be removed in future releases. See http://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html
 #
 # Conversion to utf8
 #

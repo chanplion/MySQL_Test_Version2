@@ -146,10 +146,10 @@ drop table t1;
 
 #Bug #SEQUOIADBMAINSTREAM-3564
 -- error 1071
-#create table t1 (a text, unique (a(2100))); # should give an error
-#create table t1 (a text, key (a(2100)));    # key is auto-truncated
-#show create table t1;
-#drop table t1;
+create table t1 (a text, unique (a(2100))); # should give an error
+create table t1 (a text, key (a(2100)));    # key is auto-truncated
+show create table t1;
+drop table t1;
 
 #
 # Test of join with blobs and min

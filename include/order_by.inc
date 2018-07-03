@@ -5,7 +5,7 @@
 #--disable_warnings
 #drop table if exists t1,t2,t3;
 #--enable_warnings
-#SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
+SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 #CREATE TABLE t1 (
 #  id int(6) DEFAULT '0' NOT NULL,
 #  idservice int(5),
@@ -1586,46 +1586,48 @@ DROP TABLE t1;
 #
 # Bug#46454: MySQL wrong index optimisation leads to incorrect result & crashes 
 # Bug #SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (
-#  a INT,
-#  b INT NOT NULL,
-#  c char(100) 
-#  KEY (b, c),
-#  KEY (b, a, c)
-#)
-#DEFAULT CHARSET = utf8;
+CREATE TABLE t1 (
+  a INT,
+  b INT NOT NULL,
+  c char(100),
+  KEY (b, c),
+  KEY (b, a, c)
+)
+DEFAULT CHARSET = utf8;
 
-#INSERT INTO t1 VALUES 
-#(1,  1, 1),
-#(2,  2, 2),
-#(3,  3, 3),
-#(4,  4, 4),
-#(5,  5, 5),
-#(6,  6, 6),
-#(7,  7, 7),
-#(8,  8, 8),
-#(9,  9, 9);
-#
-#INSERT INTO t1 SELECT a + 10,  b, c FROM t1;
-#INSERT INTO t1 SELECT a + 20,  b, c FROM t1;
-#INSERT INTO t1 SELECT a + 40,  b, c FROM t1;
-#INSERT INTO t1 SELECT a + 80,  b, c FROM t1;
-#INSERT INTO t1 SELECT a + 160, b, c FROM t1;
-#INSERT INTO t1 SELECT a + 320, b, c FROM t1;
-#INSERT INTO t1 SELECT a + 640, b, c FROM t1;
-#INSERT INTO t1 SELECT a + 1280, b, c FROM t1 LIMIT 80;
-#
+INSERT INTO t1 VALUES 
+(1,  1, 1),
+(2,  2, 2),
+(3,  3, 3),
+(4,  4, 4),
+(5,  5, 5),
+(6,  6, 6),
+(7,  7, 7),
+(8,  8, 8),
+(9,  9, 9);
+
+INSERT INTO t1 SELECT a + 10,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 20,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 40,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 80,  b, c FROM t1;
+INSERT INTO t1 SELECT a + 160, b, c FROM t1;
+INSERT INTO t1 SELECT a + 320, b, c FROM t1;
+INSERT INTO t1 SELECT a + 640, b, c FROM t1;
+
+#Sequoiadb return record can not be guaranteed,when sorting is not used.
+INSERT INTO t1 SELECT a + 1280, b, c FROM t1 ORDER BY a LIMIT 80;
+
 #EXPLAIN
 #SELECT a FROM t1 WHERE b = 1 ORDER BY c DESC LIMIT 9;
-#SELECT a FROM t1 WHERE b = 1 ORDER BY c DESC LIMIT 9;
-#
-#--source include/turn_off_only_full_group_by.inc
+SELECT a FROM t1 WHERE b = 1 ORDER BY a DESC LIMIT 9;
+
+--source include/turn_off_only_full_group_by.inc
 #EXPLAIN
 #SELECT DISTINCT a FROM t1 WHERE b = 1 ORDER BY c DESC LIMIT 0, 9;
-#SELECT DISTINCT a FROM t1 WHERE b = 1 ORDER BY c DESC LIMIT 0, 9;
-#--source include/restore_sql_mode_after_turn_off_only_full_group_by.inc
-#
-#DROP TABLE t1;
+SELECT DISTINCT a FROM t1 WHERE b = 1 ORDER BY a DESC LIMIT 0, 9;
+--source include/restore_sql_mode_after_turn_off_only_full_group_by.inc
+
+DROP TABLE t1;
 
 --echo #
 --echo # Bug #43029: FORCE INDEX FOR ORDER BY is ignored when join buffering 

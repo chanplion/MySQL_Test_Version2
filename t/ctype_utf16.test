@@ -97,9 +97,8 @@ SELECT * FROM t1 WHERE a LIKE 'фЫва%' ORDER BY BINARY a;
 SELECT * FROM t1 WHERE a LIKE 'фЫва%' COLLATE utf16_bin ORDER BY BINARY a;
 DROP TABLE t1;
 
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (word varchar(64) NOT NULL, PRIMARY KEY (word))
-CREATE TABLE t1 (word varchar(64) NOT NULL)
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (word varchar(64) NOT NULL, PRIMARY KEY (word))
 CHARACTER SET utf16;
 INSERT INTO t1 (word) VALUES ("cat");
 SELECT * FROM t1 WHERE word LIKE "c%";
@@ -143,48 +142,48 @@ SET NAMES latin1;
 #
 # Two fields, index
 #
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (
-#   word VARCHAR(64),
-#   bar INT(11) default 0,
-#   PRIMARY KEY (word))
-#   ENGINE=SequoiaDB
-#   CHARSET utf16
-#   COLLATE utf16_general_ci ;
-#
-#INSERT INTO t1 (word) VALUES ("aar");
-#INSERT INTO t1 (word) VALUES ("a");
-#INSERT INTO t1 (word) VALUES ("aardvar");
-#INSERT INTO t1 (word) VALUES ("aardvark");
-#INSERT INTO t1 (word) VALUES ("aardvara");
-#INSERT INTO t1 (word) VALUES ("aardvarz");
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (
+   word VARCHAR(64),
+   bar INT(11) default 0,
+   PRIMARY KEY (word))
+   ENGINE=SequoiaDB
+   CHARSET utf16
+   COLLATE utf16_general_ci ;
+
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
 #EXPLAIN SELECT * FROM t1 ORDER BY word;
-#SELECT * FROM t1 ORDER BY word;
+SELECT * FROM t1 ORDER BY word;
 #EXPLAIN SELECT word FROM t1 ORDER BY word;
-#SELECT word FROM t1 ORDER by word;
-#DROP TABLE t1;
+SELECT word FROM t1 ORDER by word;
+DROP TABLE t1;
 
 
 #
 # One field, index
 # 
 
-#CREATE TABLE t1 (
-#   word VARCHAR(64) ,
-#   PRIMARY KEY (word))
-#   ENGINE=SequoiaDB
-#   CHARSET utf16
-#   COLLATE utf16_general_ci;
-#
-#INSERT INTO t1 (word) VALUES ("aar");
-#INSERT INTO t1 (word) VALUES ("a");
-#INSERT INTO t1 (word) VALUES ("aardvar");
-#INSERT INTO t1 (word) VALUES ("aardvark");
-#INSERT INTO t1 (word) VALUES ("aardvara");
-#INSERT INTO t1 (word) VALUES ("aardvarz");
+CREATE TABLE t1 (
+   word VARCHAR(64) ,
+   PRIMARY KEY (word))
+   ENGINE=SequoiaDB
+   CHARSET utf16
+   COLLATE utf16_general_ci;
+
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
 #EXPLAIN SELECT * FROM t1 ORDER BY WORD;
-#SELECT * FROM t1 ORDER BY word;
-#DROP TABLE t1;
+SELECT * FROM t1 ORDER BY word;
+DROP TABLE t1;
 
 
 #
@@ -688,27 +687,27 @@ show create table t1;
 drop table t1;
 SET sql_mode = default;
 #
-# Testing that maximim possible key length is 1000 bytes for SequoiaDB
+# Testing that maximim possible key length is 1024 bytes for SequoiaDB
 #
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#create table t1 (a varchar(250) character set utf16 primary key) engine=SequoiaDB;
-#show create table t1;
-#drop table t1;
-#--error ER_TOO_LONG_KEY
-#create table t1 (a varchar(334) character set utf16 primary key) engine=SequoiaDB;
+#Bug #SEQUOIADBMAINSTREAM-3564
+create table t1 (a varchar(256) character set utf16 primary key) engine=SequoiaDB;
+show create table t1;
+drop table t1;
+--error ER_TOO_LONG_KEY
+create table t1 (a varchar(257) character set utf16 primary key) engine=SequoiaDB;
 
 #
-# Testing that maximim possible key length is 767 bytes for SequoiaDB
+# Testing that maximim possible key length is 1024 bytes for SequoiaDB
 #
 #Minimized the varchar length for SequoiaDB so that it does not throw max keylength exceeded error
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#create table t1 (a varchar(150) character set utf16 primary key);
-#show create table t1;
-#drop table t1;
-#set GLOBAL innodb_large_prefix=OFF;
-#--error ER_TOO_LONG_KEY
-#create table t1 (a varchar(334) character set utf16 primary key);
-#set GLOBAL innodb_large_prefix=default;
+#Bug #SEQUOIADBMAINSTREAM-3564
+create table t1 (a varchar(256) character set utf16 primary key);
+show create table t1;
+drop table t1;
+set GLOBAL innodb_large_prefix=OFF;
+--error ER_TOO_LONG_KEY
+create table t1 (a varchar(257) character set utf16 primary key);
+set GLOBAL innodb_large_prefix=default;
 
 #
 # Conversion to utf8

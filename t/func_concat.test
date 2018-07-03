@@ -92,13 +92,14 @@ DROP TABLE t1;
 --echo #
 --echo # Bug #44743: Join in combination with concat does not always work
 --echo #
+#Bug #SEQUOIADBMAINSTREAM-3564
 CREATE TABLE t1 (
   a VARCHAR(100) NOT NULL DEFAULT '0',
   b VARCHAR(2) NOT NULL DEFAULT '',
   c VARCHAR(2) NOT NULL DEFAULT '',
-  d TEXT NOT NULL
-#  PRIMARY KEY (a, b, c), # length of index is larger than 255: SEQUOIADBMAINSTREAM-3564
-#  KEY (a)
+  d TEXT NOT NULL,
+  PRIMARY KEY (a, b, c),
+  KEY (a)
 ) DEFAULT CHARSET=utf8;
 
 INSERT INTO t1 VALUES ('gui_A', 'a', 'b', 'str1'),
