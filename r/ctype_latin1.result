@@ -3198,6 +3198,16 @@ f1()
 00:00:01
 DROP FUNCTION f1;
 DROP TABLE t1;
+SET NAMES latin1;
+SET sql_mode='';
+Warnings:
+Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
+CREATE TABLE t1(a char(215) CHARACTER SET utf8 NOT NULL DEFAULT '', KEY(a));
+INSERT INTO t1 VALUES ();
+SELECT maketime(`a`,`a`,`a`) FROM t1 GROUP BY 1;
+maketime(`a`,`a`,`a`)
+00:00:00.000000
+DROP TABLE t1;
 SET sql_mode=default;
 #
 # End of 5.5 tests

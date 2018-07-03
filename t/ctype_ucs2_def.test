@@ -45,15 +45,17 @@ DROP TABLE t1;
 # Bug#32705 - myisam corruption: Key in wrong position
 #             at page 1024 with ucs2_bin
 #
-# NOW SequoiaDB not support check and that exists a bug, when index length of char is more than 255 will cause some errors: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (
-#  c1 CHAR(255) CHARACTER SET UCS2 COLLATE UCS2_BIN NOT NULL,
-#  KEY(c1)
-#  ) ENGINE=SequoiaDB;
-#INSERT INTO t1 VALUES ('marshall\'s');
-#INSERT INTO t1 VALUES ('marsh');
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (
+  c1 CHAR(255) CHARACTER SET UCS2 COLLATE UCS2_BIN NOT NULL,
+  KEY(c1)
+  ) ENGINE=SequoiaDB;
+INSERT INTO t1 VALUES ('marshall\'s');
+INSERT INTO t1 VALUES ('marsh');
+
+#Sequoiadb not support
 #CHECK TABLE t1 EXTENDED;
-#DROP TABLE t1;
+DROP TABLE t1;
 
 -- source include/uninstall_sequoiadb.inc
 --echo End of 5.0 tests

@@ -107,8 +107,8 @@ drop table t1;
 #
 SET NAMES utf8;
 #test1
-# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_general_ci);
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_general_ci, INDEX (c));
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x039C03C903B403B11F770308 USING utf8));
 #Check one row
 SELECT * FROM t1 WHERE c LIKE CONVERT(_ucs2 0x039C0025 USING utf8)
@@ -119,8 +119,8 @@ SELECT * FROM t1 WHERE c LIKE CONVERT(_ucs2 0x039C0025 USING utf8)
 COLLATE utf8_general_ci ORDER BY c;
 DROP TABLE t1;
 #test2
-# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE ucs2_unicode_ci);
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE ucs2_unicode_ci, INDEX (c));
 INSERT INTO t1 VALUES (_ucs2 0x039C03C903B403B11F770308);
 #Check one row
 SELECT * FROM t1 WHERE c LIKE _ucs2 0x039C0025 COLLATE ucs2_unicode_ci;
@@ -130,8 +130,8 @@ SELECT * FROM t1 WHERE c LIKE _ucs2 0x039C0025
 COLLATE ucs2_unicode_ci ORDER BY c;
 DROP TABLE t1;
 #test 3
-# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_unicode_ci);
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_unicode_ci, INDEX (c));
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x039C03C903B403B11F770308 USING utf8));
 #Check one row row
 SELECT * FROM t1 WHERE c LIKE CONVERT(_ucs2 0x039C0025 USING utf8) COLLATE utf8_unicode_ci;
@@ -142,7 +142,7 @@ COLLATE utf8_unicode_ci ORDER BY c;
 DROP TABLE t1;
 
 CREATE TABLE t1 (
-col1 CHAR(32) CHARACTER SET utf8 NOT NULL
+  col1 CHAR(32) CHARACTER SET utf8 NOT NULL
 );
 
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x0041004100410627 USING utf8));
@@ -336,8 +336,8 @@ DROP TABLE t1;
 # Test all characters that appear in utf8_persia_ci tailoring
 #
 CREATE TABLE t1 (
-a VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_persian_ci,
-offs INT NOT NULL
+  a VARCHAR(10) CHARACTER SET utf8 COLLATE utf8_persian_ci,
+  offs INT NOT NULL
 );
 INSERT INTO t1 VALUES
 (_ucs2 0x066D, 1),(_ucs2 0x064E, 2),(_ucs2 0xFE76, 3),(_ucs2 0xFE77, 4),
@@ -429,11 +429,11 @@ DROP TABLE IF EXISTS t1;
 #
 # Bug#27345 Incorrect data returned when range-read from utf8_danish_ci indexes
 #
-#Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
+#Bug #SEQUOIADBMAINSTREAM-3564
 set names utf8;
 create table t1 (
-a varchar(255)
-#  key a(a)
+  a varchar(255),
+  key a(a)
 ) character set utf8 collate utf8_danish_ci;
 insert into t1 values ('åaaaa'),('ååaaa'),('aaaaa');
 select a as like_a from t1 where a like 'a%';
@@ -450,10 +450,10 @@ select a as like_aaaaa from t1 where a like 'aaaaa%';
 #select a as like_aaaaa from t1 where a like 'aaaaa%';
 drop table t1;
 
-# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
+# Bug #SEQUOIADBMAINSTREAM-3564
 create table t1 (
-a varchar(255)
-#  key a(a)
+  a varchar(255),
+  key a(a)
 ) character set utf8 collate utf8_spanish2_ci;
 insert into t1 values ('aaaaa'),('lllll'),('zzzzz');
 select a as like_l from t1 where a like 'l%';
@@ -470,10 +470,10 @@ select a as like_lllll from t1 where a like 'lllll%';
 #select a as like_lllll from t1 where a like 'lllll%';
 drop table t1;
 
-# Bug of SequoiaDB, char index length too long: SEQUOIADBMAINSTREAM-3564
+#Bug #SEQUOIADBMAINSTREAM-3564
 create table t1 (
-a varchar(255)
-#  key a(a)
+  a varchar(255),
+  key a(a)
 ) character set utf8 collate utf8_czech_ci;
 # In Czech 'ch' is a single letter between 'h' and 'i'
 insert into t1 values

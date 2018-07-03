@@ -905,10 +905,10 @@ select 'aa\\' like 'a%\\';
 #
 # Bug#9557 SequoiaDB utf8 table crash
 #
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
+#Bug #SEQUOIADBMAINSTREAM-3564
 CREATE TABLE t1 (
-  a varchar(255) NOT NULL default ''
-#  KEY a (a)
+  a varchar(255) NOT NULL default '',
+  KEY a (a)
 ) ENGINE=SequoiaDB DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 insert into t1 values (_utf8 0xe880bd);
 insert into t1 values (_utf8 0x5b);

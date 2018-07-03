@@ -92,9 +92,8 @@ SELECT * FROM t1 WHERE a LIKE 'фЫва%' ORDER BY BINARY a;
 SELECT * FROM t1 WHERE a LIKE 'фЫва%' COLLATE utf16le_bin ORDER BY BINARY a;
 DROP TABLE t1;
 
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (word VARCHAR(64) NOT NULL, PRIMARY KEY (word))
-CREATE TABLE t1 (word VARCHAR(64) NOT NULL)
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (word VARCHAR(64) NOT NULL, PRIMARY KEY (word))
 CHARACTER SET utf16le;
 INSERT INTO t1 (word) VALUES ("cat");
 SELECT * FROM t1 WHERE word LIKE "c%";
@@ -144,48 +143,48 @@ SET NAMES utf8, collation_connection=utf16le_general_ci;
 --echo # Two fields, index
 --echo #
 
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (
-#   word VARCHAR(64),
-#   bar INT(11) DEFAULT 0
-#   PRIMARY KEY (word))
-#   ENGINE=SequoiaDB
-#   CHARSET utf16le
-#   COLLATE utf16le_general_ci ;
-#
-#INSERT INTO t1 (word) VALUES ("aar");
-#INSERT INTO t1 (word) VALUES ("a");
-#INSERT INTO t1 (word) VALUES ("aardvar");
-#INSERT INTO t1 (word) VALUES ("aardvark");
-#INSERT INTO t1 (word) VALUES ("aardvara");
-#INSERT INTO t1 (word) VALUES ("aardvarz");
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (
+   word VARCHAR(64),
+   bar INT(11) DEFAULT 0,
+   PRIMARY KEY (word))
+   ENGINE=SequoiaDB
+   CHARSET utf16le
+   COLLATE utf16le_general_ci ;
+
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
 #EXPLAIN SELECT * FROM t1 ORDER BY word;
-#SELECT * FROM t1 ORDER BY word;
+SELECT * FROM t1 ORDER BY word;
 #EXPLAIN SELECT word FROM t1 ORDER BY word;
-#SELECT word FROM t1 ORDER by word;
-#DROP TABLE t1;
+SELECT word FROM t1 ORDER by word;
+DROP TABLE t1;
 
 
 --echo #
 --echo # One field, index
 --echo #
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (
-#   word VARCHAR(64) ,
-#   PRIMARY KEY (word))
-#   ENGINE=SequoiaDB
-#   CHARSET utf16le
-#   COLLATE utf16le_general_ci;
-#
-#INSERT INTO t1 (word) VALUES ("aar");
-#INSERT INTO t1 (word) VALUES ("a");
-#INSERT INTO t1 (word) VALUES ("aardvar");
-#INSERT INTO t1 (word) VALUES ("aardvark");
-#INSERT INTO t1 (word) VALUES ("aardvara");
-#INSERT INTO t1 (word) VALUES ("aardvarz");
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (
+   word VARCHAR(64) ,
+   PRIMARY KEY (word))
+   ENGINE=SequoiaDB
+   CHARSET utf16le
+   COLLATE utf16le_general_ci;
+
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
 #EXPLAIN SELECT * FROM t1 ORDER BY WORD;
-#SELECT * FROM t1 ORDER BY word;
-#DROP TABLE t1;
+SELECT * FROM t1 ORDER BY word;
+DROP TABLE t1;
 
 
 --echo #
@@ -647,27 +646,27 @@ DROP TABLE t1;
 SET sql_mode = default;
 
 --echo #
---echo # Testing that maximim possible key length is 1000 bytes for SequoiaDB
+--echo # Testing that maximim possible key length is 1024 bytes for SequoiaDB
 --echo #
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (a VARCHAR(250) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
-#SHOW CREATE TABLE t1;
-#DROP TABLE t1;
-#--error ER_TOO_LONG_KEY
-#CREATE TABLE t1 (a VARCHAR(334) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (a VARCHAR(256) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
+SHOW CREATE TABLE t1;
+DROP TABLE t1;
+--error ER_TOO_LONG_KEY
+CREATE TABLE t1 (a VARCHAR(257) CHARACTER SET utf16le PRIMARY KEY) engine=SequoiaDB;
 
 --echo #
---echo # Testing that maximim possible key length is 767 bytes for SequoiaDB
+--echo # Testing that maximim possible key length is 1024 bytes for SequoiaDB
 --echo #
-#Minimized the varchar length for InnoDB so that it does not throw max keylength exceeded error
-# Bug of SequoiaDB, when create char index and length is larger than 255, it will fail: SEQUOIADBMAINSTREAM-3564
-#CREATE TABLE t1 (a VARCHAR(150) CHARACTER SET utf16le PRIMARY KEY);
-#SHOW CREATE TABLE t1;
-#DROP TABLE t1;
-#SET GLOBAL innodb_large_prefix=OFF;
-#--error ER_TOO_LONG_KEY
-#CREATE TABLE t1 (a VARCHAR(334) CHARACTER SET utf16le PRIMARY KEY);
-#SET GLOBAL innodb_large_prefix=default;
+#Minimized the varchar length for Sequoiadb so that it does not throw max keylength exceeded error
+#Bug #SEQUOIADBMAINSTREAM-3564
+CREATE TABLE t1 (a VARCHAR(256) CHARACTER SET utf16le PRIMARY KEY);
+SHOW CREATE TABLE t1;
+DROP TABLE t1;
+SET GLOBAL innodb_large_prefix=OFF;
+--error ER_TOO_LONG_KEY
+CREATE TABLE t1 (a VARCHAR(257) CHARACTER SET utf16le PRIMARY KEY);
+SET GLOBAL innodb_large_prefix=default;
 
 --echo #
 --echo # Conversion to utf8

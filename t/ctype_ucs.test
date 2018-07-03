@@ -434,10 +434,10 @@ SELECT CONVERT(-103.0, CHAR(50) UNICODE);
 #
 # Bug#9557 SequoiaDB utf8 table crash
 #
-# Bug of SequoiaDB, create index of varchar failed when index length is larger than 255: SEQUOIADBMAINSTREAM-3564
+#Bug #SEQUOIADBMAINSTREAM-3564
 CREATE TABLE t1 (
-  a varchar(255) NOT NULL default ''
-#  KEY a (a)
+  a varchar(255) NOT NULL default '',
+  KEY a (a)
 ) ENGINE=SequoiaDB DEFAULT CHARSET=ucs2 COLLATE ucs2_general_ci;
 insert into t1 values (0x803d);
 insert into t1 values (0x005b);

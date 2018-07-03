@@ -2589,7 +2589,7 @@ Z,z,Ź,ź,Ż,ż,Ž,ž
 ǃ
 drop table t1;
 SET NAMES utf8;
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_general_ci);
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_general_ci, INDEX (c));
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x039C03C903B403B11F770308 USING utf8));
 SELECT * FROM t1 WHERE c LIKE CONVERT(_ucs2 0x039C0025 USING utf8)
 COLLATE utf8_general_ci;
@@ -2602,7 +2602,7 @@ c
 Μωδ
 Μωδαί̈
 DROP TABLE t1;
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE ucs2_unicode_ci);
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE ucs2_unicode_ci, INDEX (c));
 INSERT INTO t1 VALUES (_ucs2 0x039C03C903B403B11F770308);
 SELECT * FROM t1 WHERE c LIKE _ucs2 0x039C0025 COLLATE ucs2_unicode_ci;
 c
@@ -2614,7 +2614,7 @@ c
 Μωδ
 Μωδαί̈
 DROP TABLE t1;
-CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_unicode_ci);
+CREATE TABLE t1 (c varchar(255) NOT NULL COLLATE utf8_unicode_ci, INDEX (c));
 INSERT INTO t1 VALUES (CONVERT(_ucs2 0x039C03C903B403B11F770308 USING utf8));
 SELECT * FROM t1 WHERE c LIKE CONVERT(_ucs2 0x039C0025 USING utf8) COLLATE utf8_unicode_ci;
 c
@@ -3340,8 +3340,8 @@ COUNT(*)	c1
 DROP TABLE IF EXISTS t1;
 set names utf8;
 create table t1 (
-a varchar(255)
-#  key a(a)
+a varchar(255),
+key a(a)
 ) character set utf8 collate utf8_danish_ci;
 insert into t1 values ('åaaaa'),('ååaaa'),('aaaaa');
 select a as like_a from t1 where a like 'a%';
@@ -3361,8 +3361,8 @@ like_aaaaa
 aaaaa
 drop table t1;
 create table t1 (
-a varchar(255)
-#  key a(a)
+a varchar(255),
+key a(a)
 ) character set utf8 collate utf8_spanish2_ci;
 insert into t1 values ('aaaaa'),('lllll'),('zzzzz');
 select a as like_l from t1 where a like 'l%';
@@ -3382,8 +3382,8 @@ like_lllll
 lllll
 drop table t1;
 create table t1 (
-a varchar(255)
-#  key a(a)
+a varchar(255),
+key a(a)
 ) character set utf8 collate utf8_czech_ci;
 insert into t1 values
 ('b'),('c'),('d'),('e'),('f'),('g'),('h'),('ch'),('i'),('j');

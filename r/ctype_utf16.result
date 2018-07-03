@@ -303,7 +303,7 @@ a
 фЫва
 фЫвапролдж
 DROP TABLE t1;
-CREATE TABLE t1 (word varchar(64) NOT NULL)
+CREATE TABLE t1 (word varchar(64) NOT NULL, PRIMARY KEY (word))
 CHARACTER SET utf16;
 INSERT INTO t1 (word) VALUES ("cat");
 SELECT * FROM t1 WHERE word LIKE "c%";
@@ -329,6 +329,57 @@ select insert(_utf16 0x006100620063,1,2,_utf16 0x006400650066);
 insert(_utf16 0x006100620063,1,2,_utf16 0x006400650066)
 defc
 SET NAMES latin1;
+CREATE TABLE t1 (
+word VARCHAR(64),
+bar INT(11) default 0,
+PRIMARY KEY (word))
+ENGINE=SequoiaDB
+CHARSET utf16
+COLLATE utf16_general_ci ;
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
+SELECT * FROM t1 ORDER BY word;
+word	bar
+a	0
+aar	0
+aardvar	0
+aardvara	0
+aardvark	0
+aardvarz	0
+SELECT word FROM t1 ORDER by word;
+word
+a
+aar
+aardvar
+aardvara
+aardvark
+aardvarz
+DROP TABLE t1;
+CREATE TABLE t1 (
+word VARCHAR(64) ,
+PRIMARY KEY (word))
+ENGINE=SequoiaDB
+CHARSET utf16
+COLLATE utf16_general_ci;
+INSERT INTO t1 (word) VALUES ("aar");
+INSERT INTO t1 (word) VALUES ("a");
+INSERT INTO t1 (word) VALUES ("aardvar");
+INSERT INTO t1 (word) VALUES ("aardvark");
+INSERT INTO t1 (word) VALUES ("aardvara");
+INSERT INTO t1 (word) VALUES ("aardvarz");
+SELECT * FROM t1 ORDER BY word;
+word
+a
+aar
+aardvar
+aardvara
+aardvark
+aardvarz
+DROP TABLE t1;
 SELECT hex(cast(0xAA as char character set utf16));
 hex(cast(0xAA as char character set utf16))
 00AA
@@ -805,6 +856,32 @@ t1	CREATE TABLE `t1` (
 ) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
 drop table t1;
 SET sql_mode = default;
+create table t1 (a varchar(256) character set utf16 primary key) engine=SequoiaDB;
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` varchar(256) CHARACTER SET utf16 NOT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+drop table t1;
+create table t1 (a varchar(257) character set utf16 primary key) engine=SequoiaDB;
+ERROR 42000: Specified key was too long; max key length is 1024 bytes
+create table t1 (a varchar(256) character set utf16 primary key);
+show create table t1;
+Table	Create Table
+t1	CREATE TABLE `t1` (
+  `a` varchar(256) CHARACTER SET utf16 NOT NULL,
+  PRIMARY KEY (`a`)
+) ENGINE=SEQUOIADB DEFAULT CHARSET=latin1
+drop table t1;
+set GLOBAL innodb_large_prefix=OFF;
+Warnings:
+Warning	131	Using innodb_large_prefix is deprecated and the parameter may be removed in future releases. See http://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html
+create table t1 (a varchar(257) character set utf16 primary key);
+ERROR 42000: Specified key was too long; max key length is 1024 bytes
+set GLOBAL innodb_large_prefix=default;
+Warnings:
+Warning	131	Using innodb_large_prefix is deprecated and the parameter may be removed in future releases. See http://dev.mysql.com/doc/refman/5.7/en/innodb-file-format.html
 create table t1 (a char(1) character set utf16);
 insert into t1 values (0xD800DC00),(0xD800DCFF),(0xDB7FDC00),(0xDB7FDCFF);
 insert into t1 values (0x00C0), (0x00FF),(0xE000), (0xFFFF);

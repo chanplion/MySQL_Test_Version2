@@ -885,8 +885,8 @@ SET sql_mode = 'NO_ENGINE_SUBSTITUTION';
 Warnings:
 Warning	3090	Changing sql mode 'NO_AUTO_CREATE_USER' is deprecated. It will be removed in a future release.
 CREATE TABLE t1 (
-a varchar(255) NOT NULL default ''
-# KEY a (a)
+a varchar(255) NOT NULL default '',
+KEY a (a)
 ) ENGINE=SequoiaDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;
 insert into t1 values (_utf8mb4 0xe880bd);
 insert into t1 values (_utf8mb4 0x5b);
