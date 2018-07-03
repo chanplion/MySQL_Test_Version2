@@ -39,6 +39,73 @@ delete from t1 where a=18446744073709551615;
 select * from t1;
 drop table t1;
 
+# Supply some verification point for above bug: SEQUOIADBMAINSTREAM-3563
+# Testlink: seqDB-15396: create index and verify insert/delete/update/select
+#           seqDB-15397: create index and verify where
+#           seqDB-15398: create index and verify sort
+#           seqDB-15399: create index and verify group by
+#           seqDB-15400: create index and verify math function
+#           seqDB-15401: create index and verify subquery
+#           seqDB-15402: create index and verify join
+# Test primary key, unique key and common key
+create table t1(a bigint unsigned not null, primary key(a));
+insert into t1 values (922337203685477807),(922337203685477808),(18446744073709551613),(18446744073709551615);
+select * from t1;
+update t1 set a = 0 where a = 18446744073709551615;
+select * from t1 where a = 0;
+delete from t1 where a = 0;
+select * from t1 where a = 0;
+insert into t1 values (18446744073709551615);
+select * from t1 where a = 18446744073709551615;
+select * from t1 where a between 922337203685477808 and 18446744073709551615;
+select * from t1 where a >= 922337203685477808 order by a;
+select * from t1 group by a having a > 922337203685477808;
+select * from t1 where a <> all (select a from t1 where a <> 922337203685477807);
+create table t2(a bigint unsigned not null, primary key(a));
+insert into t2 values (0),(922337203685477808),(18446744073709551615);
+select t1.a,t2.a from t1 left join t2 on t1.a = t2.a;
+select format(a, 2) from t1 where a > 922337203685477807 and a < 18446744073709551615;
+drop table t1,t2;
+
+create table t1(a bigint unsigned not null, unique key(a));
+insert into t1 values (922337203685477807),(922337203685477808),(18446744073709551613),(18446744073709551615);
+select * from t1; 
+update t1 set a = 0 where a = 18446744073709551615;
+select * from t1 where a = 0;
+delete from t1 where a = 0;
+select * from t1 where a = 0;
+insert into t1 values (18446744073709551615);
+select * from t1 where a = 18446744073709551615;
+select * from t1 where a between 922337203685477808 and 18446744073709551615;
+select * from t1 where a >= 922337203685477808 order by a;
+select * from t1 group by a having a > 922337203685477808;
+select * from t1 where a <> all (select a from t1 where a <> 922337203685477807);
+create table t2(a bigint unsigned not null, unique key(a));
+insert into t2 values (0),(922337203685477808),(18446744073709551615);
+select t1.a,t2.a from t1 left join t2 on t1.a = t2.a;
+select format(a, 2) from t1 where a > 922337203685477807 and a < 18446744073709551615;
+drop table t1,t2;
+
+create table t1(a bigint unsigned not null, key(a));
+insert into t1 values (922337203685477807),(922337203685477808),(18446744073709551613),(18446744073709551615);
+select * from t1;
+update t1 set a = 0 where a = 18446744073709551615;
+select * from t1 where a = 0;
+delete from t1 where a = 0;
+select * from t1 where a = 0;
+insert into t1 values (18446744073709551615);
+select * from t1 where a = 18446744073709551615;
+select * from t1 where a between 922337203685477808 and 18446744073709551615 order by a;
+select * from t1 group by a having a > 922337203685477808;
+select * from t1 where a in (select a from t1 group by a having a <= 18446744073709551613);
+create table t2(a bigint unsigned not null, key(a));
+insert into t2 values (0),(922337203685477808),(18446744073709551615);
+select t1.a,t2.a from t1 inner join t2 on t1.a = t2.a;
+select * from t1 where a > floor(922337203685477808);
+drop table t1,t2;
+
+--echo End of Supply 
+
 create table t1 ( a int not null default 1, big bigint );
 insert into t1 (big) values (-1),(12345678901234567),(9223372036854775807),(18446744073709551615);
 select * from t1;
