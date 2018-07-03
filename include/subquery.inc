@@ -3339,54 +3339,54 @@ drop table t1, t2, t3;
 # 
 #  2. Subquery handled with 'index_subquery':
 #Bug #SEQUOIADBMAINSTREAM-3582
-#create table t1 (a int, oref int, key(a));
-#insert into t1 values 
-#  (1, 1),
-#  (1, NULL),
-#  (2, 3),
-#  (2, NULL),
-#  (3, NULL);
-#
-#create table t2 (a int, oref int);
-#insert into t2 values (1, 1), (2,2), (NULL, 3), (NULL, 4);
-#
-#select oref, a, a in (select a from t1 where oref=t2.oref) Z from t2;
+create table t1 (a int, oref int, key(a));
+insert into t1 values 
+  (1, 1),
+  (1, NULL),
+  (2, 3),
+  (2, NULL),
+  (3, NULL);
+
+create table t2 (a int, oref int);
+insert into t2 values (1, 1), (2,2), (NULL, 3), (NULL, 4);
+
+select oref, a, a in (select a from t1 where oref=t2.oref) Z from t2;
 
 # The next explain shows "using index" but that is just incorrect display
 # (there is a bug filed about this).
 #explain extended 
 #select oref, a, a in (select a from t1 where oref=t2.oref) z from t2;
 
-#flush status;
-#select oref, a from t2 where a in (select a from t1 where oref=t2.oref);
+flush status;
+select oref, a from t2 where a in (select a from t1 where oref=t2.oref);
 # This will only show access to t2:
 #show status like '%Handler_read_rnd_next';
 
 # Check that repeated NULL-scans are not cached (subq. is not correlated):
-#delete from t2;
-#insert into t2 values (NULL, 0),(NULL, 0), (NULL, 0), (NULL, 0);
+delete from t2;
+insert into t2 values (NULL, 0),(NULL, 0), (NULL, 0), (NULL, 0);
 
-#flush status;
-#select oref, a, a in (select a from t1 where oref=t2.oref) Z from t2;
-#show status like '%Handler_read%';
-#select 'No key lookups, seq reads: 29= 5 reads from t2 + 4 * 6 reads from t1.' Z;
+flush status;
+select oref, a, a in (select a from t1 where oref=t2.oref) Z from t2;
+show status like '%Handler_read%';
+select 'No key lookups, seq reads: 29= 5 reads from t2 + 4 * 6 reads from t1.' Z;
 
-#drop table t1, t2;
+drop table t1, t2;
 
 #
 # 3. Subquery handled with 'unique_index_subquery':
 #Bug #SEQUOIADBMAINSTREAM-3582
 #
 
-#create table t1 (a int, b int, primary key (a));
-#insert into t1 values (1,1), (3,1),(100,1);
+create table t1 (a int, b int, primary key (a));
+insert into t1 values (1,1), (3,1),(100,1);
 
-#create table t2 (a int, b int);
-#insert into t2 values (1,1),(2,1),(NULL,1),(NULL,0);
+create table t2 (a int, b int);
+insert into t2 values (1,1),(2,1),(NULL,1),(NULL,0);
 
-#select a,b, a in (select a from t1 where t1.b = t2.b) Z from t2 ;
+select a,b, a in (select a from t1 where t1.b = t2.b) Z from t2 ;
 
-#drop table t1, t2;
+drop table t1, t2;
 
 #
 # 4. Subquery that is a join, with ref access
@@ -3469,15 +3469,15 @@ select a, oref,
 drop table t1, t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#create table t1 (a int, b int, primary key (a));
-#insert into t1 values (1,1), (3,1),(100,1);
-#create table t2 (a int, b int);
-#insert into t2 values (1,1),(2,1),(NULL,1),(NULL,0);
+create table t1 (a int, b int, primary key (a));
+insert into t1 values (1,1), (3,1),(100,1);
+create table t2 (a int, b int);
+insert into t2 values (1,1),(2,1),(NULL,1),(NULL,0);
 
-#select a,b, a in (select a from t1 where t1.b = t2.b union select a from
-#t1 where t1.b = t2.b) Z from t2 ;
-#select a,b, a in (select a from t1 where t1.b = t2.b) Z from t2 ;
-#drop table t1, t2;
+select a,b, a in (select a from t1 where t1.b = t2.b union select a from
+t1 where t1.b = t2.b) Z from t2 ;
+select a,b, a in (select a from t1 where t1.b = t2.b) Z from t2 ;
+drop table t1, t2;
 
 
 #
@@ -3494,7 +3494,7 @@ insert into t1 select 2*A, 2*A, 100 from t3;
 # First test index subquery engine
 #Bug #SEQUOIADBMAINSTREAM-3582
 #explain extended select a,b, oref, (a,b) in (select a,b from t1 where c=t2.oref) z from t2;
-#select a,b, oref, (a,b) in (select a,b from t1 where c=t2.oref) z from t2;
+select a,b, oref, (a,b) in (select a,b from t1 where c=t2.oref) z from t2;
 
 # Then check that we do turn off 'ref' scans in the subquery
 create table t4 (x int);
@@ -3542,7 +3542,7 @@ insert into t2 values ('new1', 10,10);
 insert into t1 values ('new1', 1234, 10, NULL); 
 # new1, 10, 10, NULL,
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) Z from t2 where a=10 and b=10; 
+select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) Z from t2 where a=10 and b=10; 
 #explain extended
 #select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2 where a=10 and b=10; 
 drop table t1, t2;
@@ -3619,13 +3619,13 @@ alter table t1 add index idx(ie);
 #explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 --sorted_result
 select oref, a from t2 where a in (select ie from t1 where oref=t2.oref); 
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
+select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
 
 
 alter table t1 drop index idx;
@@ -3709,13 +3709,13 @@ alter table t1 add index idx(ie1,ie2);
 #explain select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
+select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
 
 --sorted_result
 select oref, a, b from t2 where (a,b) in (select ie1,ie2 from t1 where oref=t2.oref); 
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a, b from t2 where (a,b) not in (select ie1,ie2 from t1 where oref=t2.oref);
+select oref, a, b from t2 where (a,b) not in (select ie1,ie2 from t1 where oref=t2.oref);
 
 #explain extended 
 #select oref, a, b, (a,b) in (select ie1,ie2 from t1 where oref=t2.oref) z from t2;
@@ -3746,13 +3746,13 @@ insert into t2 values
 #explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 --sorted_result
 select oref, a from t2 where a in (select ie from t1 where oref=t2.oref);
 
 #Bug #SEQUOIADBMAINSTREAM-3582
-#select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
+select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
 
 #explain 
 #select oref, a, a in (select min(ie) from t1 where oref=t2.oref group by grp) z from t2;

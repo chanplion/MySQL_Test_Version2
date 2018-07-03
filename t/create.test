@@ -2,7 +2,8 @@
 # Check some special create statements.
 # (Case #13068: Create DataBase)
 # (Case #13070: Create common Table)
-#
+# (Case #15395: Create index)
+# (Case #15393: Create index)
 
 --source include/have_sequoiadb.inc
 
