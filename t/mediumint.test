@@ -1,0 +1,76 @@
+# Supply some verification point of type mediumint for bug: SEQUOIADBMAINSTREAM-3563
+# Testlink: seqDB-15412: create index and verify insert/delete/update/select
+#           seqDB-15413: create index and verify where
+#           seqDB-15415: create index and verify sort
+#           seqDB-15416: create index and verify group by
+#           seqDB-15417: create index and verify math function
+#           seqDB-15418: create index and verify subquery
+#           seqDB-15419: create index and verify join
+# Test primary key, unique key and common key
+
+-- source include/have_sequoiadb.inc
+
+# primary key
+create table t1(a mediumint unsigned not null, primary key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1;
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (16777215);
+select * from t1 where a = 16777214;
+select * from t1 where a between 8388608 and 16777215;
+select * from t1 where a >= 8388608 order by a;
+select * from t1 group by a having a > 8388608;
+select * from t1 where a < any (select a from t1 group by a having a > 8388607);
+select * from t1 where a <> all (select a from t1 where a <> 8388607);
+create table t2(a mediumint unsigned not null, primary key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 right join t2 on t1.a = t2.a;
+select format(a, 2) from t1 where a > 8388608 and a < 16777215;
+drop table t1,t2;
+
+# unique key
+create table t1(a mediumint unsigned not null, unique key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1;
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (16777215);
+select * from t1 where a = 16777215;
+select * from t1 where a between 8388608 and 16777215;
+select * from t1 where a != 8388607 order by a;
+select * from t1 group by a having a > 8388607;
+select * from t1 where a <> all (select a from t1 where a < 16777214);
+create table t2(a mediumint unsigned not null, unique key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 natural left join t2;
+select format(a, 2) from t1 where a >= 8388607 and a <= 16777215;
+drop table t1,t2;
+
+# common key
+create table t1(a mediumint unsigned not null, key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1; 
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (16777215);
+select * from t1 where a = 16777215;
+select * from t1 where a between 8388608 and 16777215;
+select * from t1 where a <= 16777214 order by a;
+select * from t1 group by a having a >= 8388608;
+select * from t1 where a <> all (select a from t1 where a <> 16777214);
+create table t2(a mediumint unsigned not null, key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 inner join t2 where t1.a = t2.a; 
+select format(a, 2) from t1 where a >= 8388608 and a <= 16777215;
+drop table t1,t2;
+
+--source include/uninstall_sequoiadb.inc
+
+--echo End of Supply

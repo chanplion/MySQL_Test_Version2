@@ -1,0 +1,155 @@
+create table t1(a tinyint unsigned not null, primary key(a));
+insert into t1 values (127),(128),(254),(255);
+select * from t1;
+a
+127
+128
+254
+255
+update t1 set a = 1 where a = 255;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (255);
+select * from t1 where a = 254;
+a
+254
+select * from t1 where a between 128 and 255;
+a
+128
+254
+255
+select * from t1 where a >= 128 order by a;
+a
+128
+254
+255
+select * from t1 group by a having a > 128;
+a
+254
+255
+select * from t1 where a < any (select a from t1 group by a having a > 127);
+a
+127
+128
+254
+select * from t1 where a <> all (select a from t1 where a <> 127);
+a
+127
+create table t2(a tinyint unsigned not null, primary key(a));
+insert into t2 values (0),(127),(255);
+select t1.a,t2.a from t1 right join t2 on t1.a = t2.a;
+a	a
+NULL	0
+127	127
+255	255
+select format(a, 2) from t1 where a > 128 and a < 255;
+format(a, 2)
+254.00
+drop table t1,t2;
+create table t1(a tinyint unsigned not null, unique key(a));
+insert into t1 values (127),(128),(254),(255);
+select * from t1;
+a
+127
+128
+254
+255
+update t1 set a = 1 where a = 255;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (255);
+select * from t1 where a = 255;
+a
+255
+select * from t1 where a between 128 and 255;
+a
+128
+254
+255
+select * from t1 where a != 127 order by a;
+a
+128
+254
+255
+select * from t1 group by a having a > 127;
+a
+128
+254
+255
+select * from t1 where a <> all (select a from t1 where a < 254);
+a
+254
+255
+create table t2(a tinyint unsigned not null, unique key(a));
+insert into t2 values (0),(127),(255);
+select t1.a,t2.a from t1 natural left join t2;
+a	a
+127	127
+128	NULL
+254	NULL
+255	255
+select format(a, 2) from t1 where a >= 127 and a <= 255;
+format(a, 2)
+127.00
+128.00
+254.00
+255.00
+drop table t1,t2;
+create table t1(a tinyint unsigned not null, key(a));
+insert into t1 values (127),(128),(254),(255);
+select * from t1;
+a
+127
+128
+254
+255
+update t1 set a = 1 where a = 255;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (255);
+select * from t1 where a = 255;
+a
+255
+select * from t1 where a between 128 and 255;
+a
+128
+254
+255
+select * from t1 where a <= 254 order by a;
+a
+127
+128
+254
+select * from t1 group by a having a >= 128;
+a
+128
+254
+255
+select * from t1 where a <> all (select a from t1 where a <> 254);
+a
+254
+create table t2(a tinyint unsigned not null, key(a));
+insert into t2 values (0),(127),(255);
+select t1.a,t2.a from t1 inner join t2 where t1.a = t2.a;
+a	a
+127	127
+255	255
+select format(a, 2) from t1 where a >= 128 and a <= 255;
+format(a, 2)
+128.00
+254.00
+255.00
+drop table t1,t2;
+End of Supply

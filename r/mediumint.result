@@ -1,0 +1,155 @@
+create table t1(a mediumint unsigned not null, primary key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1;
+a
+8388607
+8388608
+16777214
+16777215
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (16777215);
+select * from t1 where a = 16777214;
+a
+16777214
+select * from t1 where a between 8388608 and 16777215;
+a
+8388608
+16777214
+16777215
+select * from t1 where a >= 8388608 order by a;
+a
+8388608
+16777214
+16777215
+select * from t1 group by a having a > 8388608;
+a
+16777214
+16777215
+select * from t1 where a < any (select a from t1 group by a having a > 8388607);
+a
+8388607
+8388608
+16777214
+select * from t1 where a <> all (select a from t1 where a <> 8388607);
+a
+8388607
+create table t2(a mediumint unsigned not null, primary key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 right join t2 on t1.a = t2.a;
+a	a
+NULL	0
+8388607	8388607
+16777215	16777215
+select format(a, 2) from t1 where a > 8388608 and a < 16777215;
+format(a, 2)
+16,777,214.00
+drop table t1,t2;
+create table t1(a mediumint unsigned not null, unique key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1;
+a
+8388607
+8388608
+16777214
+16777215
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (16777215);
+select * from t1 where a = 16777215;
+a
+16777215
+select * from t1 where a between 8388608 and 16777215;
+a
+8388608
+16777214
+16777215
+select * from t1 where a != 8388607 order by a;
+a
+8388608
+16777214
+16777215
+select * from t1 group by a having a > 8388607;
+a
+8388608
+16777214
+16777215
+select * from t1 where a <> all (select a from t1 where a < 16777214);
+a
+16777214
+16777215
+create table t2(a mediumint unsigned not null, unique key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 natural left join t2;
+a	a
+8388607	8388607
+8388608	NULL
+16777214	NULL
+16777215	16777215
+select format(a, 2) from t1 where a >= 8388607 and a <= 16777215;
+format(a, 2)
+8,388,607.00
+8,388,608.00
+16,777,214.00
+16,777,215.00
+drop table t1,t2;
+create table t1(a mediumint unsigned not null, key(a));
+insert into t1 values (8388607),(8388608),(16777214),(16777215);
+select * from t1;
+a
+8388607
+8388608
+16777214
+16777215
+update t1 set a = 1 where a = 16777215;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (16777215);
+select * from t1 where a = 16777215;
+a
+16777215
+select * from t1 where a between 8388608 and 16777215;
+a
+8388608
+16777214
+16777215
+select * from t1 where a <= 16777214 order by a;
+a
+8388607
+8388608
+16777214
+select * from t1 group by a having a >= 8388608;
+a
+8388608
+16777214
+16777215
+select * from t1 where a <> all (select a from t1 where a <> 16777214);
+a
+16777214
+create table t2(a mediumint unsigned not null, key(a));
+insert into t2 values (0),(8388607),(16777215);
+select t1.a,t2.a from t1 inner join t2 where t1.a = t2.a;
+a	a
+8388607	8388607
+16777215	16777215
+select format(a, 2) from t1 where a >= 8388608 and a <= 16777215;
+format(a, 2)
+8,388,608.00
+16,777,214.00
+16,777,215.00
+drop table t1,t2;
+End of Supply

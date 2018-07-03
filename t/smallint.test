@@ -1,0 +1,76 @@
+# Supply some verification point of type smallint for bug: SEQUOIADBMAINSTREAM-3563
+# Testlink: seqDB-15420: create index and verify insert/delete/update/select
+#           seqDB-15421: create index and verify where
+#           seqDB-15422: create index and verify sort
+#           seqDB-15423: create index and verify group by
+#           seqDB-15424: create index and verify math function
+#           seqDB-15425: create index and verify subquery
+#           seqDB-15426: create index and verify join
+# Test primary key, unique key and common key
+
+-- source include/have_sequoiadb.inc
+
+# primary key
+create table t1(a smallint unsigned not null, primary key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1;
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (65535);
+select * from t1 where a = 65534;
+select * from t1 where a between 32768 and 65535;
+select * from t1 where a >= 32768 order by a;
+select * from t1 group by a having a > 32768;
+select * from t1 where a < any (select a from t1 group by a having a > 32767);
+select * from t1 where a <> all (select a from t1 where a <> 32767);
+create table t2(a smallint unsigned not null, primary key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 right join t2 on t1.a = t2.a;
+select format(a, 2) from t1 where a > 32768 and a < 65535;
+drop table t1,t2;
+
+# unique key
+create table t1(a smallint unsigned not null, unique key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1;
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (65535);
+select * from t1 where a = 65535;
+select * from t1 where a between 32768 and 65535;
+select * from t1 where a != 32767 order by a;
+select * from t1 group by a having a > 32767;
+select * from t1 where a <> all (select a from t1 where a < 65534);
+create table t2(a smallint unsigned not null, unique key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 natural left join t2;
+select format(a, 2) from t1 where a >= 32767 and a <= 65535;
+drop table t1,t2;
+
+# common key
+create table t1(a smallint unsigned not null, key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1; 
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+insert into t1 values (65535);
+select * from t1 where a = 65535;
+select * from t1 where a between 32768 and 65535;
+select * from t1 where a <= 65534 order by a;
+select * from t1 group by a having a >= 32768;
+select * from t1 where a <> all (select a from t1 where a <> 65534);
+create table t2(a smallint unsigned not null, key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 inner join t2 where t1.a = t2.a; 
+select format(a, 2) from t1 where a >= 32768 and a <= 65535;
+drop table t1,t2;
+
+--source include/uninstall_sequoiadb.inc
+
+--echo End of Supply

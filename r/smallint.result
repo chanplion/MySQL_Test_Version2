@@ -1,0 +1,155 @@
+create table t1(a smallint unsigned not null, primary key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1;
+a
+32767
+32768
+65534
+65535
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (65535);
+select * from t1 where a = 65534;
+a
+65534
+select * from t1 where a between 32768 and 65535;
+a
+32768
+65534
+65535
+select * from t1 where a >= 32768 order by a;
+a
+32768
+65534
+65535
+select * from t1 group by a having a > 32768;
+a
+65534
+65535
+select * from t1 where a < any (select a from t1 group by a having a > 32767);
+a
+32767
+32768
+65534
+select * from t1 where a <> all (select a from t1 where a <> 32767);
+a
+32767
+create table t2(a smallint unsigned not null, primary key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 right join t2 on t1.a = t2.a;
+a	a
+NULL	0
+32767	32767
+65535	65535
+select format(a, 2) from t1 where a > 32768 and a < 65535;
+format(a, 2)
+65,534.00
+drop table t1,t2;
+create table t1(a smallint unsigned not null, unique key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1;
+a
+32767
+32768
+65534
+65535
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (65535);
+select * from t1 where a = 65535;
+a
+65535
+select * from t1 where a between 32768 and 65535;
+a
+32768
+65534
+65535
+select * from t1 where a != 32767 order by a;
+a
+32768
+65534
+65535
+select * from t1 group by a having a > 32767;
+a
+32768
+65534
+65535
+select * from t1 where a <> all (select a from t1 where a < 65534);
+a
+65534
+65535
+create table t2(a smallint unsigned not null, unique key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 natural left join t2;
+a	a
+32767	32767
+32768	NULL
+65534	NULL
+65535	65535
+select format(a, 2) from t1 where a >= 32767 and a <= 65535;
+format(a, 2)
+32,767.00
+32,768.00
+65,534.00
+65,535.00
+drop table t1,t2;
+create table t1(a smallint unsigned not null, key(a));
+insert into t1 values (32767),(32768),(65534),(65535);
+select * from t1;
+a
+32767
+32768
+65534
+65535
+update t1 set a = 1 where a = 65535;
+select * from t1 where a = 1;
+a
+1
+delete from t1 where a = 1;
+select * from t1 where a = 1;
+a
+insert into t1 values (65535);
+select * from t1 where a = 65535;
+a
+65535
+select * from t1 where a between 32768 and 65535;
+a
+32768
+65534
+65535
+select * from t1 where a <= 65534 order by a;
+a
+32767
+32768
+65534
+select * from t1 group by a having a >= 32768;
+a
+32768
+65534
+65535
+select * from t1 where a <> all (select a from t1 where a <> 65534);
+a
+65534
+create table t2(a smallint unsigned not null, key(a));
+insert into t2 values (0),(32767),(65535);
+select t1.a,t2.a from t1 inner join t2 where t1.a = t2.a;
+a	a
+32767	32767
+65535	65535
+select format(a, 2) from t1 where a >= 32768 and a <= 65535;
+format(a, 2)
+32,768.00
+65,534.00
+65,535.00
+drop table t1,t2;
+End of Supply
