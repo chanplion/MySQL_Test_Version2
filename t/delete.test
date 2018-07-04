@@ -1,5 +1,6 @@
 # The include statement below is a temp one for tests that are yet to
-#be ported to run with SequoiaDB,
+#be ported to run with SequoiaDB
+# (# case 13305: check sub query)
 --source include/have_sequoiadb.inc
 
 #
@@ -314,19 +315,19 @@ DROP TABLE t1;
 DROP FUNCTION f1;
 
 
-#--echo #
-#--echo # Bug #49552 : sql_buffer_result cause crash + not found records 
-#--echo #   in multitable delete/subquery
-#--echo #
+--echo #
+--echo # Bug #49552 : sql_buffer_result cause crash + not found records 
+--echo #   in multitable delete/subquery
+--echo #
 # Bug of SequoiaDB , delete with sub-query will cause wrong query results: SEQUOIADBMAINSTREAM-3641
-#CREATE TABLE t1(a INT);
-#INSERT INTO t1 VALUES (1),(2),(3);
-#SET SESSION SQL_BUFFER_RESULT=1;
-#DELETE t1 FROM (SELECT SUM(a) a FROM t1) x,t1;
-#
-#SET SESSION SQL_BUFFER_RESULT=DEFAULT;
-#SELECT * FROM t1;
-#DROP TABLE t1;
+CREATE TABLE t1(a INT);
+INSERT INTO t1 VALUES (1),(2),(3);
+SET SESSION SQL_BUFFER_RESULT=1;
+DELETE t1 FROM (SELECT SUM(a) a FROM t1) x,t1;
+
+SET SESSION SQL_BUFFER_RESULT=DEFAULT;
+SELECT * FROM t1;
+DROP TABLE t1;
 
 --echo End of 5.0 tests
 
