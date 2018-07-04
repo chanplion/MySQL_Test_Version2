@@ -1,6 +1,7 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB,
-# (#case #13102: Check update between muiti tables)
+# (#case #13102: Check update between muiti tables, table scan)
+# (#case #15435: Check update between muiti tables, index scan)
 --source include/have_sequoiadb.inc
 
 #

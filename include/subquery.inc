@@ -102,8 +102,9 @@ select * from t1 where t1.a=(select t2.a from t2 where t2.b=(select max(a) from 
 select * from t1 where t1.a=(select t2.a from t2 where t2.b=(select max(a) from t3 where t3.a < t1.a) order by 1 desc limit 1);
 select b,(select avg(t2.a+(select min(t3.a) from t3 where t3.a >= t4.a)) from t2) from t4;
 #explain extended select b,(select avg(t2.a+(select min(t3.a) from t3 where t3.a >= t4.a)) from t2) from t4;
+
 #Bug #SEQUOIADBMAINSTREAM-3576
-#select * from t3 where exists (select * from t2 where t2.b=t3.a);
+select * from t3 where exists (select * from t2 where t2.b=t3.a);
 select * from t3 where not exists (select * from t2 where t2.b=t3.a);
 select * from t3 where a in (select b from t2);
 select * from t3 where a not in (select b from t2);
@@ -146,7 +147,7 @@ create table t7( uq int primary key, name char(25));
 insert into t7 values(1,"Oblastnaia bolnitsa"),(2,"Bolnitsa Krasnogo Kresta");
 insert into t6 values (1,1),(1,2),(2,2),(1,3);
 #Bug #SEQUOIADBMAINSTREAM-3576
-#select * from t6 where exists (select * from t7 where uq = clinic_uq);
+select * from t6 where exists (select * from t7 where uq = clinic_uq);
 #explain extended select * from t6 where exists (select * from t7 where uq = clinic_uq);
 
 # not unique fields
@@ -1313,12 +1314,12 @@ DROP TABLE t1;
 #
 # SELECT(EXISTS * ...)optimisation
 #Bug #SEQUOIADBMAINSTREAM-3576
-#
-#create table t1 (a int, b int);
-#insert into t1 values (1,2),(3,4);
-#select * from t1 up where exists (select * from t1 where t1.a=up.a);
+
+create table t1 (a int, b int);
+insert into t1 values (1,2),(3,4);
+select * from t1 up where exists (select * from t1 where t1.a=up.a);
 #explain extended select * from t1 up where exists (select * from t1 where t1.a=up.a);
-#drop table t1;
+drop table t1;
 
 
 #
@@ -2242,8 +2243,8 @@ SELECT a FROM t1 GROUP BY a
 SELECT a, SUM(a) FROM t1 GROUP BY a;
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#SELECT a FROM t1
-#   WHERE EXISTS(SELECT c FROM t2 GROUP BY c HAVING SUM(a) = c) GROUP BY a;
+SELECT a FROM t1
+   WHERE EXISTS(SELECT c FROM t2 GROUP BY c HAVING SUM(a) = c) GROUP BY a;
 SELECT a FROM t1 GROUP BY a
    HAVING EXISTS(SELECT c FROM t2 GROUP BY c HAVING SUM(a) = c);
 
@@ -2554,36 +2555,36 @@ DROP TABLE t1,t2;
 #
 # Bug#25219 EXIST subquery with UNION over a mix of
 #           correlated and uncorrelated selects
-# Bug#SEQUOIADBMAINSTREAM-3576
+#Bug#SEQUOIADBMAINSTREAM-3576
 
-#CREATE TABLE t1 (id char(4) PRIMARY KEY, c int);
-#CREATE TABLE t2 (c int);
+CREATE TABLE t1 (id char(4) PRIMARY KEY, c int);
+CREATE TABLE t2 (c int);
 
-#INSERT INTO t1 VALUES ('aa', 1);
-#INSERT INTO t2 VALUES (1);
+INSERT INTO t1 VALUES ('aa', 1);
+INSERT INTO t2 VALUES (1);
 
-#SELECT * FROM t1
-#  WHERE EXISTS (SELECT c FROM t2 WHERE c=1
-#                UNION
-#                SELECT c from t2 WHERE c=t1.c);
+SELECT * FROM t1
+  WHERE EXISTS (SELECT c FROM t2 WHERE c=1
+                UNION
+                SELECT c from t2 WHERE c=t1.c);
 
-#INSERT INTO t1 VALUES ('bb', 2), ('cc', 3), ('dd',1);
+INSERT INTO t1 VALUES ('bb', 2), ('cc', 3), ('dd',1);
 
-#SELECT * FROM t1
-#  WHERE EXISTS (SELECT c FROM t2 WHERE c=1
-#                UNION
-#                SELECT c from t2 WHERE c=t1.c);
+SELECT * FROM t1
+  WHERE EXISTS (SELECT c FROM t2 WHERE c=1
+                UNION
+                SELECT c from t2 WHERE c=t1.c);
 
-#INSERT INTO t2 VALUES (2);
-#CREATE TABLE t3 (c int);
-#INSERT INTO t3 VALUES (1);
+INSERT INTO t2 VALUES (2);
+CREATE TABLE t3 (c int);
+INSERT INTO t3 VALUES (1);
 
-#SELECT * FROM t1
-#  WHERE EXISTS (SELECT t2.c FROM t2 JOIN t3 ON t2.c=t3.c WHERE t2.c=1
-#                UNION
-#                SELECT c from t2 WHERE c=t1.c);
+SELECT * FROM t1
+  WHERE EXISTS (SELECT t2.c FROM t2 JOIN t3 ON t2.c=t3.c WHERE t2.c=1
+                UNION
+                SELECT c from t2 WHERE c=t1.c);
 
-#DROP TABLE t1,t2,t3;
+DROP TABLE t1,t2,t3;
 
 
 #
@@ -2818,8 +2819,8 @@ SELECT a FROM t1 WHERE (SELECT COUNT(b) FROM DUAL) > 0 GROUP BY a;
 SELECT a FROM t1 WHERE (SELECT COUNT(b) FROM DUAL) > 1 GROUP BY a;
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#SELECT a FROM t1 t0
-#  WHERE (SELECT COUNT(t0.b) FROM t1 t WHERE t.b>20) GROUP BY a;
+SELECT a FROM t1 t0
+  WHERE (SELECT COUNT(t0.b) FROM t1 t WHERE t.b>20) GROUP BY a;
 
 SET @@sql_mode='ansi';
 --error ER_INVALID_GROUP_FUNC_USE
@@ -3083,13 +3084,13 @@ DROP TABLE t1;
 #
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#CREATE TABLE t1 (a INT);
-#CREATE TABLE t2 (a INT);
+CREATE TABLE t1 (a INT);
+CREATE TABLE t2 (a INT);
 
-#INSERT INTO t1 VALUES (1),(2);
-#INSERT INTO t2 VALUES (1),(2);
+INSERT INTO t1 VALUES (1),(2);
+INSERT INTO t2 VALUES (1),(2);
 
-#SELECT 2 FROM t1 WHERE EXISTS ((SELECT 1 FROM t2 WHERE t1.a=t2.a));
+SELECT 2 FROM t1 WHERE EXISTS ((SELECT 1 FROM t2 WHERE t1.a=t2.a));
 #EXPLAIN EXTENDED
 #SELECT 2 FROM t1 WHERE EXISTS ((SELECT 1 FROM t2 WHERE t1.a=t2.a));
 
@@ -3098,7 +3099,7 @@ DROP TABLE t1;
 #SELECT 2 FROM t1 WHERE EXISTS ((SELECT 1 FROM t2 WHERE t1.a=t2.a) UNION
 #                               (SELECT 1 FROM t2 WHERE t1.a = t2.a));
 
-#DROP TABLE t1,t2;
+DROP TABLE t1,t2;
 
 
 #
@@ -4244,10 +4245,10 @@ where subcase = 'A.3' and
       NOT((a1, b1, c1) IN (select * from t_in));
 -- echo test non-top level result indirectly
 #Bug #SEQUOIADBMAINSTREAM-3576
-#select case when count(*) > 0 then 'N' else 'wrong result' end as pred_in from t_out
-#where subcase = 'A.3' and
-#      ((a1, b1, c1) IN (select * from t_in)) is NULL and
-#      ((a1, b1, c1) NOT IN (select * from t_in)) is NULL;
+select case when count(*) > 0 then 'N' else 'wrong result' end as pred_in from t_out
+where subcase = 'A.3' and
+      ((a1, b1, c1) IN (select * from t_in)) is NULL and
+      ((a1, b1, c1) NOT IN (select * from t_in)) is NULL;
 
 -- echo case A.4
 select case when count(*) > 0 then 'T' else 'F' end as pred_in from t_out
@@ -4302,10 +4303,10 @@ where subcase = 'B.3' and
       NOT((a1, b1, c1) IN (select * from t_in));
 -- echo test non-top level result indirectly
 #Bug #SEQUOIADBMAINSTREAM-3576
-#select case when count(*) > 0 then 'N' else 'wrong result' end as pred_in from t_out
-#where subcase = 'B.3' and
-#      ((a1, b1, c1) IN (select * from t_in)) is NULL and
-#      ((a1, b1, c1) NOT IN (select * from t_in)) is NULL;
+select case when count(*) > 0 then 'N' else 'wrong result' end as pred_in from t_out
+where subcase = 'B.3' and
+      ((a1, b1, c1) IN (select * from t_in)) is NULL and
+      ((a1, b1, c1) NOT IN (select * from t_in)) is NULL;
 
 -- echo case B.4
 select case when count(*) > 0 then 'T' else 'F' end as pred_in from t_out
@@ -4335,8 +4336,8 @@ SELECT a FROM t1 WHERE (SELECT COUNT(b) FROM DUAL) > 0 GROUP BY a;
 SELECT a FROM t1 WHERE (SELECT COUNT(b) FROM DUAL) > 1 GROUP BY a;
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#SELECT a FROM t1 t0
-#  WHERE (SELECT COUNT(t0.b) FROM t1 t WHERE t.b>20) GROUP BY a;
+SELECT a FROM t1 t0
+  WHERE (SELECT COUNT(t0.b) FROM t1 t WHERE t.b>20) GROUP BY a;
 
 SET @@sql_mode='ansi';
 --error ER_INVALID_GROUP_FUNC_USE
@@ -4378,13 +4379,13 @@ DROP TABLE t1,t2;
 #
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#CREATE TABLE t1(pk INT PRIMARY KEY, a INT, INDEX idx(a));
-#INSERT INTO t1 VALUES (1, 10), (3, 30), (2, 20);
-#CREATE TABLE t2(pk INT PRIMARY KEY, a INT, b INT, INDEX idxa(a));
-#INSERT INTO t2 VALUES (2, 20, 700), (1, 10, 200), (4, 10, 100);
-#SELECT * FROM t1
-#   WHERE EXISTS (SELECT DISTINCT a FROM t2 WHERE t1.a < t2.a ORDER BY b);
-#DROP TABLE t1,t2;
+CREATE TABLE t1(pk INT PRIMARY KEY, a INT, INDEX idx(a));
+INSERT INTO t1 VALUES (1, 10), (3, 30), (2, 20);
+CREATE TABLE t2(pk INT PRIMARY KEY, a INT, b INT, INDEX idxa(a));
+INSERT INTO t2 VALUES (2, 20, 700), (1, 10, 200), (4, 10, 100);
+SELECT * FROM t1
+   WHERE EXISTS (SELECT DISTINCT a FROM t2 WHERE t1.a < t2.a ORDER BY b);
+DROP TABLE t1,t2;
 
 #
 # Bug#37548 result value erronously reported being NULL in certain subqueries
@@ -4472,37 +4473,37 @@ DROP TABLE t1,t2;
 --echo # Bug#37822 Correlated subquery with IN and IS UNKNOWN provides wrong result
 --echo #
 #Bug #SEQUOIADBMAINSTREAM-3576
-#create table t1(id integer primary key, g integer, v integer, s char(1));
-#create table t2(id integer primary key, g integer, v integer, s char(1));
-#insert into t1 values
-#  (10, 10, 10,   'l'),
-#  (20, 20, 20,   'l'),
-#  (40, 40, 40,   'l'),
-#  (41, 40, null, 'l'),
-#  (50, 50, 50,   'l'),
-#  (51, 50, null, 'l'),
-#  (60, 60, 60,   'l'),
-#  (61, 60, null, 'l'),
-#  (70, 70, 70,   'l'),
-#  (90, 90, null, 'l');
-#insert into t2 values
-#  (10, 10, 10,   'r'),
-#  (30, 30, 30,   'r'),
-#  (50, 50, 50,   'r'),
-#  (60, 60, 60,   'r'),
-#  (61, 60, null, 'r'),
-#  (70, 70, 70,   'r'),
-#  (71, 70, null, 'r'),
-#  (80, 80, 80,   'r'),
-#  (81, 80, null, 'r'),
-#  (100,100,null, 'r');
-#
-#select *
-#from t1
-#where v in(select v
-#           from t2
-#           where t1.g=t2.g) is unknown;
-#drop table t1, t2;
+create table t1(id integer primary key, g integer, v integer, s char(1));
+create table t2(id integer primary key, g integer, v integer, s char(1));
+insert into t1 values
+  (10, 10, 10,   'l'),
+  (20, 20, 20,   'l'),
+  (40, 40, 40,   'l'),
+  (41, 40, null, 'l'),
+  (50, 50, 50,   'l'),
+  (51, 50, null, 'l'),
+  (60, 60, 60,   'l'),
+  (61, 60, null, 'l'),
+  (70, 70, 70,   'l'),
+  (90, 90, null, 'l');
+insert into t2 values
+  (10, 10, 10,   'r'),
+  (30, 30, 30,   'r'),
+  (50, 50, 50,   'r'),
+  (60, 60, 60,   'r'),
+  (61, 60, null, 'r'),
+  (70, 70, 70,   'r'),
+  (71, 70, null, 'r'),
+  (80, 80, 80,   'r'),
+  (81, 80, null, 'r'),
+  (100,100,null, 'r');
+
+select *
+from t1
+where v in(select v
+           from t2
+           where t1.g=t2.g) is unknown;
+drop table t1, t2;
 
 -- echo #
 -- echo # Bug#33204: INTO is allowed in subselect, causing inconsistent results
@@ -5128,14 +5129,14 @@ WHERE t1.i NOT IN
 );
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#SELECT * FROM t1
-#WHERE t1.I IN
-#(
-#  SELECT STRAIGHT_JOIN t2s.i 
-#  FROM
-#  t1s LEFT OUTER JOIN t2s ON t2s.i = t1s.i
-#  HAVING t2s.i = 999
-#) IS UNKNOWN;
+SELECT * FROM t1
+WHERE t1.I IN
+(
+  SELECT STRAIGHT_JOIN t2s.i 
+  FROM
+  t1s LEFT OUTER JOIN t2s ON t2s.i = t1s.i
+  HAVING t2s.i = 999
+) IS UNKNOWN;
 
 SELECT * FROM t1
 WHERE NOT t1.I = ANY
@@ -5147,13 +5148,13 @@ WHERE NOT t1.I = ANY
 );
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#SELECT * FROM t1
-# WHERE t1.i = ANY (
-#  SELECT STRAIGHT_JOIN t2s.i 
-#  FROM
-#  t1s LEFT OUTER JOIN t2s ON t2s.i = t1s.i
-#  HAVING t2s.i = 999
-# ) IS UNKNOWN;
+SELECT * FROM t1
+ WHERE t1.i = ANY (
+  SELECT STRAIGHT_JOIN t2s.i 
+  FROM
+  t1s LEFT OUTER JOIN t2s ON t2s.i = t1s.i
+  HAVING t2s.i = 999
+ ) IS UNKNOWN;
 
 DROP TABLE t1,t1s,t2s;
 
@@ -6123,28 +6124,28 @@ DROP TABLE t1,t2;
 --echo #
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#CREATE TABLE t1 (a int, b int);
-#CREATE TABLE t2 (a int, b int, KEY a_b (a,b));
-#CREATE TABLE t4 (a int);
-#INSERT INTO t1 VALUES(0,1);
-#INSERT INTO t2 VALUES(NULL,1),(NULL,1);
-#INSERT INTO t4 VALUES(1);
-#
-#SELECT ((0,1) NOT IN (SELECT NULL,1)) IS NULL;
-#
-#let $query=SELECT * FROM t1
-#WHERE ((a,b) NOT IN (SELECT t2.a,t2.b FROM
-#        t4 STRAIGHT_JOIN t2 WHERE t4.a=t2.b)) IS NULL;
-#
+CREATE TABLE t1 (a int, b int);
+CREATE TABLE t2 (a int, b int, KEY a_b (a,b));
+CREATE TABLE t4 (a int);
+INSERT INTO t1 VALUES(0,1);
+INSERT INTO t2 VALUES(NULL,1),(NULL,1);
+INSERT INTO t4 VALUES(1);
+
+SELECT ((0,1) NOT IN (SELECT NULL,1)) IS NULL;
+
+let $query=SELECT * FROM t1
+WHERE ((a,b) NOT IN (SELECT t2.a,t2.b FROM
+        t4 STRAIGHT_JOIN t2 WHERE t4.a=t2.b)) IS NULL;
+
 #eval EXPLAIN EXTENDED $query;
-#eval $query;
-#
-#ALTER TABLE t2 DROP INDEX a_b;
-#
+eval $query;
+
+ALTER TABLE t2 DROP INDEX a_b;
+
 #EVAL EXPLAIN EXTENDED $query;
-#eval $query;
-#
-#DROP TABLE t1,t2,t4;
+eval $query;
+
+DROP TABLE t1,t2,t4;
 
 --echo #
 --echo # Bug#13725821 ASSERT NULL_REF_KEY == __NULL FAILED IN
@@ -6518,23 +6519,23 @@ DROP TABLE t1,t2;
 --echo #
 
 #Bug #SEQUOIADBMAINSTREAM-3576
-#CREATE TABLE t1 (a INT PRIMARY KEY) ENGINE=SEQUOIADB;
-#CREATE TABLE t0(a INT);
-#INSERT INTO t0 VALUES();
-#SELECT 1 FROM t1
-#WHERE 1 IN
-#(
-#  SELECT 1 FROM t1
-#   WHERE
-#   (
-#     SELECT a
-#     FROM (SELECT  1 FROM t1) q
-#     ORDER BY (SELECT (SELECT  1 FROM t1) FROM t0 HAVING a) DESC
-#     LIMIT 1
-#   )
-#)
-#;
-#DROP TABLE t0,t1;
+CREATE TABLE t1 (a INT PRIMARY KEY) ENGINE=SEQUOIADB;
+CREATE TABLE t0(a INT);
+INSERT INTO t0 VALUES();
+SELECT 1 FROM t1
+WHERE 1 IN
+(
+  SELECT 1 FROM t1
+   WHERE
+   (
+     SELECT a
+     FROM (SELECT  1 FROM t1) q
+     ORDER BY (SELECT (SELECT  1 FROM t1) FROM t0 HAVING a) DESC
+     LIMIT 1
+   )
+)
+;
+DROP TABLE t0,t1;
 
 --echo #
 --echo # Bug#21292102 CRASH IN GET_SORT_BY_TABLE()
