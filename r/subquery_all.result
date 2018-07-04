@@ -3359,6 +3359,47 @@ bb	2
 dd	NULL
 alter table t1 drop index idx;
 alter table t1 add index idx(oref,ie);
+select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+oref	a	z
+ee	NULL	NULL
+bb	2	0
+ff	2	1
+cc	3	NULL
+aa	1	1
+dd	NULL	0
+bb	NULL	NULL
+select oref, a from t2 where a in (select ie from t1 where oref=t2.oref);
+oref	a
+aa	1
+ff	2
+select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
+oref	a
+bb	2
+dd	NULL
+select oref, a, 
+a in (select min(ie) from t1 where oref=t2.oref 
+group by grp having min(ie) > 1) z 
+from t2;
+oref	a	z
+ee	NULL	0
+bb	2	0
+ff	2	1
+cc	3	0
+aa	1	0
+dd	NULL	0
+bb	NULL	NULL
+select oref, a from t2 where a in (select min(ie) from t1 where oref=t2.oref 
+group by grp having min(ie) > 1);
+oref	a
+ff	2
+select oref, a from t2 where a not in (select min(ie) from t1 where oref=t2.oref 
+group by grp having min(ie) > 1);
+oref	a
+ee	NULL
+bb	2
+cc	3
+aa	1
+dd	NULL
 drop table t1,t2;
 create table t1 (oref char(4), grp int, ie1 int, ie2 int);
 insert into t1 (oref, grp, ie1, ie2) values

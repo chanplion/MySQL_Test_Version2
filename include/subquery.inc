@@ -3634,11 +3634,12 @@ alter table t1 add index idx(oref,ie);
 #explain select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
 #Bug #SEQUOIADBMAINSTREAM-3587
-#select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
+select oref, a, a in (select ie from t1 where oref=t2.oref) z from t2;
 
-#select oref, a from t2 where a in (select ie from t1 where oref=t2.oref); 
+--sorted_result
+select oref, a from t2 where a in (select ie from t1 where oref=t2.oref); 
 
-#select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
+select oref, a from t2 where a not in (select ie from t1 where oref=t2.oref);
 
 #explain 
 #select oref, a, 
@@ -3646,16 +3647,16 @@ alter table t1 add index idx(oref,ie);
 #             group by grp having min(ie) > 1) z 
 #from t2;
 
-#select oref, a, 
-#       a in (select min(ie) from t1 where oref=t2.oref 
-#             group by grp having min(ie) > 1) z 
-#from t2;
+select oref, a, 
+       a in (select min(ie) from t1 where oref=t2.oref 
+             group by grp having min(ie) > 1) z 
+from t2;
 
-#select oref, a from t2 where a in (select min(ie) from t1 where oref=t2.oref 
-#                                   group by grp having min(ie) > 1);
+select oref, a from t2 where a in (select min(ie) from t1 where oref=t2.oref 
+                                   group by grp having min(ie) > 1);
   
-#select oref, a from t2 where a not in (select min(ie) from t1 where oref=t2.oref 
-#                                       group by grp having min(ie) > 1);
+select oref, a from t2 where a not in (select min(ie) from t1 where oref=t2.oref 
+                                       group by grp having min(ie) > 1);
 
 drop table t1,t2;
 
