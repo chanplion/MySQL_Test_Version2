@@ -1,7 +1,6 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB,
-# (#case #13102: Check update between muiti tables, table scan)
-# (#case #15435: Check update between muiti tables, index scan)
+# (#case #13102: Check update between muiti tables)
 --source include/have_sequoiadb.inc
 
 #
@@ -228,15 +227,16 @@ UPDATE t2 left outer join t1 on t1.n=t2.n  SET t1.d=t2.d;
 select * from t1;
 select * from t2;
 drop table t1,t2;
+
 #Bug #SEQUOIADBMAINSTREAM-3601
-#create table t1 (n int(10), d int(10));
-#create table t2 (n int(10), d int(10));
-#insert into t1 values(1,1),(1,2);
-#insert into t2 values(1,10),(2,20);
-#UPDATE t1,t2 SET t1.d=t2.d,t2.d=30 WHERE t1.n=t2.n;
-#select * from t1;
-#select * from t2;
-#drop table t1,t2;
+create table t1 (n int(10), d int(10));
+create table t2 (n int(10), d int(10));
+insert into t1 values(1,1),(1,2);
+insert into t2 values(1,10),(2,20);
+UPDATE t1,t2 SET t1.d=t2.d,t2.d=30 WHERE t1.n=t2.n;
+select * from t1;
+select * from t2;
+drop table t1,t2;
 create table t1 (n int(10), d int(10));
 create table t2 (n int(10), d int(10));
 insert into t1 values(1,1),(3,2);

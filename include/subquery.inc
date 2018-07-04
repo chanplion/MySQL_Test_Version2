@@ -730,20 +730,20 @@ drop table t1;
 
 #
 # Multi update test
-# Bug of SequoiaDB, multi update only one record updated when match many: SEQUOIADBMAINSTREAM-3601
-#CREATE TABLE t1 (
-#  id int(11) default NULL
-#) ENGINE=SequoiaDB CHARSET=latin1;
-#INSERT INTO t1 VALUES (1),(1),(2),(2),(1),(3);
-#CREATE TABLE t2 (
-#  id int(11) default NULL,
-#  name varchar(15) default NULL
-#) ENGINE=SequoiaDB CHARSET=latin1;
-#
-#INSERT INTO t2 VALUES (4,'vita'), (1,'vita'), (2,'vita'), (1,'vita');
-#update t1, t2 set t2.name='lenka' where t2.id in (select id from t1);
-#select * from t2;
-#drop table t1,t2;
+#Bug #SEQUOIADBMAINSTREAM-3601
+CREATE TABLE t1 (
+  id int(11) default NULL
+) ENGINE=SequoiaDB CHARSET=latin1;
+INSERT INTO t1 VALUES (1),(1),(2),(2),(1),(3);
+CREATE TABLE t2 (
+  id int(11) default NULL,
+  name varchar(15) default NULL
+) ENGINE=SequoiaDB CHARSET=latin1;
+
+INSERT INTO t2 VALUES (4,'vita'), (1,'vita'), (2,'vita'), (1,'vita');
+update t1, t2 set t2.name='lenka' where t2.id in (select id from t1);
+select * from t2;
+drop table t1,t2;
 
 #
 # correct NULL in <CONSTANT> IN (SELECT ...)
