@@ -1060,7 +1060,7 @@ t1.c1 join t2 on t2.ref_t1 = t1.c1) on t4.ref_t1 = t1.c1;
 drop table t1,t2,t3,t4;
 
 #--echo # Bug#20455184: Assertion failed: join_cond in optimizer.cc
-# Bug of SequoiaDB, query with subquery SQL will cause lost connection: SEQUOIADBMAINSTREAM-3576
+#Bug #SEQUOIADBMAINSTREAM-3596
 #CREATE TABLE t1(a INTEGER) engine=sequoiadb;
 #
 #let $query=
