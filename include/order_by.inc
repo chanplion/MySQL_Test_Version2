@@ -897,10 +897,11 @@ DROP TABLE t1;
 #
 
 #Bug #SEQUOIADBMAINSTREAM-3589
-CREATE TABLE t2 (a varchar(32), b int(11), c float, d double);
+CREATE TABLE t2 (a varchar(32), b int(11), c float, d double, 
+  UNIQUE KEY a (a,b,c), KEY b (b), KEY c (c));
 
-CREATE TABLE t1 (a varchar(32), b char(3));
-CREATE TABLE t3 (a varchar(32), b char(3));
+CREATE TABLE t1 (a varchar(32), b char(3), UNIQUE KEY a (a,b), KEY b (b));
+CREATE TABLE t3 (a varchar(32), b char(3), UNIQUE KEY a (a,b));
 
 --disable_query_log
 INSERT INTO t1 (a, b) VALUES

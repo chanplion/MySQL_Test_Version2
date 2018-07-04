@@ -1264,9 +1264,10 @@ col
 1
 DROP TABLE t1;
 End of 5.0 tests
-CREATE TABLE t2 (a varchar(32), b int(11), c float, d double);
-CREATE TABLE t1 (a varchar(32), b char(3));
-CREATE TABLE t3 (a varchar(32), b char(3));
+CREATE TABLE t2 (a varchar(32), b int(11), c float, d double, 
+UNIQUE KEY a (a,b,c), KEY b (b), KEY c (c));
+CREATE TABLE t1 (a varchar(32), b char(3), UNIQUE KEY a (a,b), KEY b (b));
+CREATE TABLE t3 (a varchar(32), b char(3), UNIQUE KEY a (a,b));
 INSERT INTO t3 SELECT * FROM t1;
 SELECT d FROM t1, t2
 WHERE t2.b=14 AND t2.a=t1.a AND 5.1<t2.c AND t1.b='DE'

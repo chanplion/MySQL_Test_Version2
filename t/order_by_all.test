@@ -2,6 +2,7 @@
 #be ported to run with SequoiaDB,
 # (#Case #13100: Check update/delete with order by)
 # (#Case #13118: Check query with order by)
+# (#Case #15434: index query and order by)
 --source include/no_valgrind_without_big.inc
 --source include/have_sequoiadb.inc
 
