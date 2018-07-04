@@ -2925,6 +2925,7 @@ select * from (select * left join t on f1=f2) tt;
 # Bug #16504: re-evaluation of Item_equal object after reading const table
 #
 
+#Bug #SEQUOIADBMAINSTREAM-3574
 CREATE TABLE t1 (sku int PRIMARY KEY, pr int);
 CREATE TABLE t2 (sku int PRIMARY KEY, sppr int, name varchar(255));
 
