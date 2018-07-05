@@ -1,6 +1,7 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB,
 # (#Case #14430: Check insert/update/delete/query of DataType DateTime)
+# (#Case #13114: Check date function) 
 
 --source include/have_sequoiadb.inc
 
@@ -62,6 +63,8 @@ select * from t1 where dt='2001-08-14 00:00:00' and dt =  if(id=1,'2001-08-14 00
 # NOW not support index of datetime
 #create index dt on t1 (dt);
 select * from t1 where dt > 20021020;
+
+#Bug #SEQUOIADBMAINSTREAM-3583
 #select * from t1 ignore index (dt) where dt > 20021020;
 drop table t1;
 

@@ -819,7 +819,7 @@ DROP VIEW v1;
 --echo # BUG #11766576 - 59715: UPDATE IGNORE, 1 ROW AFFECTED
 --echo #
 
-#Sequoiadb Not Support Update Ignore
+#Bug #SEQUOIADBMAINSTREAM-3665
 #--disable_warnings
 #DROP TABLE IF EXISTS t1, t2;
 #--enable_warnings
