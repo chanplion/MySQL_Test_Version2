@@ -828,14 +828,14 @@ drop table t1,t2,t3;
 #Bug #SEQUOIADBMAINSTREAM-3581
 # 
 
-#create table t1 (s1 int);
-#create table t2 (s1 int);
-#insert into t1 values (1);
-#insert into t2 values (1);
-#--source include/turn_off_only_full_group_by.inc
-#select * from t1 where exists (select s1 from t2 having max(t2.s1)=t1.s1);
-#--source include/restore_sql_mode_after_turn_off_only_full_group_by.inc
-#drop table t1,t2;
+create table t1 (s1 int);
+create table t2 (s1 int);
+insert into t1 values (1);
+insert into t2 values (1);
+--source include/turn_off_only_full_group_by.inc
+select * from t1 where exists (select s1 from t2 having max(t2.s1)=t1.s1);
+--source include/restore_sql_mode_after_turn_off_only_full_group_by.inc
+drop table t1,t2;
 
 #
 # update subquery with wrong field (to force name resolving
