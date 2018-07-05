@@ -218,8 +218,8 @@ insert into t1 values('2001-05-20','2001-05-20 01:01:01','2001-05-20 01:01:01');
 select f2 from t1 where f2 between '2001-2-5' and '01-04-14';
 select f1, f2, f3 from t1 where f1 between f2 and f3;
 #Bug #SEQUOIADBMAINSTREAM-3591
-#select f1, f2, f3 from t1 where cast(f1 as datetime) between f2 and
-#  cast(f3 as date);
+select f1, f2, f3 from t1 where cast(f1 as datetime) between f2 and
+  cast(f3 as date);
 select f2 from t1 where '2001-04-10 12:34:56' between f2 and '01-05-01';
 select f2, f3 from t1 where '01-03-10' between f2 and f3;
 select f2 from t1 where DATE(f2) between "2001-4-15" AND "01-4-15";
