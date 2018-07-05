@@ -1,5 +1,6 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB
+# (#Case #13109: Check Operator like)
 
 --source include/have_sequoiadb.inc
 
@@ -13,8 +14,8 @@ drop table if exists t1;
 
 create table t1 (a varchar(10), key(a));
 insert into t1 values ("a"),("abc"),("abcd"),("hello"),("test");
-explain extended select * from t1 where a like 'abc%';
-explain extended select * from t1 where a like concat('abc','%');
+#explain extended select * from t1 where a like 'abc%';
+#explain extended select * from t1 where a like concat('abc','%');
 select * from t1 where a like "abc%";
 select * from t1 where a like concat("abc","%");
 select * from t1 where a like "ABC%";
@@ -197,10 +198,10 @@ SELECT ('a%b' LIKE 'ax%b' ESCAPE x) FROM t1;
 CREATE TABLE t2(x int, y varchar(100)) ENGINE=SequoiaDB;
 CREATE INDEX idx ON t2(y);
 INSERT INTO t2 VALUES (1, 'abcd'), (2, 'ab%cde');
-ANALYZE TABLE t2;
+#ANALYZE TABLE t2;
 let $query=
 SELECT * FROM t2 WHERE y LIKE 'abc%%' ESCAPE (SELECT 'c' FROM t1) ORDER BY y;
-eval EXPLAIN $query;
+#eval EXPLAIN $query;
 eval $query;
 
 DROP TABLE t1, t2;

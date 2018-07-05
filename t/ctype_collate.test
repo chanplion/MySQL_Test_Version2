@@ -155,7 +155,7 @@ SHOW FIELDS FROM  t1;
 SET CHARACTER SET 'latin1';
 SHOW VARIABLES LIKE 'character_set_client';
 SELECT charset('a'),collation('a'),coercibility('a'),'a'='A';
-explain extended SELECT charset('a'),collation('a'),coercibility('a'),'a'='A';
+#explain extended SELECT charset('a'),collation('a'),coercibility('a'),'a'='A';
 
 SET CHARACTER SET koi8r;
 SHOW VARIABLES LIKE 'collation_client';
@@ -221,24 +221,24 @@ INSERT INTO t1 VALUES ('h','h');
 INSERT INTO t1 VALUES ('i','i');
 INSERT INTO t1 VALUES ('j','j');
 
-ANALYZE TABLE t1;
-EXPLAIN SELECT * FROM t1 WHERE s1='a';
-EXPLAIN SELECT * FROM t1 WHERE s2='a';
-EXPLAIN SELECT * FROM t1 WHERE s1='a' COLLATE latin1_german1_ci;
---replace_result 11 10 9.09 10.00
-EXPLAIN SELECT * FROM t1 WHERE s2='a' COLLATE latin1_german1_ci;
+#ANALYZE TABLE t1;
+#EXPLAIN SELECT * FROM t1 WHERE s1='a';
+#EXPLAIN SELECT * FROM t1 WHERE s2='a';
+#EXPLAIN SELECT * FROM t1 WHERE s1='a' COLLATE latin1_german1_ci;
+#--replace_result 11 10 9.09 10.00
+#EXPLAIN SELECT * FROM t1 WHERE s2='a' COLLATE latin1_german1_ci;
 
-EXPLAIN SELECT * FROM t1 WHERE s1 BETWEEN 'a' AND 'b' COLLATE latin1_german1_ci;
---replace_result 11 10
-EXPLAIN SELECT * FROM t1 WHERE s2 BETWEEN 'a' AND 'b' COLLATE latin1_german1_ci;
+#EXPLAIN SELECT * FROM t1 WHERE s1 BETWEEN 'a' AND 'b' COLLATE latin1_german1_ci;
+#--replace_result 11 10
+#EXPLAIN SELECT * FROM t1 WHERE s2 BETWEEN 'a' AND 'b' COLLATE latin1_german1_ci;
 
-EXPLAIN SELECT * FROM t1 WHERE s1 IN  ('a','b' COLLATE latin1_german1_ci);
---replace_result 11 10 18.18 20.00 3.31 4.00
-EXPLAIN SELECT * FROM t1 WHERE s2 IN  ('a','b' COLLATE latin1_german1_ci);
+#EXPLAIN SELECT * FROM t1 WHERE s1 IN  ('a','b' COLLATE latin1_german1_ci);
+#--replace_result 11 10 18.18 20.00 3.31 4.00
+#EXPLAIN SELECT * FROM t1 WHERE s2 IN  ('a','b' COLLATE latin1_german1_ci);
 
-EXPLAIN SELECT * FROM t1 WHERE s1 LIKE 'a' COLLATE latin1_german1_ci;
---replace_result 11 10
-EXPLAIN SELECT * FROM t1 WHERE s2 LIKE 'a' COLLATE latin1_german1_ci;
+#EXPLAIN SELECT * FROM t1 WHERE s1 LIKE 'a' COLLATE latin1_german1_ci;
+#--replace_result 11 10
+#EXPLAIN SELECT * FROM t1 WHERE s2 LIKE 'a' COLLATE latin1_german1_ci;
 
 DROP TABLE t1;
 

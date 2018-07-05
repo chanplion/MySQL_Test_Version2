@@ -1,5 +1,6 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB
+# (#Case #13110: Check Operator regex)
 
 --source include/have_sequoiadb.inc
 
@@ -22,7 +23,7 @@ set names latin1;
 create table t1 (xxx char(128));
 insert into t1 (xxx) values('this is a test of some long text to see what happens');
 select * from t1 where xxx regexp('is a test of some long text to');
-explain extended select * from t1 where xxx regexp('is a test of some long text to');
+#explain extended select * from t1 where xxx regexp('is a test of some long text to');
 select * from t1 where xxx regexp('is a test of some long text to ');
 select * from t1 where xxx regexp('is a test of some long text to s');
 select * from t1 where xxx regexp('is a test of some long text to se');

@@ -912,7 +912,7 @@ ANALYZE TABLE t1, t2, t3;
 let $my_stmt= UPDATE t2 straight_join t3 straight_join t1 SET t1.c2 = 30, t2.c2 = 40, t3.c2=50
               WHERE t1.c1=t2.c2 AND t2.c1=t3.c2;
 eval $my_stmt;
-eval EXPLAIN $my_stmt;
+#eval EXPLAIN $my_stmt;
 SELECT * FROM t3 ORDER BY c1;
 DROP TABLE t1, t2, t3;
 --source include/uninstall_sequoiadb.inc

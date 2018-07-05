@@ -1179,9 +1179,9 @@ insert into t1 values (unhex('65')), (unhex('C3A9')), (unhex('65'));
 analyze table t1;
 -- enable_result_log
 -- enable_query_log
-explain select distinct a from t1;
+#explain select distinct a from t1;
 select distinct a from t1;
-explain select a from t1 group by a;
+#explain select a from t1 group by a;
 select a from t1 group by a;
 drop table t1;
 
@@ -1191,13 +1191,13 @@ drop table t1;
 
 create table t1(a char(10)) default charset utf8;
 insert into t1 values ('123'), ('456');
--- disable_query_log
--- disable_result_log
-analyze table t1;
--- enable_result_log
--- enable_query_log
-explain
-  select substr(z.a,-1), z.a from t1 as y join t1 as z on y.a=z.a order by 1;
+#-- disable_query_log
+#-- disable_result_log
+#analyze table t1;
+#-- enable_result_log
+#-- enable_query_log
+#explain
+#  select substr(z.a,-1), z.a from t1 as y join t1 as z on y.a=z.a order by 1;
 select substr(z.a,-1), z.a from t1 as y join t1 as z on y.a=z.a order by 1;
 drop table t1;
 

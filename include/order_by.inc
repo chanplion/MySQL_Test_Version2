@@ -681,17 +681,17 @@ drop table t1;
 CREATE TABLE t1 (a int, b int, PRIMARY KEY  (a));
 INSERT INTO t1 VALUES (1,1), (2,2), (3,3);
 
-explain SELECT t1.b as a, t2.b as c FROM 
- t1 LEFT JOIN t1 t2 ON (t1.a = t2.a AND t2.a = 2) 
-ORDER BY c;
+#explain SELECT t1.b as a, t2.b as c FROM 
+# t1 LEFT JOIN t1 t2 ON (t1.a = t2.a AND t2.a = 2) 
+#ORDER BY c;
 SELECT t2.b as c FROM 
  t1 LEFT JOIN t1 t2 ON (t1.a = t2.a AND t2.a = 2) 
 ORDER BY c;
 
 # check that it still removes sort of const table
-explain SELECT t1.b as a, t2.b as c FROM 
- t1 JOIN t1 t2 ON (t1.a = t2.a AND t2.a = 2)  
-ORDER BY c;
+#explain SELECT t1.b as a, t2.b as c FROM 
+# t1 JOIN t1 t2 ON (t1.a = t2.a AND t2.a = 2)  
+#ORDER BY c;
 
 CREATE TABLE t2 LIKE t1;
 INSERT INTO t2 SELECT * from t1;

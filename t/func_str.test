@@ -772,11 +772,11 @@ DROP TABLE t1;
 CREATE TABLE t1 (s varchar(10));
 INSERT INTO t1 VALUES ('yadda'), ('yaddy');
 
-EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(s) > 'ab';
-EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM('y' FROM s) > 'ab';
-EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(LEADING 'y' FROM s) > 'ab';
-EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(TRAILING 'y' FROM s) > 'ab';
-EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(BOTH 'y' FROM s) > 'ab';
+#EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(s) > 'ab';
+#EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM('y' FROM s) > 'ab';
+#EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(LEADING 'y' FROM s) > 'ab';
+#EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(TRAILING 'y' FROM s) > 'ab';
+#EXPLAIN EXTENDED SELECT s FROM t1 WHERE TRIM(BOTH 'y' FROM s) > 'ab';
 
 DROP TABLE t1;
  
@@ -784,10 +784,8 @@ DROP TABLE t1;
 # Bug#23409: ENCODE() and DECODE() functions aren't printed correctly
 #
 create table t1(f1 varchar(4));
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-explain extended select encode(f1,'zxcv') as 'enc' from t1;
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-explain extended select decode(f1,'zxcv') as 'enc' from t1;
+#explain extended select encode(f1,'zxcv') as 'enc' from t1;
+#explain extended select decode(f1,'zxcv') as 'enc' from t1;
 drop table t1;
 
 #
@@ -861,10 +859,9 @@ INSERT INTO t2 VALUES ('a11'), ('a12'), ('a13'), ('a14');
 # Bug of SequoiaDB, qeury Type of char with index will return wrong result: SEQUOIADBMAINSTREAM-3568
 #SELECT * FROM t1 INNER JOIN t2 ON t1.code=t2.id 
 #  WHERE t2.id='a12' AND (LENGTH(code)=5 OR code < 'a00');
---replace_column 3 n 4 n 5 n 6 n 7 n 8 n 9 n 10 n 11 n 12 n
-EXPLAIN EXTENDED 
-SELECT * FROM t1 INNER JOIN t2 ON code=id 
-  WHERE id='a12' AND (LENGTH(code)=5 OR code < 'a00');
+#EXPLAIN EXTENDED 
+#SELECT * FROM t1 INNER JOIN t2 ON code=id 
+#  WHERE id='a12' AND (LENGTH(code)=5 OR code < 'a00');
 DROP TABLE t1,t2;
 
 #
@@ -1344,8 +1341,8 @@ drop table if exists t1;
 --enable_warnings
 create table t1(f1 tinyint default null)engine=sequoiadb;
 insert into t1 values (-1),(null);
-explain select 1 as a from t1,(select decode(f1,f1) as b from t1) a;
-explain select 1 as a from t1,(select encode(f1,f1) as b from t1) a;
+#explain select 1 as a from t1,(select decode(f1,f1) as b from t1) a;
+#explain select 1 as a from t1,(select encode(f1,f1) as b from t1) a;
 drop table t1;
 
 
