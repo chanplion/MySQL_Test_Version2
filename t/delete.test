@@ -1,6 +1,6 @@
 # The include statement below is a temp one for tests that are yet to
 #be ported to run with SequoiaDB
-# (# case 13305: check sub query)
+# (# case 15436: update/delete with sub query)
 --source include/have_sequoiadb.inc
 
 #
