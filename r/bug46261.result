@@ -1,12 +1,10 @@
 #
 # Bug#46261 Plugins can be installed with --skip-grant-tables
 #
-INSTALL PLUGIN sequoiadb SONAME 'ha_sequoiadb.so';
 SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.plugins
 WHERE plugin_name='sequoiadb';
 PLUGIN_STATUS
 ACTIVE
 INSTALL PLUGIN sequoiadb SONAME 'ha_sequoiadb.so';
 ERROR HY000: Function 'sequoiadb' already exists
-UNINSTALL PLUGIN sequoiadb;
 End of 5.1 tests

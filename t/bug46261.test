@@ -5,9 +5,9 @@
 --echo # Bug#46261 Plugins can be installed with --skip-grant-tables
 --echo #
 
---replace_regex /\.dll/ .so/
+#--replace_regex /\.dll/ .so/
 --let $SEQUOIADB_PLUGIN = ha_sequoiadb.so
-eval INSTALL PLUGIN sequoiadb SONAME '$SEQUOIADB_PLUGIN';
+#eval INSTALL PLUGIN sequoiadb SONAME '$SEQUOIADB_PLUGIN';
 
 SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.plugins
   WHERE plugin_name='sequoiadb';
@@ -16,6 +16,6 @@ SELECT PLUGIN_STATUS FROM INFORMATION_SCHEMA.plugins
 --error ER_UDF_EXISTS
 eval INSTALL PLUGIN sequoiadb SONAME '$SEQUOIADB_PLUGIN';
 
-UNINSTALL PLUGIN sequoiadb;
+#UNINSTALL PLUGIN sequoiadb;
 
 --echo End of 5.1 tests

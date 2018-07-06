@@ -471,7 +471,7 @@ drop table t1;
 
 create table t1 (a int, primary key(a));
 insert into t1 values (1),(2);
-# NOW SequoiaDB not support execute command
+# Bug of SequoiaDB, query with max in index causes error -1: SEQUOIADBMAINSTREAM-3553
 #prepare stmt1 from 'SELECT max(a) FROM t1';
 #execute stmt1;
 #execute stmt1;
