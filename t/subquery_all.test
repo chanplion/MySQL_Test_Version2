@@ -2,6 +2,8 @@
 #be ported to run with SequoiaDB,
 # (#Case #13305: Check sub query )
 # (#Case #14726: Check sub query )
+# (#Case #14763: check update with index)
+# (#Case #15438: Check update )
 --source include/have_sequoiadb.inc
 --source include/no_valgrind_without_big.inc
 

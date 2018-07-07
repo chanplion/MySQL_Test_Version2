@@ -329,8 +329,8 @@ update t1 set b= (select b from t1);
 -- error ER_SUBQUERY_NO_1_ROW
 update t1 set b= (select b from t2);
 # Bug of SequoiaDB, update set=null will not ok: SEQUOIADBMAINSTREAM-3611	
-#update t1 set b= (select b from t2 where t1.a = t2.a);
-#select * from t1;
+update t1 set b= (select b from t2 where t1.a = t2.a);
+select * from t1;
 drop table t1, t2;
 
 #delete with subselects
@@ -471,16 +471,16 @@ select 1.5 IN (SELECT * from t1);
 #select 10.5 IN (SELECT * from t1);
 select NULL IN (SELECT * from t1);
 # Bug of SequoiaDB, update set=null will not ok: SEQUOIADBMAINSTREAM-3611
-#update t1 set a=NULL where a=2.5;
-#select 1.5 IN (SELECT * from t1);
-#select 3.5 IN (SELECT * from t1);
-#select 10.5 IN (SELECT * from t1);
-#select 1.5 > ALL (SELECT * from t1);
-#select 10.5 > ALL (SELECT * from t1);
-#select 1.5 > ANY (SELECT * from t1);
-#select 10.5 > ANY (SELECT * from t1);
+update t1 set a=NULL where a=2.5;
+select 1.5 IN (SELECT * from t1);
+select 3.5 IN (SELECT * from t1);
+select 10.5 IN (SELECT * from t1);
+select 1.5 > ALL (SELECT * from t1);
+select 10.5 > ALL (SELECT * from t1);
+select 1.5 > ANY (SELECT * from t1);
+select 10.5 > ANY (SELECT * from t1);
 #explain extended select (select a+1) from t1;
-#select (select a+1) from t1;
+select (select a+1) from t1;
 drop table t1;
 
 #
@@ -781,16 +781,16 @@ drop table t1;
 # uninterruptable update
 #
 #Bug #SEQUOIADBMAINSTREAM-3611
-#create table t1 (a int, b int);
-#create table t2 (a int, b int);
+create table t1 (a int, b int);
+create table t2 (a int, b int);
 
-#insert into t1 values (1,0), (2,0), (3,0);
-#insert into t2 values (1,1), (2,1), (3,1), (2,2);
+insert into t1 values (1,0), (2,0), (3,0);
+insert into t2 values (1,1), (2,1), (3,1), (2,2);
 
-#update ignore t1 set b=(select b from t2 where t1.a=t2.a);
-#select * from t1;
+update ignore t1 set b=(select b from t2 where t1.a=t2.a);
+select * from t1;
 
-#drop table t1, t2;
+drop table t1, t2;
 
 #
 # reduced subselect in ORDER BY & GROUP BY clauses

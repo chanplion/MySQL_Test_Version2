@@ -2,6 +2,8 @@
 #be ported to run with SequoiaDB,
 # (#Case #13096: Check insert/update/delete/query of DataType Blob)
 # (#Case #13095: Check insert/update/delete/query of DataType Text)
+# (#Case #14763: check update with index)
+# (#Case #15438: Check update )
 
 # This test can't be run with running server (--extern) as this uses
 # load_file() on a file in the tree.
@@ -120,14 +122,14 @@ select distinct t from t1;
 #select distinct b from t1 order by b;
 select t from t1 group by t;
 # Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
-#select b from t1 group by b;
+select b from t1 group by b;
 set big_tables=1;
 select distinct t from t1;
 # Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
-#select distinct b from t1;
+select distinct b from t1;
 select distinct t from t1 order by t;
 # Bug of SequoiaDB, when update set=null, will cause wrong results: SEQUOIADBMAINSTREAM-3611
-#select distinct b from t1 order by b;
+select distinct b from t1 order by b;
 select distinct c from t1;
 select distinct d from t1;
 select distinct c from t1 order by c;

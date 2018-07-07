@@ -156,17 +156,17 @@ drop table t1;
 SELECT '0x8000000000000001'+0;
 
 # Test for BUG#8562: joins over BIGINT UNSIGNED value + constant propagation
-# Bug of SequoiaDB, query record of unsigned type with primary index will return wrong results: SEQUOIADBMAINSTREAM: 3556
+# Bug of SequoiaDB, query record of unsigned type with primary index will return wrong results: SEQUOIADBMAINSTREAM-3556
 create table t1 (
  value64  bigint unsigned  not null,
- value32  integer          not null
-# primary key(value64, value32)
+ value32  integer          not null,
+ primary key(value64, value32)
 );
 
 create table t2 (
  value64  bigint unsigned  not null,
- value32  integer          not null
-# primary key(value64, value32)
+ value32  integer          not null,
+ primary key(value64, value32)
 );
 
 insert into t1 values(17156792991891826145, 1);

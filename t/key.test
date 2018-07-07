@@ -169,16 +169,16 @@ drop table t1;
 # (Failed for Greg Valure)
 #
 # Bug of SequoiaDB, insert type unsigned with primary index, it will causes error 1112 when query: SEQUOIADBMAINSTREAM-3556
-#CREATE TABLE t1 (
-#  a tinytext NOT NULL,
-#  b tinyint(3) unsigned NOT NULL default '0',
-#  PRIMARY KEY (a(32),b)
-#) ENGINE=SequoiaDB;
-#INSERT INTO t1 VALUES ('a',1),('a',2);
-#SELECT * FROM t1 WHERE a='a' AND b=2;
-#SELECT * FROM t1 WHERE a='a' AND b in (2);
-#SELECT * FROM t1 WHERE a='a' AND b in (1,2);
-#drop table t1;
+CREATE TABLE t1 (
+  a tinytext NOT NULL,
+  b tinyint(3) unsigned NOT NULL default '0',
+  PRIMARY KEY (a(32),b)
+) ENGINE=SequoiaDB;
+INSERT INTO t1 VALUES ('a',1),('a',2);
+SELECT * FROM t1 WHERE a='a' AND b=2;
+SELECT * FROM t1 WHERE a='a' AND b in (2);
+SELECT * FROM t1 WHERE a='a' AND b in (1,2);
+drop table t1;
 
 #
 # Test of create key order

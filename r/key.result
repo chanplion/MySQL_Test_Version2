@@ -60,6 +60,23 @@ select * from t1 where name='patnom' and author='patauteur' and category=0;
 name	author	category	email	password	proxy	bitmap	msg	urlscol	urlhttp	timeout	nbcnx	creation	livinguntil	lang	type	subcat	subtype	reg	scs	capacity	userISP	CCident
 patnom	patauteur	0	p.favre@cryo-networks.fr	NULL	NULL	#p2sndnq6ae5g1u6t	essai salut	scol://195.242.78.119:patauteur.patnom	NULL	NULL	NULL	950036174	-882087474	NULL	3	0	3	1	Pub/patnom/futur_divers.scs	NULL	pat	CC1
 drop table t1;
+CREATE TABLE t1 (
+a tinytext NOT NULL,
+b tinyint(3) unsigned NOT NULL default '0',
+PRIMARY KEY (a(32),b)
+) ENGINE=SequoiaDB;
+INSERT INTO t1 VALUES ('a',1),('a',2);
+SELECT * FROM t1 WHERE a='a' AND b=2;
+a	b
+a	2
+SELECT * FROM t1 WHERE a='a' AND b in (2);
+a	b
+a	2
+SELECT * FROM t1 WHERE a='a' AND b in (1,2);
+a	b
+a	1
+a	2
+drop table t1;
 create table t1 (a int not null unique, b int unique, c int, d int not null primary key, key(c), e int not null unique);
 show keys from t1;
 Table	Non_unique	Key_name	Seq_in_index	Column_name	Collation	Cardinality	Sub_part	Packed	Null	Index_type	Comment	Index_comment
